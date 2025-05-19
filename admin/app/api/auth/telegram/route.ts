@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
 			{ status: 400 }
 		);
 	}
+	console.log(initData, "hellooooooo");
 
 	const data = parseInitData(initData);
 	const tgUser = JSON.parse(data.user);

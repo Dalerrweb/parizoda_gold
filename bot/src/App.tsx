@@ -8,7 +8,13 @@ function App() {
 	const user = tg.initDataUnsafe?.user;
 	useEffect(() => {
 		tg.ready();
-		authenticateUser();
+		authenticateUser()
+			.then((res) => {
+				console.log("User authenticated", res);
+			})
+			.catch((error) => {
+				console.error("Authentication error:", error);
+			});
 	}, []);
 
 	// const onClose = () => {};
