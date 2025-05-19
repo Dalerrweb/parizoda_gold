@@ -190,7 +190,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -200,6 +200,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -210,7 +211,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id         Int      @id @default(autoincrement())\n  telegramId Int      @unique\n  username   String?\n  firstName  String?\n  lastName   String?\n  orders     Order[]\n  createdAt  DateTime @default(now())\n}\n\nmodel Category {\n  id        Int       @id @default(autoincrement())\n  name      String\n  imageUrl  String\n  products  Product[]\n  createdAt DateTime  @default(now())\n}\n\nmodel Product {\n  id          Int            @id @default(autoincrement())\n  name        String\n  description String?\n  price       Int // Цена в минимальной единице (например, в тийинах или центах)\n  category    Category       @relation(fields: [categoryId], references: [id])\n  categoryId  Int\n  images      ProductImage[]\n  orders      Order[]\n  createdAt   DateTime       @default(now())\n  updatedAt   DateTime       @updatedAt\n}\n\nmodel ProductImage {\n  id        Int     @id @default(autoincrement())\n  url       String\n  product   Product @relation(fields: [productId], references: [id])\n  productId Int\n}\n\nmodel Order {\n  id        Int         @id @default(autoincrement())\n  user      User        @relation(fields: [userId], references: [id])\n  userId    Int\n  product   Product     @relation(fields: [productId], references: [id])\n  productId Int\n  status    OrderStatus @default(PENDING)\n  createdAt DateTime    @default(now())\n}\n\nenum OrderStatus {\n  PENDING\n  PAID\n  SHIPPED\n  COMPLETED\n  CANCELLED\n}\n",
   "inlineSchemaHash": "838aaa0c52e63f403f22bb9f16ee34d0eb82994363db17b0b74a366693d009d7",
-  "copyEngine": false
+  "copyEngine": true
 }
 config.dirname = '/'
 
