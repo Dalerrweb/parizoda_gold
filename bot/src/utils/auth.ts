@@ -11,13 +11,13 @@ export async function authenticateUser() {
 		});
 
 		if (!res.ok) {
-			console.error("Ошибка авторизации");
-			return;
+			throw new Error(res.statusText);
 		}
 
 		const { token } = await res.json();
 		localStorage.setItem("token", token); // или sessionStorage
-	} catch (e) {
+	} catch (e: any) {
 		console.error("Ошибка авторизации", e);
+		return e.message;
 	}
 }
