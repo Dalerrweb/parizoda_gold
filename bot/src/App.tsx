@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "./App.css";
+import { authenticateUser } from "./utils/auth";
 
 const tg = window.Telegram.WebApp;
 
@@ -7,6 +8,7 @@ function App() {
 	const user = tg.initDataUnsafe?.user;
 	useEffect(() => {
 		tg.ready();
+		authenticateUser();
 	}, []);
 
 	// const onClose = () => {};
