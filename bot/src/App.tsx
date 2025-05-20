@@ -20,7 +20,7 @@ function App() {
 			});
 		// setUser({
 		// 	id: 0,
-		// 	first_name: "Daler",
+		// 	first_name: "Dalerr",
 		// 	last_name: "Sharifkulov",
 		// 	username: "Daler Sharifkulov",
 		// 	language_code: "",
