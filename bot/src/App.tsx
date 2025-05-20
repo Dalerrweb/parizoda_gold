@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { authenticateUser } from "./utils/auth";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
@@ -16,77 +16,83 @@ const tg = window.Telegram?.WebApp;
 
 function App() {
 	const [user, setUser] = useState<User>(tg?.initDataUnsafe?.user);
+	const contentRef = useRef<HTMLDivElement>(null);
 
+	// Блокировка свайпа и скролла
 	useLayoutEffect(() => {
-		if (tg) {
-			tg.expand();
-			tg.enableClosingConfirmation();
-		}
-	}, []);
-
-	useEffect(() => {
 		if (!tg) return;
 
-		const initApp = async () => {
-			tg.ready();
-			try {
-				await authenticateUser();
-				console.log("User authenticated");
-			} catch (error) {
-				console.error("Authentication error:", error);
-			}
-			setUser(tg.initDataUnsafe?.user);
-		};
+		// Принудительное расширение и блокировка закрытия
+		tg.expand();
+		tg.enableClosingConfirmation();
+		tg.BackButton.hide();
 
-		// Настройка кнопки закрытия
-		tg.MainButton.show();
-		tg.MainButton.setParams({
-			text: "ЗАКРЫТЬ",
-			color: "#FF3347",
-			textColor: "#FFFFFF",
-		});
-		tg.MainButton.onClick(() => tg.close());
-
-		// Обработчики свайпа и скролла
-		let startY = 0;
-		const touchStart = (e: TouchEvent) => (startY = e.touches[0].clientY);
-		const touchMove = (e: TouchEvent) => {
-			if (window.scrollY <= 0 && e.touches[0].clientY - startY > 50) {
+		// Фикс для iOS
+		const handleTouchMove = (e: TouchEvent) => {
+			if (
+				contentRef.current &&
+				!contentRef.current.contains(e.target as Node)
+			) {
 				e.preventDefault();
 			}
 		};
 
-		document.addEventListener("touchstart", touchStart);
-		document.addEventListener("touchmove", touchMove, { passive: false });
-
-		// Фикс скролла вверх
-		let lastScrollTop = 0;
-		const handleScroll = () => {
-			const st = window.pageYOffset;
-			if (st < lastScrollTop && st <= 0) window.scrollTo(0, 1);
-			lastScrollTop = st <= 0 ? 0 : st;
-		};
-
-		window.addEventListener("scroll", handleScroll);
-
-		initApp();
+		document.body.style.overscrollBehavior = "none";
+		document.addEventListener("touchmove", handleTouchMove, {
+			passive: false,
+		});
 
 		return () => {
-			document.removeEventListener("touchstart", touchStart);
-			document.removeEventListener("touchmove", touchMove);
-			window.removeEventListener("scroll", handleScroll);
-			tg.MainButton.offClick();
+			document.removeEventListener("touchmove", handleTouchMove);
 		};
 	}, []);
 
+	// Инициализация приложения
+	useEffect(() => {
+		if (!tg) return;
+
+		tg.ready();
+		tg.onEvent("viewportChanged", handleViewportChange);
+
+		const authenticate = async () => {
+			try {
+				await authenticateUser();
+				console.log("User authenticated");
+				setUser(tg.initDataUnsafe?.user);
+			} catch (error) {
+				console.error("Authentication error:", error);
+			}
+		};
+
+		authenticate();
+
+		return () => {
+			tg.offEvent("viewportChanged", handleViewportChange);
+		};
+	}, []);
+
+	const handleViewportChange = () => {
+		if (!tg.isExpanded) {
+			tg.expand();
+			window.scrollTo(0, 0);
+		}
+	};
+
 	return (
 		<userCTX.Provider value={user}>
-			<div className="app-container">
-				<div className="content-wrapper">
-					<Routes>
-						<Route index element={<Home />} />
-					</Routes>
-				</div>
+			<div
+				ref={contentRef}
+				className="app-container"
+				onScroll={(e) => {
+					// Блокировка скролла за пределы контента
+					if (e.currentTarget.scrollTop <= 0) {
+						e.currentTarget.scrollTop = 1;
+					}
+				}}
+			>
+				<Routes>
+					<Route index element={<Home />} />
+				</Routes>
 			</div>
 		</userCTX.Provider>
 	);
