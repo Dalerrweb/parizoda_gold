@@ -2,33 +2,42 @@ import { useEffect, useState } from "react";
 import { authenticateUser } from "./utils/auth";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
+import { User, userCTX } from "./context/user";
 
 const tg = window.Telegram.WebApp;
 
 function App() {
-	const user = tg.initDataUnsafe?.user;
-	const [status, setStatus] = useState("");
+	const [user, setUser] = useState<User>(tg.initDataUnsafe?.user);
 
 	useEffect(() => {
 		tg.ready();
 		authenticateUser()
 			.then((res) => {
 				console.log("User authenticated", res);
-				setStatus(JSON.stringify(res));
 			})
 			.catch((error) => {
 				console.error("Authentication error:", error);
-				setStatus(error.message);
 			});
+		// setUser({
+		// 	id: 0,
+		// 	first_name: "Daler",
+		// 	last_name: "Sharifkulov",
+		// 	username: "Daler Sharifkulov",
+		// 	language_code: "",
+		// 	photo_url: "",
+		// });
+		setUser(tg.initDataUnsafe?.user);
 	}, []);
 
 	// const onClose = () => {};
 
 	return (
 		<>
-			<Routes>
-				<Route index element={<Home />} />
-			</Routes>
+			<userCTX.Provider value={user}>
+				<Routes>
+					<Route index element={<Home />} />
+				</Routes>
+			</userCTX.Provider>
 		</>
 	);
 }
