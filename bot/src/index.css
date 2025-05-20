@@ -120,8 +120,6 @@
 }
 
 .app-container {
-	background: var(--tg-theme-bg-color);
-	color: var(--tg-theme-text-color);
 	height: 100vh;
 	overflow-y: auto;
 	overscroll-behavior: none;
