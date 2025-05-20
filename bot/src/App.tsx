@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 import { authenticateUser } from "./utils/auth";
+import { Route, Routes } from "react-router-dom";
+import Home from "./pages/home";
 
 const tg = window.Telegram.WebApp;
 
@@ -25,19 +26,9 @@ function App() {
 
 	return (
 		<>
-			<div className="App">
-				<h1>Telegram Web App</h1>
-				<h2>Status of the request: {status}</h2>
-				{user && (
-					<div>
-						<p>First name: {user.first_name}</p>
-						<p>Last name: {user.last_name}</p>
-						<p>Username: {user.username}</p>
-						<p>ID: {user.id}</p>
-					</div>
-				)}
-				{/* <button onClick={onClose}>Close</button> */}
-			</div>
+			<Routes>
+				<Route index element={<Home />} />
+			</Routes>
 		</>
 	);
 }
