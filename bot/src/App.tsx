@@ -11,6 +11,7 @@ function App() {
 
 	useEffect(() => {
 		tg.ready();
+		tg.expand();
 		authenticateUser()
 			.then((res) => {
 				console.log("User authenticated", res);
