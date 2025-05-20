@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { authenticateUser } from "./utils/auth";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
@@ -9,9 +9,12 @@ const tg = window.Telegram.WebApp;
 function App() {
 	const [user, setUser] = useState<User>(tg.initDataUnsafe?.user);
 
+	useLayoutEffect(() => {
+		tg.expand();
+	});
+
 	useEffect(() => {
 		tg.ready();
-		tg.expand();
 		authenticateUser()
 			.then((res) => {
 				console.log("User authenticated", res);
