@@ -53,6 +53,7 @@ function App() {
 
 		tg.ready();
 		tg.onEvent("viewportChanged", handleViewportChange);
+		tg.setHeaderColor("#FFFFFF");
 
 		const authenticate = async () => {
 			try {
