@@ -5,6 +5,7 @@ import Home from "./pages/home";
 import { User, userCTX } from "./context/user";
 import CartPage from "./pages/cart";
 import Catalog from "./pages/catalog";
+import ProductPage from "./pages/product";
 
 declare global {
 	interface Window {
@@ -96,6 +97,7 @@ function App() {
 				<Routes>
 					<Route index element={<Home />} />
 					<Route path="/catalog/:category" element={<Catalog />} />
+					<Route path="/product/:id" element={<ProductPage />} />
 					<Route path="/cart" element={<CartPage />} />
 				</Routes>
 			</div>
