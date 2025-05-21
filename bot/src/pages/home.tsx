@@ -95,79 +95,62 @@ const products = {
 	],
 };
 
-// Categories in the order they should appear
 const categories = [
 	{ id: "rings", label: "Rings" },
 	{ id: "earrings", label: "Earrings" },
 	{ id: "bracelets", label: "Bracelet" },
 	{ id: "necklaces", label: "Necklaces" },
-	{ id: "more", label: "More" },
 ];
 
 export default function HomePage() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [activeCategory, setActiveCategory] = useState("rings");
+	const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-	// Create refs for each product section
-	const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-	// Handle tab click
 	const handleTabClick = (category: string) => {
 		setActiveCategory(category);
+		const section = sectionRefs.current[category];
 
-		// Scroll to the section
-		if (sectionRefs.current[category]) {
-			// Get the header height to offset the scroll position
-			const headerHeight = 64; // 16 * 4 = 64px (h-16)
-			const tabsHeight = 48; // Approximate height of the tabs
+		if (section) {
+			const header = document.querySelector("header");
+			const tabs = document.querySelector('[role="tablist"]');
+
+			const headerHeight = header?.clientHeight || 0;
+			const tabsHeight = tabs?.clientHeight || 0;
 			const totalOffset = headerHeight + tabsHeight;
 
-			const sectionTop =
-				sectionRefs.current[category]!.getBoundingClientRect().top;
-			const offsetPosition =
-				sectionTop + window.pageYOffset - totalOffset;
+			section.scrollIntoView({ behavior: "smooth", block: "start" });
 
-			window.scrollTo({
-				top: offsetPosition,
-				behavior: "smooth",
-			});
+			// Ручная корректировка через асинхронный коллбэк
+			setTimeout(() => {
+				window.scrollBy(0, -totalOffset);
+			}, 500);
 		}
 	};
 
-	// Set up intersection observer to update active category on scroll
 	useEffect(() => {
-		const observerOptions = {
-			root: null,
-			rootMargin: "-100px 0px -70% 0px", // Adjust rootMargin to trigger at appropriate scroll position
-			threshold: 0,
-		};
-
-		const observerCallback: IntersectionObserverCallback = (entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					// Extract category ID from the section's data attribute
-					const sectionId =
-						entry.target.getAttribute("data-category");
-					if (sectionId) {
-						setActiveCategory(sectionId);
-					}
-				}
-			});
-		};
-
 		const observer = new IntersectionObserver(
-			observerCallback,
-			observerOptions
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const sectionId =
+							entry.target.getAttribute("data-category");
+						if (sectionId) setActiveCategory(sectionId);
+					}
+				});
+			},
+			{
+				root: null,
+				rootMargin: "-112px 0px -50% 0px",
+				threshold: 0,
+			}
 		);
 
-		// Observe all section refs
-		Object.entries(sectionRefs.current).forEach(([_, ref]) => {
-			if (ref) observer.observe(ref);
+		Object.values(sectionRefs.current).forEach((section) => {
+			if (section) observer.observe(section);
 		});
 
-		return () => {
-			observer.disconnect();
-		};
+		return () => observer.disconnect();
 	}, []);
 
 	return (
@@ -179,6 +162,21 @@ export default function HomePage() {
 			/>
 
 			<main className="flex-1 pb-8">
+				<div className="relative mt-4">
+					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+					<Input placeholder="Enter value" className="pl-9" />
+				</div>
+
+				<div className="mt-6">
+					<div className="rounded-lg overflow-hidden">
+						<img
+							src="/placeholder.svg?height=200&width=800"
+							alt="Banner"
+							className="w-full h-40 object-cover"
+						/>
+					</div>
+				</div>
+
 				<div className="sticky top-16 z-10 bg-background pt-4 pb-2 px-4 border-b">
 					<Tabs value={activeCategory} onValueChange={handleTabClick}>
 						<TabsList className="w-full justify-start overflow-auto">
@@ -186,6 +184,7 @@ export default function HomePage() {
 								<TabsTrigger
 									key={category.id}
 									value={category.id}
+									className="scroll-mt-8"
 								>
 									{category.label}
 								</TabsTrigger>
@@ -195,65 +194,28 @@ export default function HomePage() {
 				</div>
 
 				<div className="px-4">
-					<div className="relative mt-4">
-						<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-						<Input placeholder="Enter value" className="pl-9" />
-					</div>
+					{/* Поиск и баннер */}
 
-					<div className="mt-6">
-						<div className="rounded-lg overflow-hidden">
-							<img
-								src="/placeholder.svg?height=200&width=800"
-								alt="Banner"
-								className="w-full h-40 object-cover"
+					{categories.map((category) => (
+						<div
+							key={category.id}
+							ref={(el) =>
+								(sectionRefs.current[category.id] = el)
+							}
+							data-category={category.id}
+							className="scroll-mt-[112px]"
+						>
+							<ProductSection
+								title={category.label}
+								products={
+									products[
+										category.id as keyof typeof products
+									]
+								}
+								viewAllHref={`/catalog/${category.id}`}
 							/>
 						</div>
-					</div>
-
-					{/* Product sections with refs */}
-					<div
-						ref={(ref) => (sectionRefs.current.rings = ref)}
-						data-category="rings"
-					>
-						<ProductSection
-							title="Rings"
-							products={products.rings}
-							viewAllHref="/catalog/rings"
-						/>
-					</div>
-
-					<div
-						ref={(ref) => (sectionRefs.current.earrings = ref)}
-						data-category="earrings"
-					>
-						<ProductSection
-							title="Earrings"
-							products={products.earrings}
-							viewAllHref="/catalog/earrings"
-						/>
-					</div>
-
-					<div
-						ref={(ref) => (sectionRefs.current.bracelets = ref)}
-						data-category="bracelets"
-					>
-						<ProductSection
-							title="Bracelets"
-							products={products.bracelets}
-							viewAllHref="/catalog/bracelets"
-						/>
-					</div>
-
-					<div
-						ref={(ref) => (sectionRefs.current.necklaces = ref)}
-						data-category="necklaces"
-					>
-						<ProductSection
-							title="Necklaces"
-							products={products.necklaces}
-							viewAllHref="/catalog/necklaces"
-						/>
-					</div>
+					))}
 				</div>
 			</main>
 		</div>

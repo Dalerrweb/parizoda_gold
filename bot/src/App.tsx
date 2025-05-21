@@ -3,6 +3,7 @@ import { authenticateUser } from "./utils/auth";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import { User, userCTX } from "./context/user";
+import CartPage from "./pages/cart";
 
 declare global {
 	interface Window {
@@ -93,6 +94,7 @@ function App() {
 			>
 				<Routes>
 					<Route index element={<Home />} />
+					<Route path="/cart" element={<CartPage />} />
 				</Routes>
 			</div>
 		</userCTX.Provider>

@@ -33,8 +33,6 @@ interface SidebarNavProps {
 export function SidebarNav({ open, onClose }: SidebarNavProps) {
 	const user = useContext(userCTX);
 
-	console.log({ user }, "ggg");
-
 	return (
 		<Sheet open={open} onOpenChange={onClose}>
 			<SheetContent side="left" className="p-0 w-[280px]">
