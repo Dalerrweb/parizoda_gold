@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/custom/header";
+import { SidebarNav } from "@/components/custom/sidebar-nav";
 
 interface ProductImage {
 	id: number;
@@ -31,6 +32,7 @@ interface Product {
 }
 
 export default function ProductPage() {
+	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const product = {
 		id: Number.parseInt((122.22).toString()),
 		name: "Premium Wireless Headphones",
@@ -60,7 +62,11 @@ export default function ProductPage() {
 	};
 	return (
 		<>
-			<Header onMenuClick={() => null} />
+			<Header onMenuClick={() => setSidebarOpen(true)} />
+			<SidebarNav
+				open={sidebarOpen}
+				onClose={() => setSidebarOpen(false)}
+			/>
 			<ProductDetails product={product} />
 		</>
 	);
