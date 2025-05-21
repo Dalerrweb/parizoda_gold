@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
 import { User, userCTX } from "./context/user";
 import CartPage from "./pages/cart";
+import Catalog from "./pages/catalog";
 
 declare global {
 	interface Window {
@@ -94,6 +95,7 @@ function App() {
 			>
 				<Routes>
 					<Route index element={<Home />} />
+					<Route path="/catalog/:category" element={<Catalog />} />
 					<Route path="/cart" element={<CartPage />} />
 				</Routes>
 			</div>

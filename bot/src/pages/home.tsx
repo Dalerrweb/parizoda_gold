@@ -7,7 +7,7 @@ import { Header } from "@/components/custom/header";
 import { SidebarNav } from "@/components/custom/sidebar-nav";
 import { ProductSection } from "@/components/custom/product-section";
 
-const products = {
+export const products = {
 	rings: [
 		{
 			id: 7,
@@ -28,6 +28,27 @@ const products = {
 			name: "Platinum Ring",
 			description: "Ring 999 purity",
 			price: "$2500",
+			image: "/placeholder.svg?height=200&width=200",
+		},
+		{
+			id: 12,
+			name: "Silver Ring",
+			description: "Ring 999 purity",
+			price: "$800",
+			image: "/placeholder.svg?height=200&width=200",
+		},
+		{
+			id: 13,
+			name: "Emerald Ring",
+			description: "Ring 999 purity",
+			price: "$1500",
+			image: "/placeholder.svg?height=200&width=200",
+		},
+		{
+			id: 14,
+			name: "Ruby Ring",
+			description: "Ring 999 purity",
+			price: "$1700",
 			image: "/placeholder.svg?height=200&width=200",
 		},
 	],
@@ -162,18 +183,20 @@ export default function HomePage() {
 			/>
 
 			<main className="flex-1 pb-8">
-				<div className="relative mt-4">
-					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-					<Input placeholder="Enter value" className="pl-9" />
-				</div>
+				<div className="pt-4 pb-2 px-4">
+					<div className="relative mt-4">
+						<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+						<Input placeholder="Enter value" className="pl-9" />
+					</div>
 
-				<div className="mt-6">
-					<div className="rounded-lg overflow-hidden">
-						<img
-							src="/placeholder.svg?height=200&width=800"
-							alt="Banner"
-							className="w-full h-40 object-cover"
-						/>
+					<div className="mt-6">
+						<div className="rounded-lg overflow-hidden">
+							<img
+								src="/placeholder.svg?height=200&width=800"
+								alt="Banner"
+								className="w-full h-40 object-cover"
+							/>
+						</div>
 					</div>
 				</div>
 
