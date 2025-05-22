@@ -17,6 +17,7 @@ export default function ProfilePage() {
 				onClose={() => setSidebarOpen(false)}
 			/>
 			<div className="container mx-auto px-4 pb-8">
+				{JSON.stringify(user)}
 				{user && <ProfileView user={user} />}
 			</div>
 		</>
