@@ -2,11 +2,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { authenticateUser } from "./utils/auth";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
-import { User, userCTX } from "./context/user";
+import { mockUser, userCTX } from "./context/user";
 import CartPage from "./pages/cart";
 import Catalog from "./pages/catalog";
 import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
+import { User } from "./types";
 
 declare global {
 	interface Window {
@@ -63,7 +64,7 @@ function App() {
 			try {
 				await authenticateUser();
 				console.log("User authenticated");
-				setUser(tg.initDataUnsafe?.user);
+				setUser(tg.initDataUnsafe?.user || mockUser);
 			} catch (error) {
 				console.error("Authentication error:", error);
 			}

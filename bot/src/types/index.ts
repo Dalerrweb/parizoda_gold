@@ -38,10 +38,14 @@ export type Order = {
 
 export type User = {
 	id: number;
-	name: string;
-	phone: string;
-	location: string;
-	avatar?: string;
+	telegramId: number;
+	username: string;
+	first_name: string;
+	last_name: string;
+	language_code: string;
+	photo_url: string;
+	orders: any[];
+	createdAt: Date;
 };
 
 export type CartItem = {

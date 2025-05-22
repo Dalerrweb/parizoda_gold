@@ -30,37 +30,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
+import { User } from "@/types";
 
-interface OrderItem {
-	name: string;
-	quantity: number;
-	price: number;
-}
-
-interface Order {
-	id: number;
-	status: string;
-	totalAmount: number;
-	items: OrderItem[];
-	createdAt: Date;
-}
-
-interface UserData {
-	id: number;
-	telegramId: number;
-	username: string | null;
-	firstName: string | null;
-	lastName: string | null;
-	orders: Order[];
-	createdAt: Date;
-}
-
-export default function ProfileView({ user }: { user: UserData }) {
+export default function ProfileView({ user }: { user: User }) {
 	const [isEditing, setIsEditing] = useState(false);
 	const [userData, setUserData] = useState({
 		username: user.username || "",
-		firstName: user.firstName || "",
-		lastName: user.lastName || "",
+		first_name: user.first_name || "",
+		last_name: user.last_name || "",
 	});
 	const navigate = useNavigate();
 
@@ -109,20 +86,20 @@ export default function ProfileView({ user }: { user: UserData }) {
 	const handleCancel = () => {
 		setUserData({
 			username: user.username || "",
-			firstName: user.firstName || "",
-			lastName: user.lastName || "",
+			first_name: user.first_name || "",
+			last_name: user.last_name || "",
 		});
 		setIsEditing(false);
 	};
 
 	const getInitials = () => {
-		if (user.firstName && user.lastName) {
-			return `${user.firstName.charAt(0)}${user.lastName.charAt(
+		if (user.first_name && user.last_name) {
+			return `${user.first_name.charAt(0)}${user.last_name.charAt(
 				0
 			)}`.toUpperCase();
 		}
-		if (user.firstName) {
-			return user.firstName.charAt(0).toUpperCase();
+		if (user.first_name) {
+			return user.first_name.charAt(0).toUpperCase();
 		}
 		if (user.username) {
 			return user.username.charAt(0).toUpperCase();
@@ -167,8 +144,8 @@ export default function ProfileView({ user }: { user: UserData }) {
 							</Avatar>
 							<div>
 								<CardTitle className="text-2xl">
-									{user.firstName && user.lastName
-										? `${user.firstName} ${user.lastName}`
+									{user.first_name && user.last_name
+										? `${user.first_name} ${user.last_name}`
 										: user.username || `User #${user.id}`}
 								</CardTitle>
 								<CardDescription>
@@ -221,7 +198,7 @@ export default function ProfileView({ user }: { user: UserData }) {
 											<Input
 												id="firstName"
 												name="firstName"
-												value={userData.firstName}
+												value={userData.first_name}
 												onChange={handleInputChange}
 												placeholder="First Name"
 											/>
@@ -236,7 +213,7 @@ export default function ProfileView({ user }: { user: UserData }) {
 											<Input
 												id="lastName"
 												name="lastName"
-												value={userData.lastName}
+												value={userData.last_name}
 												onChange={handleInputChange}
 												placeholder="Last Name"
 											/>
@@ -269,7 +246,7 @@ export default function ProfileView({ user }: { user: UserData }) {
 												First Name
 											</p>
 											<p className="text-base">
-												{user.firstName || "Not set"}
+												{user.first_name || "Not set"}
 											</p>
 										</div>
 										<div>
@@ -277,7 +254,7 @@ export default function ProfileView({ user }: { user: UserData }) {
 												Last Name
 											</p>
 											<p className="text-base">
-												{user.lastName || "Not set"}
+												{user.last_name || "Not set"}
 											</p>
 										</div>
 									</div>
@@ -414,8 +391,8 @@ export default function ProfileView({ user }: { user: UserData }) {
 														<div className="space-y-2">
 															{order.items.map(
 																(
-																	item,
-																	index
+																	item: any,
+																	index: any
 																) => (
 																	<div
 																		key={
