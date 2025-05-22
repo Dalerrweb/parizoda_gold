@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/custom/header";
 import { SidebarNav } from "@/components/custom/sidebar-nav";
+import { useNavigate } from "react-router-dom";
 
 interface ProductImage {
 	id: number;
@@ -75,6 +76,7 @@ export default function ProductPage() {
 function ProductDetails({ product }: { product: Product }) {
 	const [quantity, setQuantity] = useState(1);
 	const [currentImageIndex, setCurrentImageIndex] = useState(0);
+	const navigate = useNavigate();
 
 	const formatPrice = (price: number) => {
 		return new Intl.NumberFormat("en-US", {
@@ -110,7 +112,20 @@ function ProductDetails({ product }: { product: Product }) {
 	// const scrollbarHideClass = "scrollbar-hide";
 
 	return (
-		<div className="container mx-auto px-4 py-8">
+		<div className="container mx-auto px-4 pb-8">
+			<div className="flex items-center py-4 border-b">
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => navigate(-1)}
+					className="mr-2"
+				>
+					<ChevronLeft className="h-5 w-5" />
+				</Button>
+				<h1 className="text-lg font-semibold truncate">
+					{product.name}
+				</h1>
+			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Product Images */}
 				<div className="space-y-6">
