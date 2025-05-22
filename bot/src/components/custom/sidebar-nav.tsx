@@ -80,14 +80,14 @@ export function SidebarNav({ open, onClose }: SidebarNavProps) {
 										</a>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
-								<SidebarMenuItem>
+								{/* <SidebarMenuItem>
 									<SidebarMenuButton asChild>
 										<a href="/catalog">
 											<ShoppingBag className="h-4 w-4" />
 											<span>Catalog</span>
 										</a>
 									</SidebarMenuButton>
-								</SidebarMenuItem>
+								</SidebarMenuItem> */}
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
 										<a href="/history">
