@@ -9,6 +9,8 @@ export default function ProfilePage() {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const user = useContext<User | null>(userCTX);
 
+	console.log({ user }, "profile page");
+
 	return (
 		<>
 			<Header onMenuClick={() => setSidebarOpen(true)} />
@@ -17,7 +19,6 @@ export default function ProfilePage() {
 				onClose={() => setSidebarOpen(false)}
 			/>
 			<div className="container mx-auto px-4 pb-8">
-				{JSON.stringify(user)}
 				{user && <ProfileView user={user} />}
 			</div>
 		</>
