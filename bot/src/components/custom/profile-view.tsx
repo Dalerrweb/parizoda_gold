@@ -7,6 +7,7 @@ import {
 	ChevronDown,
 	ChevronUp,
 	ExternalLink,
+	ChevronLeft,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 interface OrderItem {
 	name: string;
@@ -60,6 +62,7 @@ export default function ProfileView({ user }: { user: UserData }) {
 		firstName: user.firstName || "",
 		lastName: user.lastName || "",
 	});
+	const navigate = useNavigate();
 
 	const formatDate = (date: Date) => {
 		return new Intl.DateTimeFormat("en-US", {
@@ -130,10 +133,25 @@ export default function ProfileView({ user }: { user: UserData }) {
 	return (
 		<div className="space-y-8">
 			<Tabs defaultValue="profile" className="w-full">
-				<TabsList className="mb-6">
-					<TabsTrigger value="profile">Profile</TabsTrigger>
-					<TabsTrigger value="orders">Orders</TabsTrigger>
-				</TabsList>
+				<div className="flex items-center justify-between py-4 border-b mb-6">
+					<div className="flex items-center">
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => navigate(-1)}
+							className="mr-2"
+						>
+							<ChevronLeft className="h-5 w-5" />
+						</Button>
+						<h1 className="text-lg font-semibold truncate">
+							My Profile
+						</h1>
+					</div>
+					<TabsList>
+						<TabsTrigger value="profile">Profile</TabsTrigger>
+						<TabsTrigger value="orders">Orders</TabsTrigger>
+					</TabsList>
+				</div>
 
 				<TabsContent value="profile" className="space-y-6">
 					<Card>

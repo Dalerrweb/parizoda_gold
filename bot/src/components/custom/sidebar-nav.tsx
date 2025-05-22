@@ -1,11 +1,4 @@
-import {
-	Heart,
-	Home,
-	MapPin,
-	ShoppingBag,
-	ShoppingCart,
-	User,
-} from "lucide-react";
+import { Heart, Home, MapPin, ShoppingCart, User } from "lucide-react";
 
 import {
 	Sheet,
