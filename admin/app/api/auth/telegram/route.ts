@@ -56,12 +56,17 @@ export async function POST(req: NextRequest) {
 		where: { telegramId: tgUser.id },
 	});
 
-	console.log(tgUser, "tgUser");
-
 	const user =
 		existingUser ||
 		(await prisma.user.create({
-			data: tgUser,
+			data: {
+				telegramId: tgUser.id,
+				first_name: tgUser.first_name,
+				last_name: tgUser.last_name,
+				username: tgUser.username,
+				language_code: tgUser.language_code,
+				photo_url: tgUser.photo_url,
+			},
 		}));
 
 	const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
