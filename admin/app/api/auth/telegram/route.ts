@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
 			{ status: 400 }
 		);
 	}
-	console.log(initData, "hellooooooo");
 
 	const data = parseInitData(initData);
 	const tgUser = JSON.parse(data.user);
@@ -56,6 +55,8 @@ export async function POST(req: NextRequest) {
 	const existingUser = await prisma.user.findUnique({
 		where: { telegramId: tgUser.id },
 	});
+
+	console.log(tgUser, "tgUser");
 
 	const user =
 		existingUser ||
