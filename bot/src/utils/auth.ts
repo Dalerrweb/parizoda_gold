@@ -1,11 +1,9 @@
 export async function authenticateUser() {
 	const initData = window.Telegram.WebApp.initData;
 
-	console.log(initData, "initData");
-
 	try {
 		const res = await fetch(
-			"https://parizoda-gold.vercel.app/api/auth/telegram",
+			import.meta.env.VITE_API_URL + "/auth/telegram",
 			{
 				method: "POST",
 				headers: {

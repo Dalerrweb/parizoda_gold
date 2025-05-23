@@ -8,6 +8,7 @@ import Catalog from "./pages/catalog";
 import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
 import { User } from "./types";
+import axios from "./lib/axios";
 
 declare global {
 	interface Window {
@@ -20,7 +21,7 @@ declare global {
 const tg = window.Telegram?.WebApp;
 
 function App() {
-	const [user, setUser] = useState<User>(tg?.initDataUnsafe?.user);
+	const [user, setUser] = useState<User | null>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	// Блокировка свайпа и скролла
@@ -60,17 +61,20 @@ function App() {
 		tg.onEvent("viewportChanged", handleViewportChange);
 		tg.setHeaderColor("#FFFFFF");
 
-		const authenticate = async () => {
-			try {
-				await authenticateUser();
-				console.log("User authenticated");
-				setUser(tg.initDataUnsafe?.user || mockUser);
-			} catch (error) {
-				console.error("Authentication error:", error);
-			}
-		};
+		authenticateUser().then(() => {
+			axios
+				.get("/user")
+				.then((res) => {
+					console.log(res);
 
-		authenticate();
+					if (res.status === 200) {
+						setUser(res.data);
+					}
+				})
+				.catch((err) => {
+					console.error("Ошибка получения данных пользователя", err);
+				});
+		});
 
 		return () => {
 			tg.offEvent("viewportChanged", handleViewportChange);

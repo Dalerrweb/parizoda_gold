@@ -26,6 +26,11 @@ interface SidebarNavProps {
 export function SidebarNav({ open, onClose }: SidebarNavProps) {
 	const user = useContext(userCTX);
 
+	const fullOrUsername =
+		user?.first_name && user?.last_name
+			? `${user?.first_name} ${user?.last_name}`
+			: user?.username;
+
 	return (
 		<Sheet open={open} onOpenChange={onClose}>
 			<SheetContent side="left" className="p-0 w-[280px]">
@@ -33,33 +38,37 @@ export function SidebarNav({ open, onClose }: SidebarNavProps) {
 					<SheetTitle className="text-left">Menu</SheetTitle>
 				</SheetHeader>
 
-				<div className="p-4 border-b">
-					<div className="flex items-center gap-3">
-						<Avatar>
-							<AvatarImage
-								src={user?.photo_url || "/placeholder.svg"}
-								alt={user?.first_name || "User"}
-							/>
-							<AvatarFallback>
-								{user?.first_name[0]}
-								{user?.last_name[0]}
-							</AvatarFallback>
-						</Avatar>
-						<div>
-							<p className="font-medium">
-								{user?.first_name} {user?.last_name}
-							</p>
-							{/* <p className="text-sm text-muted-foreground">
+				{user && (
+					<div className="p-4 border-b">
+						<div className="flex items-center gap-3">
+							<Avatar>
+								<AvatarImage
+									src={user?.photo_url || "/placeholder.svg"}
+									alt={
+										user?.first_name ||
+										user?.username ||
+										"User"
+									}
+								/>
+								<AvatarFallback>
+									{user?.first_name?.[0]}
+									{user?.last_name?.[0]}
+								</AvatarFallback>
+							</Avatar>
+							<div>
+								<p className="font-medium">{fullOrUsername}</p>
+								{/* <p className="text-sm text-muted-foreground">
 								+1 234 567 8900
 							</p> */}
+							</div>
+						</div>
+
+						<div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
+							<MapPin className="h-4 w-4" />
+							<span>New York, USA</span>
 						</div>
 					</div>
-
-					<div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-						<MapPin className="h-4 w-4" />
-						<span>New York, USA</span>
-					</div>
-				</div>
+				)}
 
 				<SidebarProvider>
 					<Sidebar collapsible="none" className="border-none">
