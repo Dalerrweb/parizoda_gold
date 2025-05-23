@@ -15,8 +15,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useContext } from "react";
-import { userCTX } from "@/context/user";
+import { useUser } from "@/context/UserProvider";
+import { Link } from "react-router-dom";
 
 interface SidebarNavProps {
 	open: boolean;
@@ -24,7 +24,9 @@ interface SidebarNavProps {
 }
 
 export function SidebarNav({ open, onClose }: SidebarNavProps) {
-	const user = useContext(userCTX);
+	const { user } = useUser();
+
+	console.log({ user });
 
 	const fullOrUsername =
 		user?.first_name && user?.last_name
@@ -76,10 +78,10 @@ export function SidebarNav({ open, onClose }: SidebarNavProps) {
 							<SidebarMenu>
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
-										<a href="/">
+										<Link to="/">
 											<Home className="h-4 w-4" />
 											<span>Home</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								{/* <SidebarMenuItem>
@@ -92,34 +94,34 @@ export function SidebarNav({ open, onClose }: SidebarNavProps) {
 								</SidebarMenuItem> */}
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
-										<a href="/history">
+										<Link to="/history">
 											<Home className="h-4 w-4" />
 											<span>History</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
-										<a href="/favorites">
+										<Link to="/favorites">
 											<Heart className="h-4 w-4" />
 											<span>Favorites</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
-										<a href="/cart">
+										<Link to="/cart">
 											<ShoppingCart className="h-4 w-4" />
 											<span>Cart</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton asChild>
-										<a href="/profile">
+										<Link to="/profile">
 											<User className="h-4 w-4" />
 											<span>Profile</span>
-										</a>
+										</Link>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 							</SidebarMenu>

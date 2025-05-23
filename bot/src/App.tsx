@@ -1,14 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { authenticateUser } from "./utils/auth";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/home";
-import { mockUser, userCTX } from "./context/user";
 import CartPage from "./pages/cart";
 import Catalog from "./pages/catalog";
 import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
-import { User } from "./types";
-import axios from "./lib/axios";
 
 declare global {
 	interface Window {
@@ -21,7 +17,6 @@ declare global {
 const tg = window.Telegram?.WebApp;
 
 function App() {
-	const [user, setUser] = useState<User | null>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 
 	// Блокировка свайпа и скролла
@@ -61,21 +56,6 @@ function App() {
 		tg.onEvent("viewportChanged", handleViewportChange);
 		tg.setHeaderColor("#FFFFFF");
 
-		authenticateUser().then(() => {
-			axios
-				.get("/user")
-				.then((res) => {
-					console.log(res);
-
-					if (res.status === 200) {
-						setUser(res.data);
-					}
-				})
-				.catch((err) => {
-					console.error("Ошибка получения данных пользователя", err);
-				});
-		});
-
 		return () => {
 			tg.offEvent("viewportChanged", handleViewportChange);
 		};
@@ -89,26 +69,24 @@ function App() {
 	};
 
 	return (
-		<userCTX.Provider value={user}>
-			<div
-				ref={contentRef}
-				className="app-container"
-				onScroll={(e) => {
-					// Блокировка скролла за пределы контента
-					if (e.currentTarget.scrollTop <= 0) {
-						e.currentTarget.scrollTop = 1;
-					}
-				}}
-			>
-				<Routes>
-					<Route index element={<Home />} />
-					<Route path="/catalog/:category" element={<Catalog />} />
-					<Route path="/product/:id" element={<ProductPage />} />
-					<Route path="/cart" element={<CartPage />} />
-					<Route path="/profile" element={<ProfilePage />} />
-				</Routes>
-			</div>
-		</userCTX.Provider>
+		<div
+			ref={contentRef}
+			className="app-container"
+			onScroll={(e) => {
+				// Блокировка скролла за пределы контента
+				if (e.currentTarget.scrollTop <= 0) {
+					e.currentTarget.scrollTop = 1;
+				}
+			}}
+		>
+			<Routes>
+				<Route index element={<Home />} />
+				<Route path="/catalog/:category" element={<Catalog />} />
+				<Route path="/product/:id" element={<ProductPage />} />
+				<Route path="/cart" element={<CartPage />} />
+				<Route path="/profile" element={<ProfilePage />} />
+			</Routes>
+		</div>
 	);
 }
 
