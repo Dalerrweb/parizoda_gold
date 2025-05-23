@@ -1380,8 +1380,10 @@ export namespace Prisma {
     id: number | null
     telegramId: number | null
     username: string | null
-    firstName: string | null
-    lastName: string | null
+    first_name: string | null
+    last_name: string | null
+    photo_url: string | null
+    language_code: string | null
     createdAt: Date | null
   }
 
@@ -1389,8 +1391,10 @@ export namespace Prisma {
     id: number | null
     telegramId: number | null
     username: string | null
-    firstName: string | null
-    lastName: string | null
+    first_name: string | null
+    last_name: string | null
+    photo_url: string | null
+    language_code: string | null
     createdAt: Date | null
   }
 
@@ -1398,8 +1402,10 @@ export namespace Prisma {
     id: number
     telegramId: number
     username: number
-    firstName: number
-    lastName: number
+    first_name: number
+    last_name: number
+    photo_url: number
+    language_code: number
     createdAt: number
     _all: number
   }
@@ -1419,8 +1425,10 @@ export namespace Prisma {
     id?: true
     telegramId?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    first_name?: true
+    last_name?: true
+    photo_url?: true
+    language_code?: true
     createdAt?: true
   }
 
@@ -1428,8 +1436,10 @@ export namespace Prisma {
     id?: true
     telegramId?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    first_name?: true
+    last_name?: true
+    photo_url?: true
+    language_code?: true
     createdAt?: true
   }
 
@@ -1437,8 +1447,10 @@ export namespace Prisma {
     id?: true
     telegramId?: true
     username?: true
-    firstName?: true
-    lastName?: true
+    first_name?: true
+    last_name?: true
+    photo_url?: true
+    language_code?: true
     createdAt?: true
     _all?: true
   }
@@ -1533,8 +1545,10 @@ export namespace Prisma {
     id: number
     telegramId: number
     username: string | null
-    firstName: string | null
-    lastName: string | null
+    first_name: string | null
+    last_name: string | null
+    photo_url: string | null
+    language_code: string | null
     createdAt: Date
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
@@ -1561,8 +1575,10 @@ export namespace Prisma {
     id?: boolean
     telegramId?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    photo_url?: boolean
+    language_code?: boolean
     createdAt?: boolean
     orders?: boolean | User$ordersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1572,8 +1588,10 @@ export namespace Prisma {
     id?: boolean
     telegramId?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    photo_url?: boolean
+    language_code?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1581,8 +1599,10 @@ export namespace Prisma {
     id?: boolean
     telegramId?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    photo_url?: boolean
+    language_code?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["user"]>
 
@@ -1590,12 +1610,14 @@ export namespace Prisma {
     id?: boolean
     telegramId?: boolean
     username?: boolean
-    firstName?: boolean
-    lastName?: boolean
+    first_name?: boolean
+    last_name?: boolean
+    photo_url?: boolean
+    language_code?: boolean
     createdAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "telegramId" | "username" | "firstName" | "lastName" | "createdAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "telegramId" | "username" | "first_name" | "last_name" | "photo_url" | "language_code" | "createdAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | User$ordersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1612,8 +1634,10 @@ export namespace Prisma {
       id: number
       telegramId: number
       username: string | null
-      firstName: string | null
-      lastName: string | null
+      first_name: string | null
+      last_name: string | null
+      photo_url: string | null
+      language_code: string | null
       createdAt: Date
     }, ExtArgs["result"]["user"]>
     composites: {}
@@ -2042,8 +2066,10 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'Int'>
     readonly telegramId: FieldRef<"User", 'Int'>
     readonly username: FieldRef<"User", 'String'>
-    readonly firstName: FieldRef<"User", 'String'>
-    readonly lastName: FieldRef<"User", 'String'>
+    readonly first_name: FieldRef<"User", 'String'>
+    readonly last_name: FieldRef<"User", 'String'>
+    readonly photo_url: FieldRef<"User", 'String'>
+    readonly language_code: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
   }
     
@@ -6946,8 +6972,10 @@ export namespace Prisma {
     id: 'id',
     telegramId: 'telegramId',
     username: 'username',
-    firstName: 'firstName',
-    lastName: 'lastName',
+    first_name: 'first_name',
+    last_name: 'last_name',
+    photo_url: 'photo_url',
+    language_code: 'language_code',
     createdAt: 'createdAt'
   };
 
@@ -7106,8 +7134,10 @@ export namespace Prisma {
     id?: IntFilter<"User"> | number
     telegramId?: IntFilter<"User"> | number
     username?: StringNullableFilter<"User"> | string | null
-    firstName?: StringNullableFilter<"User"> | string | null
-    lastName?: StringNullableFilter<"User"> | string | null
+    first_name?: StringNullableFilter<"User"> | string | null
+    last_name?: StringNullableFilter<"User"> | string | null
+    photo_url?: StringNullableFilter<"User"> | string | null
+    language_code?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     orders?: OrderListRelationFilter
   }
@@ -7116,8 +7146,10 @@ export namespace Prisma {
     id?: SortOrder
     telegramId?: SortOrder
     username?: SortOrderInput | SortOrder
-    firstName?: SortOrderInput | SortOrder
-    lastName?: SortOrderInput | SortOrder
+    first_name?: SortOrderInput | SortOrder
+    last_name?: SortOrderInput | SortOrder
+    photo_url?: SortOrderInput | SortOrder
+    language_code?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
   }
@@ -7129,8 +7161,10 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     username?: StringNullableFilter<"User"> | string | null
-    firstName?: StringNullableFilter<"User"> | string | null
-    lastName?: StringNullableFilter<"User"> | string | null
+    first_name?: StringNullableFilter<"User"> | string | null
+    last_name?: StringNullableFilter<"User"> | string | null
+    photo_url?: StringNullableFilter<"User"> | string | null
+    language_code?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     orders?: OrderListRelationFilter
   }, "id" | "telegramId">
@@ -7139,8 +7173,10 @@ export namespace Prisma {
     id?: SortOrder
     telegramId?: SortOrder
     username?: SortOrderInput | SortOrder
-    firstName?: SortOrderInput | SortOrder
-    lastName?: SortOrderInput | SortOrder
+    first_name?: SortOrderInput | SortOrder
+    last_name?: SortOrderInput | SortOrder
+    photo_url?: SortOrderInput | SortOrder
+    language_code?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
@@ -7156,8 +7192,10 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"User"> | number
     telegramId?: IntWithAggregatesFilter<"User"> | number
     username?: StringNullableWithAggregatesFilter<"User"> | string | null
-    firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
-    lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    first_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    last_name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    photo_url?: StringNullableWithAggregatesFilter<"User"> | string | null
+    language_code?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
@@ -7396,8 +7434,10 @@ export namespace Prisma {
   export type UserCreateInput = {
     telegramId: number
     username?: string | null
-    firstName?: string | null
-    lastName?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    photo_url?: string | null
+    language_code?: string | null
     createdAt?: Date | string
     orders?: OrderCreateNestedManyWithoutUserInput
   }
@@ -7406,8 +7446,10 @@ export namespace Prisma {
     id?: number
     telegramId: number
     username?: string | null
-    firstName?: string | null
-    lastName?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    photo_url?: string | null
+    language_code?: string | null
     createdAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
   }
@@ -7415,8 +7457,10 @@ export namespace Prisma {
   export type UserUpdateInput = {
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutUserNestedInput
   }
@@ -7425,8 +7469,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -7435,16 +7481,20 @@ export namespace Prisma {
     id?: number
     telegramId: number
     username?: string | null
-    firstName?: string | null
-    lastName?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    photo_url?: string | null
+    language_code?: string | null
     createdAt?: Date | string
   }
 
   export type UserUpdateManyMutationInput = {
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7452,8 +7502,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7726,8 +7778,10 @@ export namespace Prisma {
     id?: SortOrder
     telegramId?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    photo_url?: SortOrder
+    language_code?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -7740,8 +7794,10 @@ export namespace Prisma {
     id?: SortOrder
     telegramId?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    photo_url?: SortOrder
+    language_code?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -7749,8 +7805,10 @@ export namespace Prisma {
     id?: SortOrder
     telegramId?: SortOrder
     username?: SortOrder
-    firstName?: SortOrder
-    lastName?: SortOrder
+    first_name?: SortOrder
+    last_name?: SortOrder
+    photo_url?: SortOrder
+    language_code?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -8724,8 +8782,10 @@ export namespace Prisma {
   export type UserCreateWithoutOrdersInput = {
     telegramId: number
     username?: string | null
-    firstName?: string | null
-    lastName?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    photo_url?: string | null
+    language_code?: string | null
     createdAt?: Date | string
   }
 
@@ -8733,8 +8793,10 @@ export namespace Prisma {
     id?: number
     telegramId: number
     username?: string | null
-    firstName?: string | null
-    lastName?: string | null
+    first_name?: string | null
+    last_name?: string | null
+    photo_url?: string | null
+    language_code?: string | null
     createdAt?: Date | string
   }
 
@@ -8783,8 +8845,10 @@ export namespace Prisma {
   export type UserUpdateWithoutOrdersInput = {
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8792,8 +8856,10 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     telegramId?: IntFieldUpdateOperationsInput | number
     username?: NullableStringFieldUpdateOperationsInput | string | null
-    firstName?: NullableStringFieldUpdateOperationsInput | string | null
-    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    first_name?: NullableStringFieldUpdateOperationsInput | string | null
+    last_name?: NullableStringFieldUpdateOperationsInput | string | null
+    photo_url?: NullableStringFieldUpdateOperationsInput | string | null
+    language_code?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
