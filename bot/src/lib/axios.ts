@@ -1,3 +1,4 @@
+import { authenticateUser } from "@/utils/auth";
 import Axios, {
 	AxiosInstance,
 	InternalAxiosRequestConfig,
@@ -41,17 +42,15 @@ axios.interceptors.request.use(
 );
 
 axios.interceptors.response.use(
-	(res: AxiosResponse) => {
-		return res;
-	},
-	(error) => {
-		if (error?.response?.status === 401) {
-			window.location.href = "/";
-		} else if (error?.response?.status === 403) {
-			console.warn("Доступ запрещен.");
+	(response) => response,
+	async (error) => {
+		if (error.response?.status === 401 && !error.config._retry) {
+			error.config._retry = true;
+			localStorage.removeItem("token");
+			await authenticateUser();
+			return axios(error.config);
 		}
 		return Promise.reject(error);
 	}
 );
-
 export default axios;

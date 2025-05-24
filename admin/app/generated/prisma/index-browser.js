@@ -162,6 +162,21 @@ exports.Prisma.OrderScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.AdminUserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  password: 'password',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AdminSessionScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expires: 'expires',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -189,7 +204,9 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Product: 'Product',
   ProductImage: 'ProductImage',
-  Order: 'Order'
+  Order: 'Order',
+  AdminUser: 'AdminUser',
+  AdminSession: 'AdminSession'
 };
 
 /**
