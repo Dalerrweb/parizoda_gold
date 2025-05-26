@@ -35,6 +35,7 @@ import {
 	FolderOpen,
 	Clock,
 } from "lucide-react";
+import Link from "next/link";
 
 // Mock data based on your Product model
 const mockProducts = [
@@ -153,10 +154,12 @@ export default function ProductsPage() {
 					<h2 className="text-3xl font-bold tracking-tight">
 						Products Management
 					</h2>
-					<Button>
-						<Plus className="mr-2 h-4 w-4" />
-						Add Product
-					</Button>
+					<Link href="/admin/products/create">
+						<Button>
+							<Plus className="mr-2 h-4 w-4" />
+							Add Product
+						</Button>
+					</Link>
 				</div>
 
 				{/* Stats Cards */}
