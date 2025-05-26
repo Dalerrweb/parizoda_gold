@@ -8,6 +8,7 @@ import {
 	LayoutDashboard,
 	Settings,
 	LogOut,
+	FolderOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,14 +47,19 @@ const navigationItems = [
 		icon: Users,
 	},
 	{
-		title: "Purchase History",
-		url: "/admin/purchase-history",
-		icon: ShoppingBag,
+		title: "Categories",
+		url: "/admin/categories",
+		icon: FolderOpen,
 	},
 	{
 		title: "Products",
 		url: "/admin/products",
 		icon: Package,
+	},
+	{
+		title: "Purchase History",
+		url: "/admin/purchase-history",
+		icon: ShoppingBag,
 	},
 	{
 		title: "Banners",
