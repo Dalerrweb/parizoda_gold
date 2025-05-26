@@ -35,16 +35,47 @@ model Category {
 }
 
 model Product {
-  id          Int            @id @default(autoincrement())
-  name        String
-  description String?
-  price       Int // Цена в минимальной единице (например, в тийинах или центах)
-  category    Category       @relation(fields: [categoryId], references: [id])
-  categoryId  Int
-  images      ProductImage[]
-  orders      Order[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  id            Int            @id @default(autoincrement())
+  sku           String         @unique
+  name          String
+  description   String?
+  price         Int // Цена в минимальной единице (например, в тийинах)
+  weight        Float? // Вес в граммах
+  type          ProductType    @default(SINGLE)
+  preciousMetal MetalType? // Тип металла
+  category      Category       @relation(fields: [categoryId], references: [id])
+  categoryId    Int
+  images        ProductImage[]
+  orders        Order[]
+  sizes         ProductSize[]
+
+  parentBundle ProductBundle[] @relation("BundleParent")
+  childBundles ProductBundle[] @relation("BundleChildren")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductSize {
+  id        Int     @id @default(autoincrement())
+  value     String // Например: "16", "17-18", "S/M"
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(0) // Количество для конкретного размера
+}
+
+model ProductBundle {
+  bundleId Int     @id @default(autoincrement())
+  parent   Product @relation("BundleParent", fields: [parentId], references: [id])
+  parentId Int
+  child    Product @relation("BundleChildren", fields: [childId], references: [id])
+  childId  Int
+  quantity Int     @default(1)
+}
+
+enum ProductType {
+  SINGLE
+  BUNDLE
 }
 
 model ProductImage {
@@ -87,4 +118,12 @@ model AdminSession {
   userId    Int
   expires   DateTime
   createdAt DateTime  @default(now())
+}
+
+enum MetalType {
+  GOLD // Золото
+  SILVER // Серебро
+  PLATINUM // Платина
+  PALLADIUM // Палладий
+  OTHER // Другие материалы
 }

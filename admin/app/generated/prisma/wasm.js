@@ -140,12 +140,30 @@ exports.Prisma.CategoryScalarFieldEnum = {
 
 exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
+  sku: 'sku',
   name: 'name',
   description: 'description',
   price: 'price',
+  weight: 'weight',
+  type: 'type',
+  preciousMetal: 'preciousMetal',
   categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProductSizeScalarFieldEnum = {
+  id: 'id',
+  value: 'value',
+  productId: 'productId',
+  quantity: 'quantity'
+};
+
+exports.Prisma.ProductBundleScalarFieldEnum = {
+  bundleId: 'bundleId',
+  parentId: 'parentId',
+  childId: 'childId',
+  quantity: 'quantity'
 };
 
 exports.Prisma.ProductImageScalarFieldEnum = {
@@ -191,6 +209,19 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.ProductType = exports.$Enums.ProductType = {
+  SINGLE: 'SINGLE',
+  BUNDLE: 'BUNDLE'
+};
+
+exports.MetalType = exports.$Enums.MetalType = {
+  GOLD: 'GOLD',
+  SILVER: 'SILVER',
+  PLATINUM: 'PLATINUM',
+  PALLADIUM: 'PALLADIUM',
+  OTHER: 'OTHER'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
@@ -203,6 +234,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Category: 'Category',
   Product: 'Product',
+  ProductSize: 'ProductSize',
+  ProductBundle: 'ProductBundle',
   ProductImage: 'ProductImage',
   Order: 'Order',
   AdminUser: 'AdminUser',
