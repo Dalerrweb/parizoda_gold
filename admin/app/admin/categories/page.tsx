@@ -34,6 +34,7 @@ import {
 	Package,
 	Clock,
 } from "lucide-react";
+import Link from "next/link";
 
 // Mock data based on your Category model
 const mockCategories = [
@@ -106,10 +107,12 @@ export default function CategoriesPage() {
 					<h2 className="text-3xl font-bold tracking-tight">
 						Categories Management
 					</h2>
-					<Button>
-						<Plus className="mr-2 h-4 w-4" />
-						Add Category
-					</Button>
+					<Link href="/admin/categories/create">
+						<Button>
+							<Plus className="mr-2 h-4 w-4" />
+							Add Category
+						</Button>
+					</Link>
 				</div>
 
 				{/* Stats Cards */}
