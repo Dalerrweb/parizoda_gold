@@ -1,18 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const allowedOrigin = process.env.ALLOWED_ORIGIN || "";
-const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET!;
+// Конфигурация безопасности
+const securityConfig = {
+	// CORS
+	allowedOrigin: process.env.ALLOWED_ORIGIN || "",
+	allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	allowedHeaders: [
+		"Content-Type",
+		"Authorization",
+		"Content-Disposition", // Добавить это
+	],
 
-// Protected admin panel paths
-const protectedPaths = [
-	"/admin", // and other protected routes
-];
+	// Аутентификация
+	jwtSecret: process.env.ADMIN_JWT_SECRET!,
+	authCookieName: "admin-token",
 
-// Auth routes where authenticated users should be redirected
-const authRoutes = ["/login"];
+	// Защищенные пути
+	protectedRoutes: {
+		adminPanel: ["/admin"],
+		api: ["/api/admin"],
+		authRoutes: ["/login"],
+		excludedRoutes: ["/api/admin/login"],
+	},
 
-// JWT verification using Web Crypto API (Edge Runtime compatible)
+	// Security headers
+	securityHeaders: {
+		"X-Content-Type-Options": "nosniff",
+		"X-Frame-Options": "DENY",
+		"X-XSS-Protection": "1; mode=block",
+	},
+};
+
+// Валидация JWT
 async function verifyJWT(token: string): Promise<any> {
 	try {
 		const parts = token.split(".");
@@ -38,7 +58,7 @@ async function verifyJWT(token: string): Promise<any> {
 		// Verify signature using Web Crypto API
 		const encoder = new TextEncoder();
 		const data = encoder.encode(`${header}.${payload}`);
-		const secretKey = encoder.encode(ADMIN_JWT_SECRET);
+		const secretKey = encoder.encode(securityConfig.jwtSecret);
 
 		const cryptoKey = await crypto.subtle.importKey(
 			"raw",
@@ -71,23 +91,64 @@ async function verifyJWT(token: string): Promise<any> {
 	}
 }
 
+// Проверка защищенного маршрута
+function isProtectedRoute(pathname: string): boolean {
+	const { protectedRoutes } = securityConfig;
+	const normalizedPath = pathname.toLowerCase();
+
+	const isProtected = [
+		...protectedRoutes.adminPanel,
+		...protectedRoutes.api,
+	].some((path) => normalizedPath.startsWith(path.toLowerCase()));
+
+	const isExcluded = protectedRoutes.excludedRoutes.some(
+		(ex) => normalizedPath === ex.toLowerCase()
+	);
+
+	return isProtected && !isExcluded;
+}
+
+// Проверка auth-маршрута
+function isAuthRoute(pathname: string): boolean {
+	return securityConfig.protectedRoutes.authRoutes.includes(
+		pathname.toLowerCase()
+	);
+}
+
 export async function middleware(request: NextRequest) {
 	const response = NextResponse.next();
 	const pathname = request.nextUrl.pathname;
+	const isApiRoute = pathname.startsWith("/api");
 
-	// Set CORS headers
-	response.headers.set("Access-Control-Allow-Origin", allowedOrigin);
+	// // В блоке проверки защищенных маршрутов
+	// console.log("Request to:", pathname);
+	// console.log(
+	// 	"Token from cookies:",
+	// 	request.cookies.get(securityConfig.authCookieName)?.value
+	// );
+	// console.log("Auth header:", request.headers.get("Authorization"));
+
+	// Установка security headers
+	Object.entries(securityConfig.securityHeaders).forEach(([key, value]) => {
+		response.headers.set(key, value);
+	});
+
+	// Обработка CORS
+	response.headers.set(
+		"Access-Control-Allow-Origin",
+		securityConfig.allowedOrigin
+	);
 	response.headers.set(
 		"Access-Control-Allow-Methods",
-		"GET, POST, PUT, PATCH, DELETE, OPTIONS"
+		securityConfig.allowedMethods.join(", ")
 	);
 	response.headers.set(
 		"Access-Control-Allow-Headers",
-		"Content-Type, Authorization"
+		securityConfig.allowedHeaders.join(", ")
 	);
 	response.headers.set("Access-Control-Allow-Credentials", "true");
 
-	// Handle preflight requests
+	// Preflight запрос
 	if (request.method === "OPTIONS") {
 		return new NextResponse(null, {
 			status: 204,
@@ -95,62 +156,58 @@ export async function middleware(request: NextRequest) {
 		});
 	}
 
-	// Check if current path is protected
-	const isProtectedPath = protectedPaths.some((path) =>
-		pathname.startsWith(path)
-	);
-	const isAuthRoute = authRoutes.includes(pathname);
-
-	if (isProtectedPath) {
-		// Get token from cookie or Authorization header
+	// Проверка защищенных маршрутов
+	if (isProtectedRoute(pathname)) {
 		const token =
-			request.cookies.get("admin-token")?.value ||
+			request.cookies.get(securityConfig.authCookieName)?.value ||
 			request.headers.get("Authorization")?.split(" ")[1];
 
 		if (!token) {
+			if (isApiRoute) {
+				return NextResponse.json(
+					{ error: "Unauthorized" },
+					{ status: 401 }
+				);
+			}
 			return NextResponse.redirect(new URL("/login", request.url));
 		}
 
 		try {
-			// Verify JWT token using Web Crypto API
 			const decoded = await verifyJWT(token);
+			if (decoded.role !== "admin") throw new Error("Invalid role");
 
-			if (decoded.role !== "admin") {
-				throw new Error("Invalid role");
-			}
-
-			// Pass data from token in headers
+			// Передача данных пользователя через headers
 			const headers = new Headers(request.headers);
 			headers.set("x-admin-user-id", decoded.userId);
 			headers.set("x-admin-role", decoded.role);
 
-			return NextResponse.next({
-				request: {
-					headers,
-				},
-			});
+			return NextResponse.next({ request: { headers } });
 		} catch (error) {
-			console.error("Admin auth failed:", error);
+			console.error("Auth error:", error);
+			if (isApiRoute) {
+				return NextResponse.json(
+					{ error: "Invalid token" },
+					{ status: 401 }
+				);
+			}
 			return NextResponse.redirect(new URL("/login", request.url));
 		}
 	}
 
-	// If user is authenticated and trying to access auth routes, redirect to dashboard
-	if (isAuthRoute) {
-		const token =
-			request.cookies.get("admin-token")?.value ||
-			request.headers.get("Authorization")?.split(" ")[1];
-
+	// Редирект с auth-маршрутов для авторизованных
+	if (isAuthRoute(pathname)) {
+		const token = request.cookies.get(securityConfig.authCookieName)?.value;
 		if (token) {
 			try {
 				const decoded = await verifyJWT(token);
 				if (decoded.role === "admin") {
 					return NextResponse.redirect(
-						new URL("/dashboard", request.url)
+						new URL("/admin", request.url)
 					);
 				}
-			} catch (error) {
-				// Invalid token, continue to login page
+			} catch {
+				// Невалидный токен - очищаем куку
+				response.cookies.delete(securityConfig.authCookieName);
 			}
 		}
 	}
@@ -159,5 +216,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/admin/:path*", "/login"],
+	matcher: [
+		"/admin/:path*",
+		"/login",
+		"/api/admin/:path*",
+		"/api/admin/upload", // Явное указание
+	],
 };

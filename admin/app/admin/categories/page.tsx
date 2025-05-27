@@ -35,45 +35,7 @@ import {
 	Clock,
 } from "lucide-react";
 import Link from "next/link";
-
-// Mock data based on your Category model
-const mockCategories = [
-	{
-		id: 1,
-		name: "Electronics",
-		imageUrl: "/placeholder.svg?height=60&width=60",
-		products: [
-			{ id: 1, name: "Smartphone" },
-			{ id: 2, name: "Laptop" },
-			{ id: 3, name: "Headphones" },
-		],
-		createdAt: new Date("2024-01-10T08:00:00Z"),
-	},
-	{
-		id: 2,
-		name: "Clothing",
-		imageUrl: "/placeholder.svg?height=60&width=60",
-		products: [
-			{ id: 4, name: "T-Shirt" },
-			{ id: 5, name: "Jeans" },
-		],
-		createdAt: new Date("2024-01-15T10:30:00Z"),
-	},
-	{
-		id: 3,
-		name: "Home & Garden",
-		imageUrl: "/placeholder.svg?height=60&width=60",
-		products: [{ id: 6, name: "Plant Pot" }],
-		createdAt: new Date("2024-02-01T14:20:00Z"),
-	},
-	{
-		id: 4,
-		name: "Books",
-		imageUrl: "/placeholder.svg?height=60&width=60",
-		products: [],
-		createdAt: new Date("2024-02-10T16:45:00Z"),
-	},
-];
+import prisma from "@/lib/prisma";
 
 function formatDate(date: Date) {
 	return new Intl.DateTimeFormat("en-US", {
@@ -83,7 +45,13 @@ function formatDate(date: Date) {
 	}).format(date);
 }
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+	const mockCategories = await prisma.category.findMany({
+		include: {
+			products: true,
+		},
+	});
+
 	const totalCategories = mockCategories.length;
 	const categoriesWithProducts = mockCategories.filter(
 		(cat) => cat.products.length > 0
