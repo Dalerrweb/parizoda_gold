@@ -49,18 +49,52 @@ export default function CreateCategoryPage() {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		if (!imageFile) {
+			console.error("Файл изображения не выбран");
+			return;
+		}
+
 		setIsSubmitting(true);
 
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		try {
+			const imageFormData = new FormData();
+			imageFormData.append("file", imageFile);
 
-		console.log("Category Data:", {
-			...formData,
-			imageFile,
-		});
+			const uploadRes = await fetch("/api/admin/upload", {
+				method: "POST",
+				body: imageFormData,
+			});
 
-		setIsSubmitting(false);
-		// Redirect to categories page or show success message
+			if (!uploadRes.ok) {
+				throw new Error("Ошибка загрузки изображения");
+			}
+
+			const { url: imageUrl } = await uploadRes.json();
+
+			const categoryRes = await fetch("/api/admin/category", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: formData.name.trim(),
+					imageUrl,
+				}),
+			});
+
+			if (!categoryRes.ok) {
+				throw new Error("Ошибка создания категории");
+			}
+
+			setImageFile(null);
+			setImagePreview("");
+			setFormData({ name: "" });
+		} catch (err) {
+			console.error("Ошибка при отправке формы:", err);
+		} finally {
+			setIsSubmitting(false);
+		}
 	};
 
 	return (

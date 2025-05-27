@@ -45,11 +45,11 @@ export async function POST(request: NextRequest) {
 
 		const cookieStore = await cookies();
 		cookieStore.set("admin-token", token, {
-			path: "/admin",
+			path: "/", // Исправлено!
 			httpOnly: true,
-			sameSite: "strict",
+			sameSite: "lax", // Рекомендуется для современных браузеров
 			secure: process.env.NODE_ENV === "production",
-			maxAge: 8 * 60 * 60, // 8 hours
+			maxAge: 8 * 60 * 60,
 		});
 
 		return NextResponse.json({ ok: true, message: "Login successful" });
