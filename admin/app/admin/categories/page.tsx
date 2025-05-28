@@ -8,55 +8,32 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
 	Table,
 	TableBody,
-	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import {
-	Search,
-	Plus,
-	MoreHorizontal,
-	Eye,
-	Edit,
-	Trash2,
-	FolderOpen,
-	Package,
-	Clock,
-} from "lucide-react";
+import { Search, Plus, FolderOpen, Package, Clock } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-
-function formatDate(date: Date) {
-	return new Intl.DateTimeFormat("en-US", {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	}).format(date);
-}
+import CategoryRow from "@/components/custom/CategoryRow";
+import { Category } from "@/app/types";
 
 export default async function CategoriesPage() {
-	const mockCategories = await prisma.category.findMany({
+	const categories = await prisma.category.findMany({
 		include: {
 			products: true,
 		},
 	});
 
-	const totalCategories = mockCategories.length;
-	const categoriesWithProducts = mockCategories.filter(
+	const totalCategories = categories.length;
+	const categoriesWithProducts = categories.filter(
 		(cat) => cat.products.length > 0
 	).length;
-	const totalProducts = mockCategories.reduce(
+	const totalProducts = categories.reduce(
 		(sum, cat) => sum + cat.products.length,
 		0
 	);
@@ -171,89 +148,11 @@ export default async function CategoriesPage() {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{mockCategories.map((category) => (
-										<TableRow key={category.id}>
-											<TableCell>
-												<div className="flex items-center space-x-3">
-													<img
-														src={
-															category.imageUrl ||
-															"/placeholder.svg"
-														}
-														alt={category.name}
-														className="h-12 w-12 rounded-lg object-cover border"
-													/>
-													<div>
-														<div className="font-medium">
-															{category.name}
-														</div>
-														<div className="text-sm text-muted-foreground">
-															ID: {category.id}
-														</div>
-													</div>
-												</div>
-											</TableCell>
-											<TableCell>
-												<div className="flex items-center space-x-2">
-													<span className="font-medium">
-														{
-															category.products
-																.length
-														}
-													</span>
-													<span className="text-muted-foreground text-sm">
-														products
-													</span>
-												</div>
-											</TableCell>
-											<TableCell>
-												{category.products.length >
-												0 ? (
-													<Badge variant="default">
-														Active
-													</Badge>
-												) : (
-													<Badge variant="secondary">
-														Empty
-													</Badge>
-												)}
-											</TableCell>
-											<TableCell>
-												<div className="text-sm">
-													{formatDate(
-														category.createdAt
-													)}
-												</div>
-											</TableCell>
-											<TableCell className="text-right">
-												<DropdownMenu>
-													<DropdownMenuTrigger
-														asChild
-													>
-														<Button
-															variant="ghost"
-															className="h-8 w-8 p-0"
-														>
-															<MoreHorizontal className="h-4 w-4" />
-														</Button>
-													</DropdownMenuTrigger>
-													<DropdownMenuContent align="end">
-														<DropdownMenuItem>
-															<Eye className="mr-2 h-4 w-4" />
-															View Products
-														</DropdownMenuItem>
-														<DropdownMenuItem>
-															<Edit className="mr-2 h-4 w-4" />
-															Edit Category
-														</DropdownMenuItem>
-														<DropdownMenuItem className="text-destructive">
-															<Trash2 className="mr-2 h-4 w-4" />
-															Delete Category
-														</DropdownMenuItem>
-													</DropdownMenuContent>
-												</DropdownMenu>
-											</TableCell>
-										</TableRow>
+									{categories.map((category) => (
+										<CategoryRow
+											key={category.id}
+											category={category as any}
+										/>
 									))}
 								</TableBody>
 							</Table>
@@ -261,8 +160,8 @@ export default async function CategoriesPage() {
 
 						<div className="flex items-center justify-between space-x-2 py-4">
 							<div className="text-sm text-muted-foreground">
-								Showing 1-{mockCategories.length} of{" "}
-								{mockCategories.length} categories
+								Showing 1-{categories.length} of{" "}
+								{categories.length} categories
 							</div>
 							<div className="flex space-x-2">
 								<Button variant="outline" size="sm" disabled>
