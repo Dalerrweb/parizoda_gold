@@ -12,8 +12,8 @@ import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Category } from "@/app/types";
-import { Toaster } from "../ui/sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 function formatDate(date: Date) {
 	return new Intl.DateTimeFormat("en-US", {
@@ -98,23 +98,12 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ category }) => {
 							<Eye className="mr-2 h-4 w-4" />
 							View Products
 						</DropdownMenuItem>
-						<DropdownMenuItem
-							onClick={() => {
-								toast("Category was removed", {
-									description: `Category "${category.name}" has been deleted.`,
-									action: {
-										label: "Undo",
-										onClick: () => {
-											// Logic to undo deletion
-											toast.info("Category restored");
-										},
-									},
-								});
-							}}
-						>
-							<Edit className="mr-2 h-4 w-4" />
-							Edit Category
-						</DropdownMenuItem>
+						<Link href={`/admin/categories/edit/${category.id}`}>
+							<DropdownMenuItem>
+								<Edit className="mr-2 h-4 w-4" />
+								Edit Category
+							</DropdownMenuItem>
+						</Link>
 						<DropdownMenuItem
 							className="text-destructive"
 							onClick={handleRemoveCategory}

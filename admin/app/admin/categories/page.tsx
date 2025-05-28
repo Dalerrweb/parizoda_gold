@@ -20,7 +20,6 @@ import { Search, Plus, FolderOpen, Package, Clock } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import CategoryRow from "@/components/custom/CategoryRow";
-import { Category } from "@/app/types";
 
 export default async function CategoriesPage() {
 	const categories = await prisma.category.findMany({
