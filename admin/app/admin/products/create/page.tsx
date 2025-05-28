@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
 	Card,
@@ -25,12 +25,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Upload, X, Plus, Package, Save, Eye } from "lucide-react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { Category } from "@/app/types";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
 	SINGLE: "Single Product",
 	BUNDLE: "Product Bundle",
-	VARIANT: "Product Variant",
 };
 
 const MetalTypes = {
@@ -41,14 +42,6 @@ const MetalTypes = {
 	COPPER: "Copper",
 	BRONZE: "Bronze",
 };
-
-// Mock categories
-const mockCategories = [
-	{ id: 1, name: "Electronics" },
-	{ id: 2, name: "Clothing" },
-	{ id: 3, name: "Jewelry" },
-	{ id: 4, name: "Home & Garden" },
-];
 
 interface ProductSize {
 	id?: number;
@@ -74,9 +67,28 @@ export default function CreateProductPage() {
 		categoryId: "",
 	});
 
+	const [categories, setCategories] = useState<Category[]>([]);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	useEffect(() => {
+		const fetchCategories = async () => {
+			try {
+				const response = await fetch("/api/admin/category");
+				if (!response.ok) {
+					throw new Error("Failed to fetch categories");
+				}
+				const data = await response.json();
+
+				setCategories(data);
+			} catch (error) {
+				console.error("Error fetching categories:", error);
+				toast.error("Failed to load categories. Please try again.");
+			}
+		};
+		fetchCategories();
+	}, []);
 
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -123,27 +135,62 @@ export default function CreateProductPage() {
 		setSizes((prev) => prev.filter((_, i) => i !== index));
 	};
 
+	const uploadFiles = async (files: any) => {
+		const formData = new FormData();
+		files.forEach((file: any) => formData.append("files", file.file)); // Ключ "files"
+
+		const response = await fetch("/api/admin/multiple-upload", {
+			method: "POST",
+			body: formData,
+		});
+
+		const { urls } = await response.json();
+		return urls;
+	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 2000));
+		try {
+			const filesRes = await uploadFiles(images);
 
-		console.log("Product Data:", {
-			...formData,
-			price: Number.parseInt(formData.price) * 100, // Convert to cents
-			weight: formData.weight ? Number.parseFloat(formData.weight) : null,
-			categoryId: Number.parseInt(formData.categoryId),
-			images,
-			sizes,
-		});
+			const res = await fetch("/api/admin/product", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					...formData,
+					price: parseFloat(formData.price),
+					weight: formData.weight
+						? parseFloat(formData.weight)
+						: null,
+					categoryId: Number.parseInt(formData.categoryId),
+					images: filesRes,
+					sizes: sizes.map((size) => ({
+						value: size.size,
+						quantity: size.stock,
+					})),
+				}),
+			});
+
+			if (!res.ok) {
+				throw new Error("Failed to create product");
+			}
+
+			const data = await res.json();
+			console.log(data);
+			toast("Product created successfully!");
+		} catch (e) {
+			console.error("Error creating product:", e);
+			toast.error("Failed to create product. Please try again.");
+		}
 
 		setIsSubmitting(false);
-		// Redirect to products page or show success message
 	};
 
-	const isPreciousMetalCategory = formData.categoryId === "3"; // Jewelry category
+	const isPreciousMetalCategory = formData.categoryId === "10"; // Jewelry category
 
 	return (
 		<div className="flex flex-col min-h-screen">
@@ -259,8 +306,8 @@ export default function CreateProductPage() {
 										<Input
 											id="price"
 											type="number"
-											step="0.01"
-											placeholder="0.00"
+											// step="0.01"
+											placeholder="0"
 											className="pl-8"
 											value={formData.price}
 											onChange={(e) =>
@@ -306,7 +353,7 @@ export default function CreateProductPage() {
 											<SelectValue placeholder="Select category" />
 										</SelectTrigger>
 										<SelectContent>
-											{mockCategories.map((category) => (
+											{categories.map((category) => (
 												<SelectItem
 													key={category.id}
 													value={category.id.toString()}
