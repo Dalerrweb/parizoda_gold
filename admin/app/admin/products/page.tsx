@@ -36,78 +36,7 @@ import {
 	Clock,
 } from "lucide-react";
 import Link from "next/link";
-
-// Mock data based on your Product model
-const mockProducts = [
-	{
-		id: 1,
-		name: "iPhone 15 Pro",
-		description:
-			"Latest iPhone with advanced camera system and titanium design",
-		price: 99900, // Price in cents/tiyins
-		categoryId: 1,
-		category: { id: 1, name: "Electronics" },
-		images: [
-			{ id: 1, url: "/placeholder.svg?height=60&width=60" },
-			{ id: 2, url: "/placeholder.svg?height=60&width=60" },
-		],
-		orders: [{ id: 1 }, { id: 2 }],
-		createdAt: new Date("2024-01-15T10:30:00Z"),
-		updatedAt: new Date("2024-02-01T14:20:00Z"),
-	},
-	{
-		id: 2,
-		name: "MacBook Air M3",
-		description: "Powerful laptop with M3 chip and all-day battery life",
-		price: 119900,
-		categoryId: 1,
-		category: { id: 1, name: "Electronics" },
-		images: [{ id: 3, url: "/placeholder.svg?height=60&width=60" }],
-		orders: [{ id: 3 }],
-		createdAt: new Date("2024-01-20T08:15:00Z"),
-		updatedAt: new Date("2024-01-25T16:45:00Z"),
-	},
-	{
-		id: 3,
-		name: "Premium Cotton T-Shirt",
-		description: "Comfortable and stylish cotton t-shirt for everyday wear",
-		price: 2999,
-		categoryId: 2,
-		category: { id: 2, name: "Clothing" },
-		images: [
-			{ id: 4, url: "/placeholder.svg?height=60&width=60" },
-			{ id: 5, url: "/placeholder.svg?height=60&width=60" },
-			{ id: 6, url: "/placeholder.svg?height=60&width=60" },
-		],
-		orders: [],
-		createdAt: new Date("2024-02-01T12:00:00Z"),
-		updatedAt: new Date("2024-02-01T12:00:00Z"),
-	},
-	{
-		id: 4,
-		name: "Wireless Headphones",
-		description: "High-quality wireless headphones with noise cancellation",
-		price: 15999,
-		categoryId: 1,
-		category: { id: 1, name: "Electronics" },
-		images: [{ id: 7, url: "/placeholder.svg?height=60&width=60" }],
-		orders: [{ id: 4 }, { id: 5 }],
-		createdAt: new Date("2024-02-05T09:30:00Z"),
-		updatedAt: new Date("2024-02-10T11:15:00Z"),
-	},
-	{
-		id: 5,
-		name: "Designer Jeans",
-		description: null,
-		price: 7999,
-		categoryId: 2,
-		category: { id: 2, name: "Clothing" },
-		images: [],
-		orders: [{ id: 6 }],
-		createdAt: new Date("2024-02-10T14:20:00Z"),
-		updatedAt: new Date("2024-02-12T10:30:00Z"),
-	},
-];
+import prisma from "@/lib/prisma";
 
 function formatPrice(price: number) {
 	// Assuming price is in cents/tiyins, convert to dollars/som
@@ -125,16 +54,27 @@ function formatDate(date: Date) {
 	}).format(date);
 }
 
-export default function ProductsPage() {
-	const totalProducts = mockProducts.length;
-	const productsWithOrders = mockProducts.filter(
+export default async function ProductsPage() {
+	const products = await prisma.product.findMany({
+		include: {
+			category: true,
+			images: true,
+			orders: true,
+		},
+		orderBy: {
+			createdAt: "desc",
+		},
+	});
+
+	const totalProducts = products.length;
+	const productsWithOrders = products.filter(
 		(product) => product.orders.length > 0
 	).length;
-	const totalRevenue = mockProducts.reduce(
+	const totalRevenue = products.reduce(
 		(sum, product) => sum + product.price * product.orders.length,
 		0
 	);
-	const recentProducts = mockProducts.filter((product) => {
+	const recentProducts = products.filter((product) => {
 		const daysDiff =
 			(Date.now() - product.createdAt.getTime()) / (1000 * 60 * 60 * 24);
 		return daysDiff <= 7;
@@ -273,7 +213,7 @@ export default function ProductsPage() {
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{mockProducts.map((product) => (
+									{products.map((product) => (
 										<TableRow key={product.id}>
 											<TableCell>
 												<div className="flex items-center space-x-3">
@@ -394,8 +334,8 @@ export default function ProductsPage() {
 
 						<div className="flex items-center justify-between space-x-2 py-4">
 							<div className="text-sm text-muted-foreground">
-								Showing 1-{mockProducts.length} of{" "}
-								{mockProducts.length} products
+								Showing 1-{products.length} of {products.length}{" "}
+								products
 							</div>
 							<div className="flex space-x-2">
 								<Button variant="outline" size="sm" disabled>
