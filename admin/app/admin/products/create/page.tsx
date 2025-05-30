@@ -29,7 +29,7 @@ import { toast } from "sonner";
 import { Category } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "./product-bundle-table";
-import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -67,6 +67,7 @@ export default function CreateProductPage() {
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [bundleProducts, setBundleProducts] = useState<any>(null);
+	const router = useRouter();
 
 	useEffect(() => {
 		setFormData((prev) => ({
@@ -181,7 +182,7 @@ export default function CreateProductPage() {
 				body: JSON.stringify({ images: uploadedImages }),
 			});
 
-			revalidatePath("/admin/products");
+			router.refresh();
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
