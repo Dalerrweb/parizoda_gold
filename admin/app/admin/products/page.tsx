@@ -66,6 +66,8 @@ export default async function ProductsPage() {
 		},
 	});
 
+	console.log({ products }, "Products page");
+
 	const totalProducts = products.length;
 	const productsWithOrders = products.filter(
 		(product) => product.orders.length > 0
