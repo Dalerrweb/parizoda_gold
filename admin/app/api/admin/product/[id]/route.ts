@@ -22,7 +22,8 @@ export async function GET(
 				category: true,
 				images: true,
 				sizes: true,
-				childBundles: {
+
+				parentBundle: {
 					include: {
 						child: true,
 					},
@@ -87,7 +88,8 @@ export async function PATCH(
 				weight: data.weight ?? existingProduct.weight,
 				type: data.type ?? existingProduct.type,
 				preciousMetal:
-					data.preciousMetal ?? existingProduct.preciousMetal,
+					(data.preciousMetal ?? existingProduct.preciousMetal) ||
+					null,
 				categoryId: data.categoryId ?? existingProduct.categoryId,
 			};
 

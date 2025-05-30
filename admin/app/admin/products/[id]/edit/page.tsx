@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-
 import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
 	Card,
@@ -23,12 +23,21 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Upload, X, Plus, Package, Save, Eye } from "lucide-react";
+import {
+	ArrowLeft,
+	Upload,
+	X,
+	Plus,
+	Package,
+	Save,
+	Eye,
+	Loader2,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Category } from "@/app/types";
+import type { Category } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
-import ProductBundleTable from "./product-bundle-table";
+import ProductBundleTable from "../../create/product-bundle-table";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -48,7 +57,29 @@ interface ProductImage {
 	file?: File;
 }
 
-export default function CreateProductPage() {
+interface Product {
+	id: number;
+	sku: string;
+	name: string;
+	description?: string;
+	price: number;
+	weight?: number;
+	type: string;
+	categoryId: number;
+	preciousMetal?: string;
+	images: ProductImage[];
+	sizes: ProductSize[];
+	childBundles: any[];
+	parentBundle: any[];
+	category: Category;
+}
+
+export default function EditProductPage() {
+	const router = useRouter();
+	const params = useParams();
+	const productId = params.id as string;
+
+	const [loading, setLoading] = useState(true);
 	const [formData, setFormData] = useState({
 		sku: "",
 		name: "",
@@ -66,15 +97,81 @@ export default function CreateProductPage() {
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [bundleProducts, setBundleProducts] = useState<any>(null);
+	const [originalProduct, setOriginalProduct] = useState<Product | null>(
+		null
+	);
 
+	// Load product data
 	useEffect(() => {
-		setFormData((prev) => ({
-			...prev,
-			weight: bundleProducts?.totalBundleWeight || 0,
-			childBundles: bundleProducts?.selectedProducts || [],
-		}));
-	}, [bundleProducts]);
+		const fetchProduct = async () => {
+			if (!productId) return;
 
+			try {
+				setLoading(true);
+				const response = await fetch(`/api/admin/product/${productId}`);
+
+				if (!response.ok) {
+					throw new Error("Failed to fetch product");
+				}
+
+				const product: Product = await response.json();
+				console.log({ product });
+
+				setOriginalProduct(product);
+
+				// Populate form data
+				setFormData({
+					sku: product.sku,
+					name: product.name,
+					description: product.description || "",
+					price: product.price.toString(),
+					weight: product.weight?.toString() || "",
+					type: product.type,
+					childBundles: (product?.parentBundle as any) || [],
+					preciousMetal: product.preciousMetal || "",
+					categoryId: product.categoryId.toString(),
+				});
+
+				// Set images
+				setImages(product.images || []);
+
+				// Set sizes
+				setSizes(product.sizes || []);
+
+				// Set bundle products if it's a bundle
+				if (
+					product.type === "BUNDLE" &&
+					product.childBundles?.length > 0
+				) {
+					setBundleProducts({
+						selectedProducts: product.childBundles,
+						totalBundlePrice: product.childBundles.reduce(
+							(total: number, bundle: any) => {
+								return total + (bundle.product?.price || 0);
+							},
+							0
+						),
+						totalBundleWeight: product.childBundles.reduce(
+							(total: number, bundle: any) => {
+								return total + (bundle.product?.weight || 0);
+							},
+							0
+						),
+					});
+				}
+			} catch (error) {
+				console.error("Error fetching product:", error);
+				toast.error("Failed to load product. Please try again.");
+				router.push("/admin/products");
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchProduct();
+	}, [productId, router]);
+
+	// Load categories
 	useEffect(() => {
 		const fetchCategories = async () => {
 			try {
@@ -83,7 +180,6 @@ export default function CreateProductPage() {
 					throw new Error("Failed to fetch categories");
 				}
 				const data = await response.json();
-
 				setCategories(data);
 			} catch (error) {
 				console.error("Error fetching categories:", error);
@@ -92,6 +188,19 @@ export default function CreateProductPage() {
 		};
 		fetchCategories();
 	}, []);
+
+	// Update form data when bundle products change
+	useEffect(() => {
+		if (bundleProducts) {
+			setFormData((prev) => ({
+				...prev,
+				weight:
+					bundleProducts?.totalBundleWeight?.toString() ||
+					prev.weight,
+				childBundles: bundleProducts?.selectedProducts || [],
+			}));
+		}
+	}, [bundleProducts]);
 
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -143,17 +252,32 @@ export default function CreateProductPage() {
 		setIsSubmitting(true);
 
 		try {
-			const productResponse = await fetch("/api/admin/product", {
-				method: "POST",
+			// Prepare images for upload
+			const newImages = images.filter((img) => img.file);
+			const existingImages = images.filter((img) => !img.file);
+
+			// Upload new images
+			const uploadedImages =
+				newImages.length > 0 ? await uploadFiles(newImages) : [];
+
+			// Combine existing and new images
+			const allImages = [
+				...existingImages.map((img) => ({ url: img.url, id: img.id })),
+				...uploadedImages,
+			];
+
+			// Update product
+			const response = await fetch(`/api/admin/product/${productId}`, {
+				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					...formData,
-					price: parseFloat(formData.price),
+					price: Number.parseFloat(formData.price),
 					weight: formData.weight
-						? parseFloat(formData.weight)
+						? Number.parseFloat(formData.weight)
 						: null,
 					categoryId: Number.parseInt(formData.categoryId),
-					images: [], // Пока без изображений
+					images: allImages,
 					sizes: sizes.map((size) => ({
 						value: size.value,
 						quantity: size.quantity,
@@ -161,33 +285,73 @@ export default function CreateProductPage() {
 				}),
 			});
 
-			// 2. Проверяем ошибки сервера
-			if (!productResponse.ok) {
-				const errorData = await productResponse.json();
+			if (!response.ok) {
+				const errorData = await response.json();
 				throw new Error(
-					errorData.message || "Ошибка сохранения продукта"
+					errorData.message || "Failed to update product"
 				);
 			}
 
-			// 3. Если продукт сохранён — загружаем файлы
-			const productData = await productResponse.json();
-			const uploadedImages = await uploadFiles(images);
+			toast.success("Product updated successfully!");
+			router.push("/admin/products");
+		} catch (error) {
+			console.error("Error updating product:", error);
+			toast.error("Failed to update product. Please try again.");
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
-			// 4. Обновляем продукт с привязкой изображений
-			await fetch(`/api/admin/product/${productData.id}`, {
-				method: "PATCH",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ images: uploadedImages }),
-			});
-
-			toast("Product created successfully!");
-		} catch (e) {
-			console.error("Error creating product:", e);
-			toast.error("Failed to create product. Please try again.");
+	const handleDelete = async () => {
+		if (
+			!confirm(
+				"Are you sure you want to delete this product? This action cannot be undone."
+			)
+		) {
+			return;
 		}
 
-		setIsSubmitting(false);
+		try {
+			const response = await fetch(`/api/admin/product/${productId}`, {
+				method: "DELETE",
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to delete product");
+			}
+
+			toast.success("Product deleted successfully!");
+			router.push("/admin/products");
+		} catch (error) {
+			console.error("Error deleting product:", error);
+			toast.error("Failed to delete product. Please try again.");
+		}
 	};
+
+	if (loading) {
+		return (
+			<div className="flex flex-col min-h-screen">
+				<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+					<SidebarTrigger className="-ml-1" />
+					<div className="flex flex-1 items-center gap-2">
+						<Link href="/admin/products">
+							<Button variant="ghost" size="sm">
+								<ArrowLeft className="h-4 w-4 mr-2" />
+								Back to Products
+							</Button>
+						</Link>
+						<h1 className="text-lg font-semibold">Edit Product</h1>
+					</div>
+				</header>
+				<div className="flex-1 flex items-center justify-center">
+					<div className="flex items-center gap-2">
+						<Loader2 className="h-6 w-6 animate-spin" />
+						<span>Loading product...</span>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex flex-col min-h-screen">
@@ -200,7 +364,7 @@ export default function CreateProductPage() {
 							Back to Products
 						</Button>
 					</Link>
-					<h1 className="text-lg font-semibold">Create Product</h1>
+					<h1 className="text-lg font-semibold">Edit Product</h1>
 				</div>
 			</header>
 
@@ -212,22 +376,35 @@ export default function CreateProductPage() {
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-3xl font-bold tracking-tight">
-								Create New Product
+								Edit Product
 							</h2>
 							<p className="text-muted-foreground">
-								Add a new product to your inventory
+								Update product information and settings
 							</p>
+							{originalProduct && (
+								<Badge variant="outline" className="mt-2">
+									ID: {originalProduct.id} • SKU:{" "}
+									{originalProduct.sku}
+								</Badge>
+							)}
 						</div>
 						<div className="flex space-x-2">
 							<Button type="button" variant="outline">
 								<Eye className="mr-2 h-4 w-4" />
 								Preview
 							</Button>
+							<Button
+								type="button"
+								variant="destructive"
+								onClick={handleDelete}
+							>
+								Delete
+							</Button>
 							<Button type="submit" disabled={isSubmitting}>
 								<Save className="mr-2 h-4 w-4" />
 								{isSubmitting
-									? "Creating..."
-									: "Create Product"}
+									? "Updating..."
+									: "Update Product"}
 							</Button>
 						</div>
 					</div>
@@ -247,11 +424,11 @@ export default function CreateProductPage() {
 
 					{formData.type === "BUNDLE" && (
 						<Card>
-							{/* <ProductBundle
-								setBundleProducts={setBundleProducts}
-							/> */}
 							<ProductBundleTable
 								setBundleProducts={setBundleProducts}
+								initialSelectedProducts={
+									originalProduct?.parentBundle || []
+								}
 							/>
 						</Card>
 					)}
@@ -272,18 +449,27 @@ export default function CreateProductPage() {
 					/>
 
 					{/* Form Actions */}
-					<div className="flex justify-end space-x-4 pt-6">
-						<Link href="/admin/products">
-							<Button type="button" variant="outline">
-								Cancel
-							</Button>
-						</Link>
-						<Button type="submit" disabled={isSubmitting}>
-							<Save className="mr-2 h-4 w-4" />
-							{isSubmitting
-								? "Creating Product..."
-								: "Create Product"}
+					<div className="flex justify-between pt-6">
+						<Button
+							type="button"
+							variant="destructive"
+							onClick={handleDelete}
+						>
+							Delete Product
 						</Button>
+						<div className="flex space-x-4">
+							<Link href="/admin/products">
+								<Button type="button" variant="outline">
+									Cancel
+								</Button>
+							</Link>
+							<Button type="submit" disabled={isSubmitting}>
+								<Save className="mr-2 h-4 w-4" />
+								{isSubmitting
+									? "Updating Product..."
+									: "Update Product"}
+							</Button>
+						</div>
 					</div>
 				</form>
 			</div>
@@ -362,7 +548,7 @@ function BasicInformation({
 							<Input
 								id="price"
 								type="number"
-								// step="0.01"
+								step="0.01"
 								placeholder="0"
 								className="pl-8"
 								value={formData.price}
@@ -421,7 +607,6 @@ function ProductTypeSelector({
 }: {
 	formData: any;
 	handleInputChange: (field: string, value: string) => void;
-	categories?: Category[];
 }) {
 	return (
 		<Card className="flex flex-col sm:flex-row items-start justify-between">
@@ -456,38 +641,6 @@ function ProductTypeSelector({
 						</SelectContent>
 					</Select>
 				</div>
-				{/* {isPreciousMetalCategory && ( */}
-				{/* <div className="space-y-2">
-										<Label htmlFor="preciousMetal">
-											Precious Metal
-										</Label>
-										<Select
-											value={formData.preciousMetal}
-											onValueChange={(value) =>
-												handleInputChange(
-													"preciousMetal",
-													value
-												)
-											}
-										>
-											<SelectTrigger>
-												<SelectValue placeholder="Select metal type" />
-											</SelectTrigger>
-											<SelectContent>
-												{Object.entries(MetalTypes).map(
-													([key, label]) => (
-														<SelectItem
-															key={key}
-															value={key}
-														>
-															{label}
-														</SelectItem>
-													)
-												)}
-											</SelectContent>
-										</Select>
-									</div> */}
-				{/* )} */}
 			</CardContent>
 		</Card>
 	);
@@ -531,6 +684,14 @@ function ProductImageUpload({
 							{index === 0 && (
 								<Badge className="absolute bottom-2 left-2">
 									Main
+								</Badge>
+							)}
+							{!image.file && image.id && (
+								<Badge
+									variant="secondary"
+									className="absolute bottom-2 right-2"
+								>
+									Existing
 								</Badge>
 							)}
 						</div>

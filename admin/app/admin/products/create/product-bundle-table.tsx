@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { log } from "console";
 
 interface ProductImage {
 	id: number;
@@ -74,19 +75,23 @@ interface ApiResponse {
 	};
 }
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 const PARENT_ID = 1;
 
-export default function ProductBundleTable({
+export default function ProductBundle({
 	setBundleProducts,
+	initialSelectedProducts = [],
 }: {
 	setBundleProducts: (arr: any) => void;
+	initialSelectedProducts?: ProductBundle[];
 }) {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
 	const [selectedProducts, setSelectedProducts] = useState<ProductBundle[]>(
-		[]
+		initialSelectedProducts
 	);
+	console.log({ initialSelectedProducts });
+
 	const [products, setProducts] = useState<Product[]>([]);
 	const [pagination, setPagination] = useState({
 		page: 1,
@@ -147,6 +152,43 @@ export default function ProductBundleTable({
 	useEffect(() => {
 		fetchProducts(1, searchTerm);
 	}, []);
+
+	// Load initial products data
+	useEffect(() => {
+		const loadInitialProducts = async () => {
+			if (initialSelectedProducts.length > 0) {
+				try {
+					// Загружаем данные о продуктах из начального списка
+					const productIds = initialSelectedProducts.map(
+						(bundle) => bundle.childId
+					);
+					const promises = productIds.map((id) =>
+						fetch(`/api/admin/product/${id}`).then((res) =>
+							res.json()
+						)
+					);
+
+					const products = await Promise.all(promises);
+
+					// Обновляем кэш продуктов
+					setProductsCache((prev) => {
+						const newCache = { ...prev };
+						products.forEach((product) => {
+							newCache[product.id] = product;
+						});
+						return newCache;
+					});
+
+					// Устанавливаем выбранные продукты
+					setSelectedProducts(initialSelectedProducts);
+				} catch (error) {
+					console.error("Error loading initial products:", error);
+				}
+			}
+		};
+
+		loadInitialProducts();
+	}, [initialSelectedProducts]);
 
 	// Handle search with debounce
 	const handleSearchChange = (value: string) => {
@@ -258,6 +300,33 @@ export default function ProductBundleTable({
 		);
 	};
 
+	// Update parent component when selectedProducts change
+	useEffect(() => {
+		if (selectedProducts.length > 0) {
+			const totalBundlePrice = selectedProducts.reduce(
+				(total, bundle) => {
+					const product = getProductById(bundle.childId);
+					return total + (product?.price || 0);
+				},
+				0
+			);
+
+			const totalBundleWeight = selectedProducts.reduce(
+				(total, bundle) => {
+					const product = getProductById(bundle.childId);
+					return total + (product?.weight || 0);
+				},
+				0
+			);
+
+			setBundleProducts({
+				selectedProducts,
+				totalBundlePrice,
+				totalBundleWeight,
+			});
+		}
+	}, [selectedProducts, productsCache, setBundleProducts, getProductById]);
+
 	const allVisibleSelected =
 		products.length > 0 && products.every((p) => isProductSelected(p.id));
 	const someVisibleSelected = products.some((p) => isProductSelected(p.id));
@@ -329,6 +398,7 @@ export default function ProductBundleTable({
 											{formatPrice(product.price)}
 										</span>
 										<Button
+											type="button"
 											variant="ghost"
 											size="sm"
 											className="h-4 w-4 p-0 hover:bg-destructive hover:text-destructive-foreground"
@@ -366,8 +436,8 @@ export default function ProductBundleTable({
 				{products.length > 0 && (
 					<div className="flex items-center gap-2">
 						<Button
-							variant="outline"
 							type="button"
+							variant="outline"
 							size="sm"
 							onClick={
 								allVisibleSelected
@@ -397,10 +467,7 @@ export default function ProductBundleTable({
 											? deselectAllVisible
 											: selectAllVisible
 									}
-									// indeterminate={
-									// 	someVisibleSelected &&
-									// 	!allVisibleSelected
-									// }
+									//   indeterminate={someVisibleSelected && !allVisibleSelected}
 								/>
 							</TableHead>
 							<TableHead className="w-16">Image</TableHead>
@@ -526,6 +593,7 @@ export default function ProductBundleTable({
 					</div>
 					<div className="flex items-center gap-2">
 						<Button
+							type="button"
 							variant="outline"
 							size="sm"
 							onClick={() =>
@@ -543,6 +611,7 @@ export default function ProductBundleTable({
 									const pageNum = i + 1;
 									return (
 										<Button
+											type="button"
 											key={pageNum}
 											variant={
 												pagination.page === pageNum
@@ -562,6 +631,7 @@ export default function ProductBundleTable({
 							)}
 						</div>
 						<Button
+							type="button"
 							variant="outline"
 							size="sm"
 							onClick={() =>
@@ -579,7 +649,7 @@ export default function ProductBundleTable({
 			)}
 
 			{/* Debug Output */}
-			{selectedProducts.length > 0 && (
+			{/* {selectedProducts.length > 0 && (
 				<Card>
 					<CardHeader>
 						<CardTitle className="text-lg">
@@ -592,7 +662,7 @@ export default function ProductBundleTable({
 						</pre>
 					</CardContent>
 				</Card>
-			)}
+			)} */}
 		</div>
 	);
 }

@@ -315,14 +315,18 @@ export default async function ProductsPage() {
 															<Eye className="mr-2 h-4 w-4" />
 															View Details
 														</DropdownMenuItem>
-														<DropdownMenuItem>
-															<Edit className="mr-2 h-4 w-4" />
-															Edit Product
-														</DropdownMenuItem>
-														<DropdownMenuItem className="text-destructive">
+														<Link
+															href={`/admin/products/${product.id}/edit`}
+														>
+															<DropdownMenuItem>
+																<Edit className="mr-2 h-4 w-4" />
+																Edit Product
+															</DropdownMenuItem>
+														</Link>
+														{/* <DropdownMenuItem className="text-destructive">
 															<Trash2 className="mr-2 h-4 w-4" />
 															Delete Product
-														</DropdownMenuItem>
+														</DropdownMenuItem> */}
 													</DropdownMenuContent>
 												</DropdownMenu>
 											</TableCell>
