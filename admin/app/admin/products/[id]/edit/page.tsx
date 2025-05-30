@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import type { Category } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "../../create/product-bundle-table";
+import action from "@/action/action";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -320,6 +321,7 @@ export default function EditProductPage() {
 				throw new Error("Failed to delete product");
 			}
 
+			action("/api/admin/product");
 			toast.success("Product deleted successfully!");
 			router.push("/admin/products");
 		} catch (error) {
