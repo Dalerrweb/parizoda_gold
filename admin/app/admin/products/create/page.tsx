@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { Category } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "./product-bundle-table";
+import { revalidatePath } from "next/cache";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -180,6 +181,7 @@ export default function CreateProductPage() {
 				body: JSON.stringify({ images: uploadedImages }),
 			});
 
+			revalidatePath("/admin/products");
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
