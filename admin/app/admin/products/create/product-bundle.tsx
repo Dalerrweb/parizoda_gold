@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, X, ShoppingCart, Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,7 +64,7 @@ interface ApiResponse {
 }
 
 const ITEMS_PER_PAGE = 5;
-const PARENT_ID = 1; // Assuming bundle parent ID
+const PARENT_ID = 1;
 
 export default function ProductBundle({
 	setBundleProducts,
@@ -89,8 +89,13 @@ export default function ProductBundle({
 		null
 	);
 
+	// Кэш для хранения всех загруженных продуктов
+	const [productsCache, setProductsCache] = useState<Record<number, Product>>(
+		{}
+	);
+
 	// Fetch products from API
-	const fetchProducts = async (page = 1, search = "") => {
+	const fetchProducts = useCallback(async (page = 1, search = "") => {
 		setLoading(true);
 		try {
 			const params = new URLSearchParams({
@@ -110,6 +115,16 @@ export default function ProductBundle({
 
 			const data: ApiResponse = await response.json();
 			setProducts(data.products);
+
+			// Обновляем кэш продуктов
+			setProductsCache((prev) => {
+				const newCache = { ...prev };
+				data.products.forEach((product) => {
+					newCache[product.id] = product;
+				});
+				return newCache;
+			});
+
 			setPagination(data.pagination);
 			setCurrentPage(page);
 		} catch (error) {
@@ -118,25 +133,23 @@ export default function ProductBundle({
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, []);
 
 	// Initial load
 	useEffect(() => {
 		if (isOpen) {
 			fetchProducts(1, searchTerm);
 		}
-	}, [isOpen]);
+	}, [isOpen, fetchProducts, searchTerm]);
 
 	// Handle search with debounce
 	const handleSearchChange = (value: string) => {
 		setSearchTerm(value);
 
-		// Clear existing timeout
 		if (searchTimeout) {
 			clearTimeout(searchTimeout);
 		}
 
-		// Set new timeout for debounced search
 		const timeout = setTimeout(() => {
 			fetchProducts(1, value);
 		}, 500);
@@ -150,9 +163,14 @@ export default function ProductBundle({
 	};
 
 	// Check if product is already added
-	const isProductAdded = (productId: number) => {
-		return selectedProducts.some((bundle) => bundle.childId === productId);
-	};
+	const isProductAdded = useCallback(
+		(productId: number) => {
+			return selectedProducts.some(
+				(bundle) => bundle.childId === productId
+			);
+		},
+		[selectedProducts]
+	);
 
 	// Add product to bundle
 	const addProduct = (productId: number) => {
@@ -175,14 +193,17 @@ export default function ProductBundle({
 		);
 	};
 
-	// Get product details by ID
-	const getProductById = (id: number) => {
-		return products.find((product) => product.id === id);
-	};
+	// Get product details by ID from cache
+	const getProductById = useCallback(
+		(id: number) => {
+			return productsCache[id] || null;
+		},
+		[productsCache]
+	);
 
 	// Get product image URL
 	const getProductImage = (product: Product) => {
-		if (product.images && product.images.length > 0) {
+		if (product.images?.length > 0) {
 			return product.images[0].url;
 		}
 		return "/placeholder.svg?height=80&width=80";
@@ -205,6 +226,15 @@ export default function ProductBundle({
 		return total + (product?.weight || 0);
 	}, 0);
 
+	// Сбрасываем состояние при закрытии панели
+	const handleSheetOpenChange = (open: boolean) => {
+		if (!open) {
+			setSearchTerm("");
+			setCurrentPage(1);
+		}
+		setIsOpen(open);
+	};
+
 	return (
 		<div className="p-4 w-full">
 			<div className="flex items-start justify-between w-full">
@@ -221,7 +251,7 @@ export default function ProductBundle({
 						Add Product
 					</Button>
 				</div>
-				{/* {selectedProducts.length > 0 && ( */}
+
 				<div className="flex flex-col items-end gap-2">
 					<div className="text-lg text-gray-500">
 						Total Weight: {totalBundleWeight} grams
@@ -240,12 +270,12 @@ export default function ProductBundle({
 						}
 						className="flex items-center gap-2"
 						variant="outline"
+						disabled={selectedProducts.length === 0}
 					>
 						<Plus className="h-4 w-4" />
 						Save Bundle
 					</Button>
 				</div>
-				{/* )} */}
 			</div>
 
 			{/* Selected Products Display */}
@@ -260,7 +290,25 @@ export default function ProductBundle({
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 						{selectedProducts.map((bundle) => {
 							const product = getProductById(bundle.childId);
-							if (!product) return null;
+							if (!product) {
+								// Если продукт не найден в кэше, показываем плейсхолдер
+								return (
+									<Card
+										key={bundle.childId}
+										className="relative"
+									>
+										<CardContent className="p-4">
+											<div className="flex items-center gap-3">
+												<div className="h-16 w-16 rounded-md bg-gray-200 animate-pulse" />
+												<div className="flex-1 min-w-0">
+													<div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+													<div className="h-3 bg-gray-200 rounded w-1/2" />
+												</div>
+											</div>
+										</CardContent>
+									</Card>
+								);
+							}
 
 							return (
 								<Card
@@ -322,7 +370,7 @@ export default function ProductBundle({
 			)}
 
 			{/* Side Panel */}
-			<Sheet open={isOpen} onOpenChange={setIsOpen}>
+			<Sheet open={isOpen} onOpenChange={handleSheetOpenChange}>
 				<SheetContent className="md:w-[70vw] w-[100vw] sm:max-w-none px-4">
 					<SheetHeader>
 						<SheetTitle>Add Products to Bundle</SheetTitle>
@@ -478,7 +526,7 @@ export default function ProductBundle({
 				</SheetContent>
 			</Sheet>
 
-			{/* Debug Output
+			{/* Debug Output */}
 			{selectedProducts.length > 0 && (
 				<div className="mt-8 p-4 bg-gray-50 rounded-lg">
 					<h3 className="font-medium mb-2">
@@ -488,7 +536,7 @@ export default function ProductBundle({
 						{JSON.stringify(selectedProducts, null, 2)}
 					</pre>
 				</div>
-			)} */}
+			)}
 		</div>
 	);
 }

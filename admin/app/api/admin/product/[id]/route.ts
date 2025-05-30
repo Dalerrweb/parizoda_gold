@@ -115,7 +115,7 @@ export async function PATCH(
 				if (data.images.length > 0) {
 					productData.images = {
 						createMany: {
-							data: data.images.map((url: string) => ({ url })),
+							data: data.images,
 						},
 					};
 				}

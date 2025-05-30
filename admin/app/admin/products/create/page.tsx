@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { Category } from "@/app/types";
 import ProductBundle from "./product-bundle";
 import { uploadFiles } from "@/lib/utils";
+import ProductBundleTable from "./product-bundle-table";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -143,13 +144,9 @@ export default function CreateProductPage() {
 		setIsSubmitting(true);
 
 		try {
-			const filesRes = await uploadFiles(images);
-
-			const res = await fetch("/api/admin/product", {
+			const productResponse = await fetch("/api/admin/product", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					...formData,
 					price: parseFloat(formData.price),
@@ -157,7 +154,7 @@ export default function CreateProductPage() {
 						? parseFloat(formData.weight)
 						: null,
 					categoryId: Number.parseInt(formData.categoryId),
-					images: filesRes,
+					images: [], // Пока без изображений
 					sizes: sizes.map((size) => ({
 						value: size.size,
 						quantity: size.stock,
@@ -165,12 +162,25 @@ export default function CreateProductPage() {
 				}),
 			});
 
-			if (!res.ok) {
-				throw new Error("Failed to create product");
+			// 2. Проверяем ошибки сервера
+			if (!productResponse.ok) {
+				const errorData = await productResponse.json();
+				throw new Error(
+					errorData.message || "Ошибка сохранения продукта"
+				);
 			}
 
-			const data = await res.json();
-			console.log(data);
+			// 3. Если продукт сохранён — загружаем файлы
+			const productData = await productResponse.json();
+			const uploadedImages = await uploadFiles(images);
+
+			// 4. Обновляем продукт с привязкой изображений
+			await fetch(`/api/admin/product/${productData.id}`, {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ images: uploadedImages }),
+			});
+
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
@@ -238,7 +248,10 @@ export default function CreateProductPage() {
 
 					{formData.type === "BUNDLE" && (
 						<Card>
-							<ProductBundle
+							{/* <ProductBundle
+								setBundleProducts={setBundleProducts}
+							/> */}
+							<ProductBundleTable
 								setBundleProducts={setBundleProducts}
 							/>
 						</Card>
