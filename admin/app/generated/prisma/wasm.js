@@ -195,6 +195,16 @@ exports.Prisma.AdminSessionScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BannerScalarFieldEnum = {
+  id: 'id',
+  imageUrl: 'imageUrl',
+  link: 'link',
+  isActive: 'isActive',
+  position: 'position',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -239,7 +249,8 @@ exports.Prisma.ModelName = {
   ProductImage: 'ProductImage',
   Order: 'Order',
   AdminUser: 'AdminUser',
-  AdminSession: 'AdminSession'
+  AdminSession: 'AdminSession',
+  Banner: 'Banner'
 };
 
 /**

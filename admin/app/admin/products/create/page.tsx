@@ -182,7 +182,7 @@ export default function CreateProductPage() {
 				body: JSON.stringify({ images: uploadedImages }),
 			});
 
-			router.refresh();
+			router.replace("/admin/products");
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
