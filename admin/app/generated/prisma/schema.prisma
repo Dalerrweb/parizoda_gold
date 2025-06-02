@@ -120,6 +120,16 @@ model AdminSession {
   createdAt DateTime  @default(now())
 }
 
+model Banner {
+  id        Int      @id @default(autoincrement())
+  imageUrl  String
+  link      String?
+  isActive  Boolean  @default(true)
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 enum MetalType {
   GOLD // Золото
   SILVER // Серебро
