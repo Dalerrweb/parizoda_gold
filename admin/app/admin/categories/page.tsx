@@ -16,13 +16,22 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, FolderOpen, Package, Clock } from "lucide-react";
+import { Search, Plus, FolderOpen, Package, Clock, X } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import CategoryRow from "@/components/custom/CategoryRow";
 
-export default async function CategoriesPage() {
+export default async function CategoriesPage({ searchParams }: any) {
+	const params = await searchParams;
+	const searchQuery =
+		typeof params.search === "string" ? params.search : undefined;
+
 	const categories = await prisma.category.findMany({
+		where: {
+			...(searchQuery && {
+				OR: [{ name: { contains: searchQuery, mode: "insensitive" } }],
+			}),
+		},
 		include: {
 			products: true,
 		},
@@ -122,16 +131,28 @@ export default async function CategoriesPage() {
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="flex items-center space-x-2 mb-4">
-							<div className="relative flex-1">
-								<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									placeholder="Search categories..."
-									className="pl-8"
-								/>
-							</div>
-							<Button variant="outline">Filter</Button>
-						</div>
+						<form
+							action="/admin/categories"
+							method="GET"
+							className="relative flex-1 mb-4 "
+						>
+							<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+							<Input
+								placeholder="Search categories..."
+								className="pl-8"
+								name="search" // Имя параметра в URL
+								defaultValue={searchQuery || ""} // Текущее значение поиска
+							/>
+							{/* Кнопка сброса поиска */}
+							{searchQuery && (
+								<Link
+									href="/admin/categories"
+									className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
+								>
+									<X className="h-4 w-4" />
+								</Link>
+							)}
+						</form>
 
 						<div className="rounded-md border">
 							<Table>

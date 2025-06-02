@@ -34,16 +34,13 @@ import {
 	DollarSign,
 	FolderOpen,
 	Clock,
+	X,
 } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 
 function formatPrice(price: number) {
-	// Assuming price is in cents/tiyins, convert to dollars/som
-	return new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: "USD",
-	}).format(price / 100);
+	return new Intl.NumberFormat("en-US").format(price);
 }
 
 function formatDate(date: Date) {
@@ -54,8 +51,26 @@ function formatDate(date: Date) {
 	}).format(date);
 }
 
-export default async function ProductsPage() {
+export default async function ProductsPage({ searchParams }: any) {
+	const params = await searchParams;
+	const searchQuery =
+		typeof params.search === "string" ? params.search : undefined;
+
 	const products = await prisma.product.findMany({
+		where: {
+			...(searchQuery && {
+				OR: [
+					{ sku: { contains: searchQuery, mode: "insensitive" } },
+					{ name: { contains: searchQuery, mode: "insensitive" } },
+					{
+						description: {
+							contains: searchQuery,
+							mode: "insensitive",
+						},
+					},
+				],
+			}),
+		},
 		include: {
 			category: true,
 			images: true,
@@ -65,6 +80,8 @@ export default async function ProductsPage() {
 			createdAt: "desc",
 		},
 	});
+
+	console.log(products);
 
 	const totalProducts = products.length;
 	const productsWithOrders = products.filter(
@@ -175,27 +192,43 @@ export default async function ProductsPage() {
 
 				{/* Products Table */}
 				<Card>
-					<CardHeader>
-						<CardTitle>Products</CardTitle>
-						<CardDescription>
-							Manage your product inventory and details
-						</CardDescription>
+					<CardHeader className="flex items-start justify-between">
+						<div>
+							<CardTitle>Products</CardTitle>
+							<CardDescription>
+								Manage your product inventory and details
+							</CardDescription>
+						</div>
+						<Button variant="outline">
+							<FolderOpen className="mr-2 h-4 w-4" />
+							Categories
+						</Button>
 					</CardHeader>
 					<CardContent>
-						<div className="flex items-center space-x-2 mb-4">
-							<div className="relative flex-1">
-								<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-								<Input
-									placeholder="Search products..."
-									className="pl-8"
-								/>
-							</div>
-							<Button variant="outline">Filter</Button>
-							<Button variant="outline">
-								<FolderOpen className="mr-2 h-4 w-4" />
-								Categories
-							</Button>
-						</div>
+						<form
+							action="/admin/products"
+							method="GET"
+							className="relative flex-1 mb-4 "
+						>
+							<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+							<Input
+								placeholder="Search products..."
+								className="pl-8"
+								name="search" // Имя параметра в URL
+								defaultValue={searchQuery || ""} // Текущее значение поиска
+							/>
+							{/* Кнопка сброса поиска */}
+							{searchQuery && (
+								<Link
+									href="/admin/products"
+									className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
+								>
+									<X className="h-4 w-4" />
+								</Link>
+							)}
+						</form>
+
+						{/* <Button variant="outline">Filter</Button> */}
 
 						<div className="rounded-md border">
 							<Table>
@@ -203,7 +236,7 @@ export default async function ProductsPage() {
 									<TableRow>
 										<TableHead>Product</TableHead>
 										<TableHead>Category</TableHead>
-										<TableHead>Price</TableHead>
+										<TableHead>Price/Grams</TableHead>
 										<TableHead>Images</TableHead>
 										<TableHead>Orders</TableHead>
 										<TableHead>Updated</TableHead>
@@ -259,7 +292,11 @@ export default async function ProductsPage() {
 											</TableCell>
 											<TableCell>
 												<div className="font-medium">
-													{formatPrice(product.price)}
+													{formatPrice(product.price)}{" "}
+													/
+												</div>
+												<div className="font-medium text-blue-700">
+													{product.weight} grams
 												</div>
 											</TableCell>
 											<TableCell>
