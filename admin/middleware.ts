@@ -217,10 +217,11 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
 	matcher: [
-		"/admin/:path*",
 		"/login",
-		"/api/admin/:path*",
-		"/api/admin/upload", // Явное указание
-		"/api/auth/:path*",
+		"/api/:path*",
+		// "/admin/:path*",
+		// "/api/admin/:path*",
+		// "/api/admin/upload", // Явное указание
+		// "/api/auth/:path*",
 	],
 };
