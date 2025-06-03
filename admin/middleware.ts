@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 // Конфигурация безопасности
 const securityConfig = {
 	// CORS
-	allowedOrigin: process.env.ALLOWED_ORIGIN || "",
+	allowedOrigin: "*",
 	allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 	allowedHeaders: [
 		"Content-Type",
