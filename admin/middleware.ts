@@ -221,5 +221,6 @@ export const config = {
 		"/login",
 		"/api/admin/:path*",
 		"/api/admin/upload", // Явное указание
+		"/api/auth/:path*",
 	],
 };
