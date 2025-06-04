@@ -2,7 +2,6 @@ import { authenticateUser } from "@/utils/auth";
 import Axios, {
 	AxiosInstance,
 	InternalAxiosRequestConfig,
-	AxiosResponse,
 	AxiosHeaders,
 } from "axios";
 
