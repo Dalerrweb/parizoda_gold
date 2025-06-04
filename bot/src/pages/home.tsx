@@ -8,6 +8,7 @@ import { SidebarNav } from "@/components/custom/sidebar-nav";
 import { ProductSection } from "@/components/custom/product-section";
 import { Category } from "@/types";
 import axios from "@/lib/axios";
+import Banners from "@/components/custom/banners";
 
 // export const products = {
 // 	rings: [
@@ -207,15 +208,7 @@ export default function HomePage() {
 						<Input placeholder="Enter value" className="pl-9" />
 					</div>
 
-					<div className="mt-6">
-						<div className="rounded-lg overflow-hidden">
-							<img
-								src="/placeholder.svg?height=200&width=800"
-								alt="Banner"
-								className="w-full h-40 object-cover"
-							/>
-						</div>
-					</div>
+					<Banners />
 				</div>
 
 				<div className="sticky top-16 z-10 bg-background pt-4 pb-2 px-4 border-b">
