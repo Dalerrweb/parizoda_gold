@@ -2,35 +2,56 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProductCard } from "./product-card";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { Product } from "@/types";
+import axios from "@/lib/axios";
 
 const scrollbarHideClass =
 	"scrollbar-hide [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden";
 
-interface Product {
-	id: number;
-	name: string;
-	description: string;
-	price: string;
-	image: string;
-}
+// interface Product {
+// 	id: number;
+// 	name: string;
+// 	description: string;
+// 	price: string;
+// 	image: string;
+// }
+
+// interface ProductSectionProps {
+// 	title: string;
+// 	products: Product[];
+// 	viewAllHref: string;
+// }
 
 interface ProductSectionProps {
+	categoryId: number;
 	title: string;
-	products: Product[];
-	viewAllHref: string;
-}
-
-interface ProductSectionProps {
-	title: string;
-	products: Product[];
 	viewAllHref: string;
 }
 
 export function ProductSection({
 	title,
-	products,
 	viewAllHref,
+	categoryId,
 }: ProductSectionProps) {
+	const [products, setProducts] = useState<Product[]>([]);
+
+	useEffect(() => {
+		async function fetchProducts() {
+			try {
+				const res = await axios.get(
+					"/products?categoryId=" + categoryId
+				);
+				setProducts(res.data.products);
+			} catch (e: any) {
+				console.log(e.message);
+				setProducts([]);
+			}
+		}
+
+		fetchProducts();
+	}, []);
+
 	return (
 		<section className="mt-8">
 			<div className="flex items-center justify-between mb-4">

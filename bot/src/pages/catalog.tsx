@@ -1,10 +1,10 @@
 import { Header } from "@/components/custom/header";
-import { ProductCard } from "@/components/custom/product-card";
+// import { ProductCard } from "@/components/custom/product-card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { products } from "./home";
+// import { products } from "./home";
 
 interface catalogProps {}
 
@@ -32,9 +32,9 @@ const Catalog: React.FC<catalogProps> = () => {
 				</div>
 				<div className="p-4">
 					<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-						{products.rings.map((product) => (
+						{/* {[].map((product) => (
 							<ProductCard key={product.id} {...product} />
-						))}
+						))} */}
 					</div>
 				</div>
 			</main>
