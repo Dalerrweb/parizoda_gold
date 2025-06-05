@@ -25,7 +25,14 @@ export async function GET(
 
 				parentBundle: {
 					include: {
-						child: true,
+						child: {
+							select: {
+								name: true,
+								images: true,
+								sku: true,
+								price: true,
+							},
+						},
 					},
 				},
 			},
