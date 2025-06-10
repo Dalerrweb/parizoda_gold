@@ -30,6 +30,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 		try {
 			const token = localStorage.getItem("token");
 
+			console.log({ token }, "token");
+
 			if (token) {
 				const response = await axios.get("/user");
 				setUser(response.data);
