@@ -5,6 +5,7 @@ import CartPage from "./pages/cart";
 import Catalog from "./pages/catalog";
 import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
+import Layout from "./layout/layout";
 
 declare global {
 	interface Window {
@@ -80,11 +81,13 @@ function App() {
 			}}
 		>
 			<Routes>
-				<Route index element={<Home />} />
-				<Route path="/catalog/:category" element={<Catalog />} />
-				<Route path="/product/:id" element={<ProductPage />} />
-				<Route path="/cart" element={<CartPage />} />
-				<Route path="/profile" element={<ProfilePage />} />
+				<Route path="/" element={<Layout />}>
+					<Route index element={<Home />} />
+					<Route path="/catalog/:category" element={<Catalog />} />
+					<Route path="/product/:id" element={<ProductPage />} />
+					<Route path="/cart" element={<CartPage />} />
+					<Route path="/profile" element={<ProfilePage />} />
+				</Route>
 			</Routes>
 		</div>
 	);

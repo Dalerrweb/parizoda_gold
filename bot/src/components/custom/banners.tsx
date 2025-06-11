@@ -29,10 +29,9 @@ const Banners: React.FC<BannersProps> = () => {
 				setError(null);
 				const res = await axios.get("/banners");
 
-				console.log(res);
 				setBanners(res.data || []);
 			} catch (e: any) {
-				console.log(e.message);
+				console.error(e.message);
 				setError("Failed to load banners");
 				setBanners([]);
 			} finally {

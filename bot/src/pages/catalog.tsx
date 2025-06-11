@@ -1,10 +1,8 @@
 import { Header } from "@/components/custom/header";
-// import { ProductCard } from "@/components/custom/product-card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-// import { products } from "./home";
 
 interface catalogProps {}
 

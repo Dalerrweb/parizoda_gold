@@ -40,7 +40,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 			const initData = window.Telegram.WebApp.initData;
 			const { data } = await axios.post("/auth/telegram", { initData });
-			console.log({ initData }, "initData");
 
 			localStorage.setItem("token", data.token);
 			setUser(data.user);

@@ -135,7 +135,7 @@ export default function ProfileView({ user }: { user: User }) {
 						<CardHeader className="flex flex-row items-center gap-4 pb-2">
 							<Avatar className="h-16 w-16">
 								<AvatarImage
-									src="/placeholder.svg"
+									src={user.photo_url || "/placeholder.svg"}
 									alt={user.username || "User"}
 								/>
 								<AvatarFallback className="text-lg">

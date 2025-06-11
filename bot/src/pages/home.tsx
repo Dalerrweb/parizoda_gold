@@ -3,8 +3,6 @@ import { Search } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Header } from "@/components/custom/header";
-import { SidebarNav } from "@/components/custom/sidebar-nav";
 import { ProductSection } from "@/components/custom/product-section";
 import { Category } from "@/types";
 import axios from "@/lib/axios";
@@ -127,7 +125,6 @@ import Banners from "@/components/custom/banners";
 // ];
 
 export default function HomePage() {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [activeCategory, setActiveCategory] = useState("rings");
 	const [categories, setCategories] = useState<Category[]>([]);
 	const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
@@ -195,12 +192,6 @@ export default function HomePage() {
 
 	return (
 		<div className="flex min-h-screen flex-col">
-			<Header onMenuClick={() => setSidebarOpen(true)} />
-			<SidebarNav
-				open={sidebarOpen}
-				onClose={() => setSidebarOpen(false)}
-			/>
-
 			<main className="flex-1 pb-8">
 				<div className="pt-4 pb-2 px-4">
 					<div className="relative mt-4">

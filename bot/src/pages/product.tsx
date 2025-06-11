@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import { Header } from "@/components/custom/header";
-import { SidebarNav } from "@/components/custom/sidebar-nav";
 import { useParams } from "react-router-dom";
 import axios from "@/lib/axios";
 import ProductDetails, { Product } from "@/components/custom/product-details";
 
 export default function ProductPage() {
-	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [product, setProducts] = useState<Product | null>(null);
 	const { id } = useParams();
 
@@ -25,17 +22,5 @@ export default function ProductPage() {
 		fetchPorduct();
 	}, []);
 
-	console.log({ product });
-
-	return (
-		<>
-			<Header onMenuClick={() => setSidebarOpen(true)} />
-			<SidebarNav
-				open={sidebarOpen}
-				onClose={() => setSidebarOpen(false)}
-			/>
-
-			{product && <ProductDetails product={product} />}
-		</>
-	);
+	return product && <ProductDetails product={product} />;
 }
