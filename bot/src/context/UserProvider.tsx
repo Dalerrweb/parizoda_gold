@@ -28,15 +28,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const authCheck = useCallback(async () => {
 		try {
-			const token = localStorage.getItem("token");
+			// const token = localStorage.getItem("token");
 
-			console.log({ token }, "token");
+			// console.log({ token }, "token");
 
-			if (token) {
-				const response = await axios.get("/user");
-				setUser(response.data);
-				return;
-			}
+			// if (token) {
+			// 	const response = await axios.get("/user");
+			// 	setUser(response.data);
+			// 	return;
+			// }
 
 			const initData = window.Telegram.WebApp.initData;
 			const { data } = await axios.post("/auth/telegram", { initData });
