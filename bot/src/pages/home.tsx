@@ -202,7 +202,7 @@ export default function HomePage() {
 					<Banners />
 				</div>
 
-				<div className="sticky top-16 z-10 bg-background pt-4 pb-2 px-4 border-b">
+				<div className="sticky top-0 z-10 bg-background pt-4 pb-2 px-4 border-b">
 					<Tabs value={activeCategory} onValueChange={handleTabClick}>
 						<TabsList className="w-full h-auto justify-start overflow-auto">
 							{categories.map((category) => (

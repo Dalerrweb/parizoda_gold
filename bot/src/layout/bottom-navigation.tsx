@@ -1,4 +1,4 @@
-import { Heart, Home, ShoppingCart, User, History } from "lucide-react";
+import { Heart, Home, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -15,11 +15,11 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 			icon: Home,
 			label: "Home",
 		},
-		{
-			to: "/history",
-			icon: History,
-			label: "History",
-		},
+		// {
+		// 	to: "/history",
+		// 	icon: History,
+		// 	label: "History",
+		// },
 		{
 			to: "/favorites",
 			icon: Heart,

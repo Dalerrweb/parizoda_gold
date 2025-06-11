@@ -2,7 +2,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
-export default function CartPage() {
+export default function Favs() {
 	const navigate = useNavigate();
 
 	return (
@@ -17,7 +17,7 @@ export default function CartPage() {
 					>
 						<ChevronLeft className="h-5 w-5" />
 					</Button>
-					<h1 className="text-lg font-semibold">Корзина</h1>
+					<h1 className="text-lg font-semibold">Понравившиеся</h1>
 				</div>
 			</main>
 		</div>

@@ -6,6 +6,7 @@ import Catalog from "./pages/catalog";
 import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
 import Layout from "./layout/layout";
+import Favs from "./pages/favourites";
 
 declare global {
 	interface Window {
@@ -86,6 +87,7 @@ function App() {
 					<Route path="/catalog/:category" element={<Catalog />} />
 					<Route path="/product/:id" element={<ProductPage />} />
 					<Route path="/cart" element={<CartPage />} />
+					<Route path="/favorites" element={<Favs />} />
 					<Route path="/profile" element={<ProfilePage />} />
 				</Route>
 			</Routes>
