@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "@/lib/axios";
 import ProductDetails, { Product } from "@/components/custom/product-details";
+import Loading from "@/components/animations/loading";
 
 export default function ProductPage() {
 	const [product, setProducts] = useState<Product | null>(null);
@@ -22,5 +23,5 @@ export default function ProductPage() {
 		fetchPorduct();
 	}, []);
 
-	return product && <ProductDetails product={product} />;
+	return product ? <ProductDetails product={product} /> : <Loading />;
 }
