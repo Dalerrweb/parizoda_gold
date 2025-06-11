@@ -87,6 +87,9 @@ export async function POST(req: NextRequest) {
 				language_code: tgUser.language_code,
 				photo_url: tgUser.photo_url,
 			},
+			include: {
+				orders: true,
+			},
 		}));
 
 	const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
