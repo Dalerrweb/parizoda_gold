@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
 	if (!initData || !validateInitData(initData)) {
 		return NextResponse.json(
-			{ error: "Invalid initData" },
+			{ error: "Invalid initial data" },
 			{ status: 400 }
 		);
 	}
