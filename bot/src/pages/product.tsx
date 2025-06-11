@@ -1,27 +1,19 @@
-import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "@/lib/axios";
-import ProductDetails, { Product } from "@/components/custom/product-details";
+
+import ProductDetails from "@/components/custom/product-details";
 import Loading from "@/components/animations/loading";
+import { useGetProductsByIdQuery } from "@/services/api";
 
 export default function ProductPage() {
-	const [product, setProducts] = useState<Product | null>(null);
 	const { id } = useParams();
+	const {
+		data: product,
+		error,
+		isLoading,
+	} = useGetProductsByIdQuery(Number(id));
 
-	useEffect(() => {
-		async function fetchPorduct() {
-			try {
-				const res = await axios.get("/products/" + id);
+	if (isLoading) return <Loading />;
+	if (error) return <p>Ошибка загрузки</p>;
 
-				setProducts(res.data);
-			} catch (e: any) {
-				console.log(e.message);
-				setProducts(null);
-			}
-		}
-
-		fetchPorduct();
-	}, []);
-
-	return product ? <ProductDetails product={product} /> : <Loading />;
+	return product && <ProductDetails product={product} />;
 }

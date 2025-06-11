@@ -2,26 +2,10 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ProductCard } from "./product-card";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { Product } from "@/types";
-import axios from "@/lib/axios";
+import { useGetProductsQuery } from "@/services/api";
 
 const scrollbarHideClass =
 	"scrollbar-hide [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden";
-
-// interface Product {
-// 	id: number;
-// 	name: string;
-// 	description: string;
-// 	price: string;
-// 	image: string;
-// }
-
-// interface ProductSectionProps {
-// 	title: string;
-// 	products: Product[];
-// 	viewAllHref: string;
-// }
 
 interface ProductSectionProps {
 	categoryId: number;
@@ -34,23 +18,22 @@ export function ProductSection({
 	viewAllHref,
 	categoryId,
 }: ProductSectionProps) {
-	const [products, setProducts] = useState<Product[]>([]);
+	const {
+		data: products,
+		error,
+		isLoading,
+	} = useGetProductsQuery({ categoryId });
 
-	useEffect(() => {
-		async function fetchProducts() {
-			try {
-				const res = await axios.get(
-					"/products?categoryId=" + categoryId
-				);
-				setProducts(res.data.products);
-			} catch (e: any) {
-				console.log(e.message);
-				setProducts([]);
-			}
-		}
+	function RenderProducts() {
+		if (!products || products.products.length === 0)
+			return "Тут пока что пусто";
 
-		fetchProducts();
-	}, []);
+		return products.products.map((product) => (
+			<div key={product.id} className="flex-none w-[140px]">
+				<ProductCard {...product} />
+			</div>
+		));
+	}
 
 	return (
 		<section className="mt-8">
@@ -60,7 +43,7 @@ export function ProductSection({
 					to={viewAllHref}
 					className="flex items-center text-sm font-medium text-primary"
 				>
-					View all
+					Посмотреть все
 					<ChevronRight className="h-4 w-4 ml-1" />
 				</Link>
 			</div>
@@ -71,11 +54,9 @@ export function ProductSection({
 					scrollbarHideClass
 				)}
 			>
-				{products.map((product) => (
-					<div key={product.id} className="flex-none w-[140px]">
-						<ProductCard {...product} />
-					</div>
-				))}
+				{error &&
+					"Видимо что то пошло не так! перезапустите приложение"}
+				{isLoading ? "loading..." : RenderProducts()}
 			</div>
 		</section>
 	);

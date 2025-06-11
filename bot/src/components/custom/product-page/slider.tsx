@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Product } from "../product-details";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Product } from "@/types";
 
 interface sliderProps {
 	product: Product;

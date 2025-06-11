@@ -1,21 +1,8 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Product } from "@/types";
 import { Link } from "react-router-dom";
 
-interface ProductCardProps {
-	id: number;
-	name: string;
-	description: string;
-	price: number;
-	images: any;
-}
-
-export function ProductCard({
-	id,
-	name,
-	description,
-	price,
-	images,
-}: ProductCardProps) {
+export function ProductCard({ id, name, description, price, images }: Product) {
 	return (
 		<Link to={`/product/${id}`} className="block h-full">
 			<Card className="h-full overflow-hidden transition-all hover:shadow-md border-0 shadow-sm">

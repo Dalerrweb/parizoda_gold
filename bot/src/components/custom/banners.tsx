@@ -1,46 +1,19 @@
 "use client";
 
-import axios from "@/lib/axios";
+import { useGetBannersQuery } from "@/services/api";
 import type React from "react";
 import { useEffect, useState, useRef } from "react";
-
-interface Banner {
-	id: string | number;
-	imageUrl: string;
-	title?: string;
-	description?: string;
-	link?: string;
-}
 
 type BannersProps = {};
 
 const Banners: React.FC<BannersProps> = () => {
-	const [banners, setBanners] = useState<Banner[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-	useEffect(() => {
-		async function fetchBanners() {
-			try {
-				setLoading(true);
-				setError(null);
-				const res = await axios.get("/banners");
+	const { data, error, isLoading: loading } = useGetBannersQuery();
 
-				setBanners(res.data || []);
-			} catch (e: any) {
-				console.error(e.message);
-				setError("Failed to load banners");
-				setBanners([]);
-			} finally {
-				setLoading(false);
-			}
-		}
-
-		fetchBanners();
-	}, []);
+	const banners = data ?? [];
 
 	// Auto-scroll effect
 	useEffect(() => {
@@ -71,7 +44,7 @@ const Banners: React.FC<BannersProps> = () => {
 				if (id) clearInterval(id);
 			};
 		}
-	}, [banners.length]);
+	}, [banners?.length]);
 
 	// Cleanup interval on unmount
 	useEffect(() => {
@@ -161,7 +134,9 @@ const Banners: React.FC<BannersProps> = () => {
 		return (
 			<div className="mt-6">
 				<div className="rounded-lg border border-red-200 bg-red-50 p-4">
-					<p className="text-red-600 text-center">{error}</p>
+					<p className="text-red-600 text-center">
+						Что то пошло не так!
+					</p>
 				</div>
 			</div>
 		);
@@ -193,17 +168,12 @@ const Banners: React.FC<BannersProps> = () => {
 								"/placeholder.svg?height=200&width=800";
 						}}
 					/>
-					{(banners[0].title || banners[0].description) && (
+					{banners[0].title && (
 						<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
 							{banners[0].title && (
 								<h3 className="text-white text-lg font-semibold">
 									{banners[0].title}
 								</h3>
-							)}
-							{banners[0].description && (
-								<p className="text-white/90 text-sm mt-1">
-									{banners[0].description}
-								</p>
 							)}
 						</div>
 					)}
@@ -241,21 +211,6 @@ const Banners: React.FC<BannersProps> = () => {
 										"/placeholder.svg?height=200&width=800";
 								}}
 							/>
-							{/* Overlay with text if available */}
-							{(banner.title || banner.description) && (
-								<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-									{banner.title && (
-										<h3 className="text-white text-lg font-semibold">
-											{banner.title}
-										</h3>
-									)}
-									{banner.description && (
-										<p className="text-white/90 text-sm mt-1">
-											{banner.description}
-										</p>
-									)}
-								</div>
-							)}
 						</div>
 					))}
 				</div>

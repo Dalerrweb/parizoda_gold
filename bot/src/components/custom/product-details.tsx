@@ -9,53 +9,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import { formatPrice } from "@/lib/data";
 import Slider from "./product-page/slider";
-
-interface ProductImage {
-	id: number;
-	url: string;
-	alt?: string;
-	productId: number;
-	isPrimary?: boolean;
-	sortOrder?: number;
-}
-
-interface ProductSize {
-	id: number;
-	productId: number;
-	quantity: number;
-	value: string;
-	isAvailable?: boolean;
-	price?: number; // Different sizes might have different prices
-}
-
-interface BundleItem {
-	id: number;
-	parentId: number;
-	bundleId: number;
-	childId: number;
-	quantity: number;
-	child: Omit<Product, "parentBundle" | "sizes">; // Avoid circular reference
-}
-
-interface Product {
-	id: number;
-	sku: string;
-	name: string;
-	description: string | null;
-	weight: number;
-	type: "SINGLE" | "BUNDLE";
-	price: number;
-	categoryId: number;
-	tags?: string[];
-	images: ProductImage[];
-	sizes: ProductSize[];
-	parentBundle: BundleItem[]; // More specific type for bundle items
-	isActive: boolean;
-	isFeatured?: boolean;
-	createdAt: Date;
-	updatedAt: Date;
-	publishedAt?: Date;
-}
+import { Product } from "@/types";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -290,10 +244,3 @@ function ProductDetails({
 }
 
 export default ProductDetails;
-export type {
-	Product,
-	ProductImage,
-	ProductSize,
-	BundleItem,
-	ProductDetailsProps,
-};

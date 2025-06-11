@@ -1,18 +1,48 @@
 export type Product = {
 	id: number;
+	sku: string;
 	name: string;
-	description: string;
-	price: number; // Price in minimum unit (e.g., cents)
+	description: string | null;
+	weight: number;
+	type: "SINGLE" | "BUNDLE";
+	price: number;
 	categoryId: number;
+	tags?: string[];
 	images: ProductImage[];
-	createdAt: string;
-	updatedAt: string;
+	sizes: ProductSize[];
+	parentBundle: BundleItem[]; // More specific type for bundle items
+	isActive: boolean;
+	isFeatured?: boolean;
+	createdAt: Date;
+	updatedAt: Date;
+	publishedAt?: Date;
 };
 
-export type ProductImage = {
+type ProductImage = {
 	id: number;
 	url: string;
+	alt?: string;
 	productId: number;
+	isPrimary?: boolean;
+	sortOrder?: number;
+};
+
+type ProductSize = {
+	id: number;
+	productId: number;
+	quantity: number;
+	value: string;
+	isAvailable?: boolean;
+	price?: number; // Different sizes might have different prices
+};
+
+type BundleItem = {
+	id: number;
+	parentId: number;
+	bundleId: number;
+	childId: number;
+	quantity: number;
+	child: Omit<Product, "parentBundle" | "sizes">; // Avoid circular reference
 };
 
 export type Category = {
@@ -52,4 +82,15 @@ export type User = {
 export type CartItem = {
 	product: Product;
 	quantity: number;
+};
+
+export type Banner = {
+	id: number;
+	imageUrl: string;
+	title: string;
+	link: string;
+	isActive: boolean;
+	position: number;
+	createdAt: Date;
+	updatedAt: Date;
 };
