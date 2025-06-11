@@ -38,6 +38,23 @@ function validateInitData(initData: string): boolean {
 	return checkHash === hash;
 }
 
+// export async function POST(req: NextRequest) {
+// 	const existingUser = await prisma.user.findUnique({
+// 		where: { telegramId: 202783522 },
+// 		include: {
+// 			orders: true,
+// 		},
+// 	});
+
+// 	const user = existingUser;
+
+// 	const token = jwt.sign({ userId: 16 }, JWT_SECRET, {
+// 		expiresIn: "7d",
+// 	});
+
+// 	return NextResponse.json({ token, user });
+// }
+
 export async function POST(req: NextRequest) {
 	const body = await req.json();
 	const { initData } = body;
@@ -54,6 +71,9 @@ export async function POST(req: NextRequest) {
 
 	const existingUser = await prisma.user.findUnique({
 		where: { telegramId: tgUser.id },
+		include: {
+			orders: true,
+		},
 	});
 
 	const user =
