@@ -157,6 +157,7 @@ function ProductDetails({
 												{/* Product Info */}
 												<div className="flex-1 min-w-0">
 													<Link
+														key={bundleItem.childId}
 														to={`/product/${bundleItem.childId}`}
 														className="text-left hover:text-primary transition-colors"
 													>
