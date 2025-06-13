@@ -1,3 +1,9 @@
+export type AuPrice = {
+	id: number;
+	name: string;
+	pricePerGram: bigint;
+};
+
 export type Category = {
 	id: string;
 	name: string;

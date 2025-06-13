@@ -16,3 +16,8 @@ export const uploadFiles = async (files: any) => {
 	const { urls } = await response.json();
 	return urls;
 };
+
+export function formatPrice(price: number | bigint): string {
+	const str = price.toString();
+	return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
+}

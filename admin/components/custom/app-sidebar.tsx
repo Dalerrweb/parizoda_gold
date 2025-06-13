@@ -33,6 +33,10 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AuPrice } from "@/app/types";
+import { formatPrice } from "@/lib/utils";
+import { usePrice } from "@/context/PriceContext";
+// import { formatPrice } from "@/lib/utils";
 
 // Navigation items
 const navigationItems = [
@@ -70,6 +74,7 @@ const navigationItems = [
 
 export function AppSidebar() {
 	const pathname = usePathname();
+	const auPrice = usePrice();
 
 	return (
 		<Sidebar>
@@ -113,7 +118,7 @@ export function AppSidebar() {
 
 				<SidebarSeparator />
 
-				<SidebarGroup>
+				{/* <SidebarGroup>
 					<SidebarGroupLabel>Settings</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
@@ -122,6 +127,32 @@ export function AppSidebar() {
 									<Link href="/settings">
 										<Settings className="h-4 w-4" />
 										<span>Settings</span>
+									</Link>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroupContent>
+				</SidebarGroup>
+
+				<SidebarSeparator /> */}
+
+				{/* auprice */}
+				<SidebarGroup>
+					<SidebarGroupLabel>
+						<b className="text-yellow-600 capitalize text-lg">
+							{auPrice?.name}
+						</b>
+					</SidebarGroupLabel>
+					<SidebarGroupContent>
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<SidebarMenuButton asChild>
+									<Link href="/settings">
+										<span>
+											{formatPrice(
+												auPrice?.pricePerGram ?? 0
+											)}
+										</span>
 									</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>

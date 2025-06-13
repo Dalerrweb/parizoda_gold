@@ -29,7 +29,6 @@ import {
 	MoreHorizontal,
 	Eye,
 	Edit,
-	Trash2,
 	Package,
 	DollarSign,
 	FolderOpen,
@@ -38,10 +37,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
-
-function formatPrice(price: number) {
-	return new Intl.NumberFormat("en-US").format(price);
-}
+import { formatPrice } from "@/lib/utils";
 
 function formatDate(date: Date) {
 	return new Intl.DateTimeFormat("en-US", {
@@ -56,6 +52,7 @@ export default async function ProductsPage({ searchParams }: any) {
 	const searchQuery =
 		typeof params.search === "string" ? params.search : undefined;
 
+	const auPrice = await prisma.auPrice.findFirst();
 	const products = await prisma.product.findMany({
 		where: {
 			...(searchQuery && {
@@ -118,7 +115,7 @@ export default async function ProductsPage({ searchParams }: any) {
 				</div>
 
 				{/* Stats Cards */}
-				<div className="grid gap-4 md:grid-cols-4">
+				<div className="grid gap-4 md:grid-cols-3">
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
@@ -234,7 +231,6 @@ export default async function ProductsPage({ searchParams }: any) {
 									<TableRow>
 										<TableHead>Product</TableHead>
 										<TableHead>Category</TableHead>
-										<TableHead>Price/Grams</TableHead>
 										<TableHead>Images</TableHead>
 										<TableHead>Orders</TableHead>
 										<TableHead>Updated</TableHead>
@@ -288,15 +284,7 @@ export default async function ProductsPage({ searchParams }: any) {
 													{product.category.name}
 												</Badge>
 											</TableCell>
-											<TableCell>
-												<div className="font-medium">
-													{/* {formatPrice(product.price)}{" "} */}
-													1000 /
-												</div>
-												{/* <div className="font-medium text-blue-700">
-													{product.weight} grams
-												</div> */}
-											</TableCell>
+
 											<TableCell>
 												<div className="flex items-center space-x-2">
 													<span className="font-medium">
