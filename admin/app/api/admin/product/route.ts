@@ -110,10 +110,7 @@ export async function POST(req: NextRequest) {
 					sku: data.sku,
 					name: data.name,
 					description: data.description || null,
-					price: data.price,
-					weight: data.weight || null,
 					type: data.type || "SINGLE",
-					preciousMetal: data.preciousMetal || null,
 					categoryId: data.categoryId,
 
 					// 2. Добавляем изображения

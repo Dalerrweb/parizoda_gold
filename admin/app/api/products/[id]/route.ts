@@ -30,7 +30,6 @@ export async function GET(
 								name: true,
 								images: true,
 								sku: true,
-								price: true,
 							},
 						},
 					},

@@ -81,16 +81,14 @@ export default async function ProductsPage({ searchParams }: any) {
 		},
 	});
 
-	console.log(products);
-
 	const totalProducts = products.length;
 	const productsWithOrders = products.filter(
 		(product) => product.orders.length > 0
 	).length;
-	const totalRevenue = products.reduce(
-		(sum, product) => sum + product.price * product.orders.length,
-		0
-	);
+	// const totalRevenue = products.reduce(
+	// 	(sum, product) => sum + product.price * product.orders.length,
+	// 	0
+	// );
 	const recentProducts = products.filter((product) => {
 		const daysDiff =
 			(Date.now() - product.createdAt.getTime()) / (1000 * 60 * 60 * 24);
@@ -155,7 +153,7 @@ export default async function ProductsPage({ searchParams }: any) {
 						</CardContent>
 					</Card>
 
-					<Card>
+					{/* <Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
 								Revenue
@@ -170,7 +168,7 @@ export default async function ProductsPage({ searchParams }: any) {
 								Total sales
 							</p>
 						</CardContent>
-					</Card>
+					</Card> */}
 
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -292,12 +290,12 @@ export default async function ProductsPage({ searchParams }: any) {
 											</TableCell>
 											<TableCell>
 												<div className="font-medium">
-													{formatPrice(product.price)}{" "}
-													/
+													{/* {formatPrice(product.price)}{" "} */}
+													1000 /
 												</div>
-												<div className="font-medium text-blue-700">
+												{/* <div className="font-medium text-blue-700">
 													{product.weight} grams
-												</div>
+												</div> */}
 											</TableCell>
 											<TableCell>
 												<div className="flex items-center space-x-2">

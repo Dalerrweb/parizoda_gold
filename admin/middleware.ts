@@ -219,7 +219,7 @@ export const config = {
 	matcher: [
 		"/login",
 		"/api/:path*",
-		// "/admin/:path*",
+		"/admin/:path*",
 		// "/api/admin/:path*",
 		// "/api/admin/upload", // Явное указание
 		// "/api/auth/:path*",

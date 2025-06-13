@@ -120,10 +120,17 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.AuPriceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  pricePerGram: 'pricePerGram'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   telegramId: 'telegramId',
   username: 'username',
+  phone: 'phone',
   first_name: 'first_name',
   last_name: 'last_name',
   photo_url: 'photo_url',
@@ -143,10 +150,9 @@ exports.Prisma.ProductScalarFieldEnum = {
   sku: 'sku',
   name: 'name',
   description: 'description',
-  price: 'price',
-  weight: 'weight',
+  markup: 'markup',
+  defaultWeight: 'defaultWeight',
   type: 'type',
-  preciousMetal: 'preciousMetal',
   categoryId: 'categoryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -154,9 +160,10 @@ exports.Prisma.ProductScalarFieldEnum = {
 
 exports.Prisma.ProductSizeScalarFieldEnum = {
   id: 'id',
-  value: 'value',
-  productId: 'productId',
-  quantity: 'quantity'
+  size: 'size',
+  quantity: 'quantity',
+  weight: 'weight',
+  productId: 'productId'
 };
 
 exports.Prisma.ProductBundleScalarFieldEnum = {
@@ -224,14 +231,6 @@ exports.ProductType = exports.$Enums.ProductType = {
   BUNDLE: 'BUNDLE'
 };
 
-exports.MetalType = exports.$Enums.MetalType = {
-  GOLD: 'GOLD',
-  SILVER: 'SILVER',
-  PLATINUM: 'PLATINUM',
-  PALLADIUM: 'PALLADIUM',
-  OTHER: 'OTHER'
-};
-
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
@@ -241,6 +240,7 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
 };
 
 exports.Prisma.ModelName = {
+  AuPrice: 'AuPrice',
   User: 'User',
   Category: 'Category',
   Product: 'Product',

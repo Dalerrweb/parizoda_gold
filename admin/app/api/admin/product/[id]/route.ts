@@ -84,12 +84,7 @@ export async function PATCH(
 			const productData: any = {
 				name: data.name ?? existingProduct.name,
 				description: data.description ?? existingProduct.description,
-				price: data.price ?? existingProduct.price,
-				weight: data.weight ?? existingProduct.weight,
 				type: data.type ?? existingProduct.type,
-				preciousMetal:
-					(data.preciousMetal ?? existingProduct.preciousMetal) ||
-					null,
 				categoryId: data.categoryId ?? existingProduct.categoryId,
 			};
 
