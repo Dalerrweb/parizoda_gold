@@ -90,7 +90,6 @@ export default function ProductBundle({
 	const [selectedProducts, setSelectedProducts] = useState<ProductBundle[]>(
 		initialSelectedProducts
 	);
-	console.log({ initialSelectedProducts });
 
 	const [products, setProducts] = useState<Product[]>([]);
 	const [pagination, setPagination] = useState({
@@ -337,21 +336,21 @@ export default function ProductBundle({
 			<div className="flex items-start justify-between">
 				<div>
 					<h1 className="text-3xl font-bold mb-2">
-						Product Bundle Manager
+						Собрать комплект
 					</h1>
 					<p className="text-muted-foreground">
-						Select products to create a bundle. Use checkboxes to
-						add/remove items.
+						Выберите товары для создания комплекта. Используйте
+						флажки, чтобы добавлять или удалять позиции.
 					</p>
 				</div>
 
 				<div className="flex flex-col items-end gap-2">
-					<div className="text-sm text-muted-foreground">
+					{/* <div className="text-sm text-muted-foreground">
 						Total Weight: {totalBundleWeight}g
 					</div>
 					<div className="text-2xl font-bold text-green-600">
 						{formatPrice(totalBundlePrice)}
-					</div>
+					</div> */}
 					<Button
 						type="button"
 						onClick={() =>
@@ -365,7 +364,7 @@ export default function ProductBundle({
 						disabled={selectedProducts.length === 0}
 					>
 						<Plus className="h-4 w-4" />
-						Save Bundle ({selectedProducts.length})
+						Сохранить изделия в комплект ({selectedProducts.length})
 					</Button>
 				</div>
 			</div>
@@ -376,7 +375,7 @@ export default function ProductBundle({
 					<CardHeader>
 						<CardTitle className="flex items-center gap-2">
 							<ShoppingCart className="h-5 w-5" />
-							Selected Products ({selectedProducts.length})
+							Выбранные изделия ({selectedProducts.length})
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
@@ -394,9 +393,9 @@ export default function ProductBundle({
 										<span className="truncate max-w-[200px]">
 											{product.name}
 										</span>
-										<span className="text-green-600 font-medium">
+										{/* <span className="text-green-600 font-medium">
 											{formatPrice(product.price)}
-										</span>
+										</span> */}
 										<Button
 											type="button"
 											variant="ghost"
@@ -445,10 +444,10 @@ export default function ProductBundle({
 									: selectAllVisible
 							}
 						>
-							{allVisibleSelected ? "Deselect All" : "Select All"}
+							{allVisibleSelected ? "Убрать все" : "Выбрать все"}
 						</Button>
 						<span className="text-sm text-muted-foreground">
-							{selectedProducts.length} selected
+							{selectedProducts.length} выбрано
 						</span>
 					</div>
 				)}
@@ -470,12 +469,12 @@ export default function ProductBundle({
 									//   indeterminate={someVisibleSelected && !allVisibleSelected}
 								/>
 							</TableHead>
-							<TableHead className="w-16">Image</TableHead>
-							<TableHead>Product</TableHead>
-							<TableHead>Category</TableHead>
+							<TableHead className="w-16">Картинка</TableHead>
+							<TableHead>Изделие</TableHead>
+							<TableHead>Категория</TableHead>
 							<TableHead>SKU</TableHead>
-							<TableHead>Weight</TableHead>
-							<TableHead className="text-right">Price</TableHead>
+							{/* <TableHead>Weight</TableHead>
+							<TableHead className="text-right">Price</TableHead> */}
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -487,7 +486,7 @@ export default function ProductBundle({
 								>
 									<div className="flex items-center justify-center gap-2">
 										<Loader2 className="h-5 w-5 animate-spin" />
-										<span>Loading products...</span>
+										<span>Загрузка изделий...</span>
 									</div>
 								</TableCell>
 							</TableRow>
@@ -497,8 +496,8 @@ export default function ProductBundle({
 									colSpan={7}
 									className="text-center py-8 text-muted-foreground"
 								>
-									No products found. Try adjusting your
-									search.
+									Товары не найдены. Попробуйте изменить
+									параметры поиска.
 								</TableCell>
 							</TableRow>
 						) : (
@@ -564,14 +563,14 @@ export default function ProductBundle({
 											{product.sku}
 										</Badge>
 									</TableCell>
-									<TableCell className="text-sm">
+									{/* <TableCell className="text-sm">
 										{product.weight}g
 									</TableCell>
 									<TableCell className="text-right">
 										<span className="font-semibold text-green-600">
 											{formatPrice(product.price)}
 										</span>
-									</TableCell>
+									</TableCell> */}
 								</TableRow>
 							))
 						)}

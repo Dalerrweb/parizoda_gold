@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 // GET - Fetch all products
@@ -79,8 +78,7 @@ export async function POST(req: NextRequest) {
 	try {
 		const data = await req.json();
 
-		// Валидация основных полей
-		if (!data.name || !data.sku || !data.price || !data.categoryId) {
+		if (!data.name || !data.sku || !data.categoryId) {
 			return NextResponse.json(
 				{ error: "Обязательные поля: name, sku, price, categoryId" },
 				{ status: 400 }
@@ -98,9 +96,6 @@ export async function POST(req: NextRequest) {
 				{ status: 409 }
 			);
 		}
-
-		console.log(data.images, "data.images");
-		console.log(data.sizes, "data.sizes");
 
 		// Создание продукта с транзакцией
 		const newProduct = await prisma.$transaction(async (tx) => {
@@ -126,17 +121,12 @@ export async function POST(req: NextRequest) {
 					sizes: data.sizes?.length
 						? {
 								createMany: {
-									data: data.sizes.map((size: any) => ({
-										value: size.value,
-										quantity: size.quantity || 0,
-									})),
+									data: data.sizes,
 								},
 						  }
 						: undefined,
 				},
 			});
-
-			console.log(product, "product created");
 
 			// 4. Обработка комплектов (только для BUNDLE)
 			if (data.type === "BUNDLE" && data.childBundles?.length) {

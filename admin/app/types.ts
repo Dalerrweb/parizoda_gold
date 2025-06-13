@@ -17,10 +17,8 @@ type Product = {
 	sku: string;
 	name: string;
 	description?: string;
-	price: number; // цена в минимальной единице (тийины и т.п.)
-	weight?: number;
+	markup: number;
 	type: ProductType; // enum: SINGLE | BUNDLE и т.п.
-	preciousMetal?: PreciousMetal; // enum, если указан
 	categoryId: number;
 	category: Category;
 	images: string[];
@@ -38,6 +36,7 @@ export type User = {
 	id: number;
 	telegramId: number;
 	username: string;
+	phone?: string;
 	first_name: string;
 	last_name: string;
 	photo_url: string;
@@ -46,25 +45,18 @@ export type User = {
 	createdAt: Date;
 };
 
-enum ProductType {
+export enum ProductType {
 	SINGLE = "SINGLE",
 	BUNDLE = "BUNDLE",
 }
 
-enum PreciousMetal {
-	GOLD = "GOLD", // Золото
-	SILVER = "SILVER", // Серебро
-	PLATINUM = "PLATINUM", // Платина
-	PALLADIUM = "PALLADIUM", // Палладий
-	OTHER = "OTHER", // Другие материалы
-}
-
 export type ProductSize = {
-	id: number;
-	value: string;
-	product: Product;
-	productId: number;
+	id?: number;
+	size: string;
 	quantity: number;
+	weight: number;
+	product?: Product;
+	productId?: number;
 };
 export type Order = {
 	id: number;

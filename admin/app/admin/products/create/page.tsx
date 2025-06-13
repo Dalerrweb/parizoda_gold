@@ -26,22 +26,16 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Upload, X, Plus, Package, Save, Eye } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Category } from "@/app/types";
+import { Category, ProductSize, ProductType } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "./product-bundle-table";
 import { useRouter } from "next/navigation";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
-	SINGLE: "Single Product",
-	BUNDLE: "Product Bundle",
+	SINGLE: "Изделие",
+	BUNDLE: "Комплект",
 };
-
-interface ProductSize {
-	id?: number;
-	value: string;
-	quantity: number;
-}
 
 interface ProductImage {
 	id?: number;
@@ -54,11 +48,9 @@ export default function CreateProductPage() {
 		sku: "",
 		name: "",
 		description: "",
-		price: "",
-		weight: "",
+		markup: "",
 		type: "SINGLE",
 		childBundles: [],
-		preciousMetal: "",
 		categoryId: "",
 	});
 
@@ -72,10 +64,21 @@ export default function CreateProductPage() {
 	useEffect(() => {
 		setFormData((prev) => ({
 			...prev,
-			weight: bundleProducts?.totalBundleWeight || 0,
+			// weight: bundleProducts?.totalBundleWeight || 0,
 			childBundles: bundleProducts?.selectedProducts || [],
 		}));
 	}, [bundleProducts]);
+
+	useEffect(() => {
+		if (formData.type === ProductType.BUNDLE) {
+			setSizes([]);
+		} else {
+			setFormData((prev) => ({
+				...prev,
+				childBundles: [],
+			}));
+		}
+	}, [formData.type]);
 
 	useEffect(() => {
 		const fetchCategories = async () => {
@@ -121,7 +124,7 @@ export default function CreateProductPage() {
 	};
 
 	const addSize = () => {
-		setSizes((prev) => [...prev, { value: "", quantity: 0 }]);
+		setSizes((prev) => [...prev, { size: "", quantity: 0, weight: 0 }]);
 	};
 
 	const updateSize = (
@@ -145,21 +148,21 @@ export default function CreateProductPage() {
 		setIsSubmitting(true);
 
 		try {
+			console.log(formData, sizes);
+
 			const productResponse = await fetch("/api/admin/product", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					...formData,
-					price: parseFloat(formData.price),
-					weight: formData.weight
-						? parseFloat(formData.weight)
-						: null,
 					categoryId: Number.parseInt(formData.categoryId),
 					images: [], // Пока без изображений
-					sizes: sizes.map((size) => ({
-						value: size.value,
-						quantity: size.quantity,
-					})),
+					sizes: sizes,
+					// .map((size) => ({
+					// 	value: size.size,
+					// 	quantity: size.quantity,
+					// 	weight: size.weight,
+					// }))
 				}),
 			});
 
@@ -182,7 +185,7 @@ export default function CreateProductPage() {
 				body: JSON.stringify({ images: uploadedImages }),
 			});
 
-			router.replace("/admin/products");
+			// router.replace("/admin/products");
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
@@ -200,10 +203,9 @@ export default function CreateProductPage() {
 					<Link href="/admin/products">
 						<Button variant="ghost" size="sm">
 							<ArrowLeft className="h-4 w-4 mr-2" />
-							Back to Products
+							Вернуться к товарам
 						</Button>
 					</Link>
-					<h1 className="text-lg font-semibold">Create Product</h1>
 				</div>
 			</header>
 
@@ -215,22 +217,22 @@ export default function CreateProductPage() {
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-3xl font-bold tracking-tight">
-								Create New Product
+								Создайте новый товар
 							</h2>
 							<p className="text-muted-foreground">
-								Add a new product to your inventory
+								Добавить новый товар в ваш склад
 							</p>
 						</div>
 						<div className="flex space-x-2">
-							<Button type="button" variant="outline">
+							{/* <Button type="button" variant="outline">
 								<Eye className="mr-2 h-4 w-4" />
 								Preview
-							</Button>
+							</Button> */}
 							<Button type="submit" disabled={isSubmitting}>
 								<Save className="mr-2 h-4 w-4" />
 								{isSubmitting
-									? "Creating..."
-									: "Create Product"}
+									? "Создается..."
+									: "Создать товар"}
 							</Button>
 						</div>
 					</div>
@@ -250,9 +252,6 @@ export default function CreateProductPage() {
 
 					{formData.type === "BUNDLE" && (
 						<Card>
-							{/* <ProductBundle
-								setBundleProducts={setBundleProducts}
-							/> */}
 							<ProductBundleTable
 								setBundleProducts={setBundleProducts}
 							/>
@@ -267,25 +266,27 @@ export default function CreateProductPage() {
 					/>
 
 					{/* Product Sizes */}
-					<ProductSizes
-						sizes={sizes}
-						addSize={addSize}
-						updateSize={updateSize}
-						removeSize={removeSize}
-					/>
+					{formData.type === ProductType.SINGLE && (
+						<ProductSizes
+							sizes={sizes}
+							addSize={addSize}
+							updateSize={updateSize}
+							removeSize={removeSize}
+						/>
+					)}
 
 					{/* Form Actions */}
 					<div className="flex justify-end space-x-4 pt-6">
 						<Link href="/admin/products">
 							<Button type="button" variant="outline">
-								Cancel
+								Отмена
 							</Button>
 						</Link>
 						<Button type="submit" disabled={isSubmitting}>
 							<Save className="mr-2 h-4 w-4" />
 							{isSubmitting
-								? "Creating Product..."
-								: "Create Product"}
+								? "Товар создается..."
+								: "Создать товар"}
 						</Button>
 					</div>
 				</form>
@@ -306,9 +307,9 @@ function BasicInformation({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Basic Information</CardTitle>
+				<CardTitle>Базовая информация</CardTitle>
 				<CardDescription>
-					Essential product details and identification
+					Основная информация о продукте и его идентификация
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
@@ -325,11 +326,11 @@ function BasicInformation({
 							required
 						/>
 						<p className="text-xs text-muted-foreground">
-							Unique product identifier
+							Уникальныя единица складского учёта
 						</p>
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="name">Product Name *</Label>
+						<Label htmlFor="name">Название изделия *</Label>
 						<Input
 							id="name"
 							placeholder="Enter product name"
@@ -343,10 +344,10 @@ function BasicInformation({
 				</div>
 
 				<div className="space-y-2">
-					<Label htmlFor="description">Description</Label>
+					<Label htmlFor="description">Описание</Label>
 					<Textarea
 						id="description"
-						placeholder="Describe your product..."
+						placeholder="Опишите изделие"
 						value={formData.description}
 						onChange={(e) =>
 							handleInputChange("description", e.target.value)
@@ -357,26 +358,52 @@ function BasicInformation({
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 					<div className="space-y-2">
-						<Label htmlFor="price">Price *</Label>
+						<Label htmlFor="price">
+							Цена (высчитывается автоматически)
+						</Label>
 						<div className="relative">
-							<span className="absolute left-3 top-2.5 text-muted-foreground">
-								$
+							<span className="absolute left-3 top-1.5 text-muted-foreground">
+								сум
 							</span>
 							<Input
 								id="price"
 								type="number"
-								// step="0.01"
+								readOnly
+								value={0}
 								placeholder="0"
-								className="pl-8"
-								value={formData.price}
-								onChange={(e) =>
-									handleInputChange("price", e.target.value)
-								}
+								className="pl-12"
 								required
 							/>
 						</div>
 					</div>
-					<div className="space-y-2">
+					{formData.type === ProductType.SINGLE && (
+						<div className="space-y-2">
+							<Label htmlFor="markup">
+								Наценка (в процентах)
+							</Label>
+							<div className="relative">
+								<span className="absolute left-3 top-1.5 text-muted-foreground">
+									%
+								</span>
+								<Input
+									id="markup"
+									type="number"
+									value={formData.markup}
+									onChange={(e) =>
+										handleInputChange(
+											"markup",
+											e.target.value
+										)
+									}
+									placeholder="0"
+									className="pl-12"
+									required
+								/>
+							</div>
+						</div>
+					)}
+
+					{/* <div className="space-y-2">
 						<Label htmlFor="weight">Weight (grams)</Label>
 						<Input
 							id="weight"
@@ -388,9 +415,9 @@ function BasicInformation({
 								handleInputChange("weight", e.target.value)
 							}
 						/>
-					</div>
+					</div> */}
 					<div className="space-y-2">
-						<Label htmlFor="category">Category *</Label>
+						<Label htmlFor="category">Категория *</Label>
 						<Select
 							value={formData.categoryId}
 							onValueChange={(value) =>
@@ -398,7 +425,7 @@ function BasicInformation({
 							}
 						>
 							<SelectTrigger>
-								<SelectValue placeholder="Select category" />
+								<SelectValue placeholder="Выбрать категорию" />
 							</SelectTrigger>
 							<SelectContent>
 								{categories.map((category) => (
@@ -430,15 +457,17 @@ function ProductTypeSelector({
 		<Card className="flex flex-col sm:flex-row items-start justify-between">
 			<div className="w-full h-full">
 				<CardHeader className="mb-4">
-					<CardTitle>Product Classification</CardTitle>
+					<CardTitle>Классификация товара</CardTitle>
 					<CardDescription>
-						Product type and material specifications
+						Если вы создаёте комплект, то не сможете добавить
+						наценку или указать размеры вручную — они будут
+						автоматически взяты из товаров, входящих в комплект.
 					</CardDescription>
 				</CardHeader>
 			</div>
 			<CardContent className="space-y-4">
 				<div className="space-y-2">
-					<Label htmlFor="type">Product Type</Label>
+					<Label htmlFor="type">Тип товара</Label>
 					<Select
 						value={formData.type}
 						onValueChange={(value) =>
@@ -459,38 +488,6 @@ function ProductTypeSelector({
 						</SelectContent>
 					</Select>
 				</div>
-				{/* {isPreciousMetalCategory && ( */}
-				{/* <div className="space-y-2">
-										<Label htmlFor="preciousMetal">
-											Precious Metal
-										</Label>
-										<Select
-											value={formData.preciousMetal}
-											onValueChange={(value) =>
-												handleInputChange(
-													"preciousMetal",
-													value
-												)
-											}
-										>
-											<SelectTrigger>
-												<SelectValue placeholder="Select metal type" />
-											</SelectTrigger>
-											<SelectContent>
-												{Object.entries(MetalTypes).map(
-													([key, label]) => (
-														<SelectItem
-															key={key}
-															value={key}
-														>
-															{label}
-														</SelectItem>
-													)
-												)}
-											</SelectContent>
-										</Select>
-									</div> */}
-				{/* )} */}
 			</CardContent>
 		</Card>
 	);
@@ -508,9 +505,11 @@ function ProductImageUpload({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Product Images</CardTitle>
+				<CardTitle>Картинки товара</CardTitle>
 				<CardDescription>
-					Upload product photos (first image will be the main image)
+					Загрузите фотографии товара (первая будет использоваться как
+					основная). <br /> ⚠️ Загружайте изображения с небольшим
+					размером файла, чтобы улучшить скорость работы приложения.
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
@@ -576,7 +575,7 @@ function ProductSizes({
 		<Card>
 			<CardHeader>
 				<CardTitle className="flex items-center justify-between">
-					Product Sizes & Stock
+					Размеры, кол-во и вес
 					<Button
 						type="button"
 						variant="outline"
@@ -584,11 +583,13 @@ function ProductSizes({
 						onClick={addSize}
 					>
 						<Plus className="h-4 w-4 mr-2" />
-						Add Size
+						Добавить размер
 					</Button>
 				</CardTitle>
 				<CardDescription>
-					Manage different sizes and their stock levels
+					⚠️ Даже если изделие не является комплектом вы должны
+					обязательно создать хотябы один размер так как только здесь
+					можно задать вес изделия будь то серьги или что угодно! ⚠️
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">
@@ -596,7 +597,8 @@ function ProductSizes({
 					<div className="text-center py-8 text-muted-foreground">
 						<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
 						<p>
-							No sizes added yet. Click "Add Size" to get started.
+							Пока не добавлено ни одного размера. Нажмите
+							«Добавить размер», чтобы начать.
 						</p>
 					</div>
 				) : (
@@ -608,16 +610,16 @@ function ProductSizes({
 							>
 								<div className="flex-1">
 									<Label htmlFor={`size-${index}`}>
-										Size
+										Размер
 									</Label>
 									<Input
 										id={`size-${index}`}
 										placeholder="e.g., S, M, L, XL"
-										value={size.value}
+										value={size.size}
 										onChange={(e) =>
 											updateSize(
 												index,
-												"value",
+												"size",
 												e.target.value
 											)
 										}
@@ -625,7 +627,7 @@ function ProductSizes({
 								</div>
 								<div className="flex-1">
 									<Label htmlFor={`stock-${index}`}>
-										Stock
+										Кол-во
 									</Label>
 									<Input
 										id={`stock-${index}`}
@@ -637,6 +639,25 @@ function ProductSizes({
 											updateSize(
 												index,
 												"quantity",
+												Number.parseInt(
+													e.target.value
+												) || 0
+											)
+										}
+									/>
+								</div>
+								<div className="flex-1">
+									<Label htmlFor={`weight-${index}`}>
+										Вес в граммах
+									</Label>
+									<Input
+										id={`weight-${index}`}
+										placeholder="e.g., 2, 3, 4"
+										value={size.weight}
+										onChange={(e) =>
+											updateSize(
+												index,
+												"weight",
 												Number.parseInt(
 													e.target.value
 												) || 0
