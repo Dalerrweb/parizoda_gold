@@ -21,3 +21,11 @@ export function formatPrice(price: number | bigint): string {
 	const str = price.toString();
 	return str.replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " сум";
 }
+
+export function formatDate(date: Date) {
+	return new Intl.DateTimeFormat("en-US", {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	}).format(date);
+}
