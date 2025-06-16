@@ -12,24 +12,24 @@ export type Category = {
 	createdAt: Date;
 };
 
-type Product = {
-	id: number;
+export type Product = {
+	id?: number;
 	sku: string;
 	name: string;
 	description?: string;
 	markup: number;
 	type: ProductType; // enum: SINGLE | BUNDLE и т.п.
 	categoryId: number;
-	category: Category;
-	images: string[];
-	orders: Order[];
-	sizes: ProductSize[];
+	category?: Category;
+	images?: any[];
+	orders?: Order[];
+	sizes?: ProductSize[];
 
-	parentBundle: any[]; // продукты, в которые этот входит
-	childBundles: any[]; // продукты, из которых этот состоит
+	parentBundle?: any[]; // продукты, в которые этот входит
+	childBundles?: any[]; // продукты, из которых этот состоит
 
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt?: Date;
+	updatedAt?: Date;
 };
 
 export type User = {

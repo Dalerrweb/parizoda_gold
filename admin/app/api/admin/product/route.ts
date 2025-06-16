@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { ProductType } from "@/app/types";
 
 // GET - Fetch all products
 export async function GET(req: NextRequest) {
@@ -78,9 +79,10 @@ export async function POST(req: NextRequest) {
 	try {
 		const data = await req.json();
 
+		// Проверка обязательных полей (БЕЗ price)
 		if (!data.name || !data.sku || !data.categoryId) {
 			return NextResponse.json(
-				{ error: "Обязательные поля: name, sku, price, categoryId" },
+				{ error: "Обязательные поля: name, sku, categoryId" },
 				{ status: 400 }
 			);
 		}
@@ -105,10 +107,10 @@ export async function POST(req: NextRequest) {
 					sku: data.sku,
 					name: data.name,
 					description: data.description || null,
-					type: data.type || "SINGLE",
+					type: data.type || ProductType.SINGLE,
+					markup: data.markup,
 					categoryId: data.categoryId,
 
-					// 2. Добавляем изображения
 					images: data.images?.length
 						? {
 								createMany: {
@@ -117,7 +119,6 @@ export async function POST(req: NextRequest) {
 						  }
 						: undefined,
 
-					// 3. Добавляем размеры
 					sizes: data.sizes?.length
 						? {
 								createMany: {
@@ -128,19 +129,20 @@ export async function POST(req: NextRequest) {
 				},
 			});
 
-			// 4. Обработка комплектов (только для BUNDLE)
-			if (data.type === "BUNDLE" && data.childBundles?.length) {
-				// Проверка существования дочерних товаров
+			// 2. Обработка комплектов (BUNDLE) - ФИКС ПРОБЛЕМЫ
+			if (data.type === ProductType.BUNDLE && data.childBundles?.length) {
 				const childIds = data.childBundles.map((b: any) => b.childId);
+				const uniqueChildIds = [...new Set(childIds)]; // Уникальные ID
+
 				const existingChildren = await tx.product.count({
-					where: { id: { in: childIds } },
+					where: { id: { in: uniqueChildIds as number[] } },
 				});
 
-				if (existingChildren !== childIds.length) {
+				if (existingChildren !== uniqueChildIds.length) {
 					throw new Error("Некоторые дочерние товары не найдены");
 				}
 
-				// Создаем связи для комплекта
+				// ФИКС: Создаем связи для комплекта
 				await tx.productBundle.createMany({
 					data: data.childBundles.map((bundle: any) => ({
 						parentId: product.id,
@@ -150,7 +152,26 @@ export async function POST(req: NextRequest) {
 				});
 			}
 
-			return product;
+			// 3. ВОЗВРАЩАЕМ ПОЛНЫЙ ОБЪЕКТ С КОМПЛЕКТАМИ - ГЛАВНЫЙ ФИКС
+			return await tx.product.findUnique({
+				where: { id: product.id },
+				include: {
+					images: true,
+					sizes: true,
+					childBundles: {
+						// Включаем связи комплектов
+						include: {
+							child: true, // Включаем информацию о дочернем продукте
+						},
+					},
+					parentBundle: {
+						// Включаем связи комплектов
+						include: {
+							child: true, // Включаем информацию о дочернем продукте
+						},
+					},
+				},
+			});
 		});
 
 		return NextResponse.json(newProduct, { status: 201 });

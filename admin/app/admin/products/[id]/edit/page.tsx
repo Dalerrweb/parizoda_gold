@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -35,43 +35,19 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import type { Category } from "@/app/types";
+import { Category, Product, ProductSize, ProductType } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "../../create/product-bundle-table";
 
-// Enums based on your Prisma schema
 const ProductTypes = {
-	SINGLE: "Single Product",
-	BUNDLE: "Product Bundle",
+	SINGLE: "Изделие",
+	BUNDLE: "Комплект",
 };
-
-interface ProductSize {
-	id?: number;
-	value: string;
-	quantity: number;
-}
 
 interface ProductImage {
 	id?: number;
 	url: string;
 	file?: File;
-}
-
-interface Product {
-	id: number;
-	sku: string;
-	name: string;
-	description?: string;
-	price: number;
-	weight?: number;
-	type: string;
-	categoryId: number;
-	preciousMetal?: string;
-	images: ProductImage[];
-	sizes: ProductSize[];
-	childBundles: any[];
-	parentBundle: any[];
-	category: Category;
 }
 
 export default function EditProductPage() {
@@ -80,127 +56,78 @@ export default function EditProductPage() {
 	const productId = params.id as string;
 
 	const [loading, setLoading] = useState(true);
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<Product>({
 		sku: "",
 		name: "",
 		description: "",
-		price: "",
-		weight: "",
-		type: "SINGLE",
+		markup: 0,
+		type: ProductType.SINGLE,
 		childBundles: [],
-		preciousMetal: "",
-		categoryId: "",
+		categoryId: 0,
 	});
 
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [bundleProducts, setBundleProducts] = useState<any>(null);
+	// const [bundleProducts, setBundleProducts] = useState<any>(null);
 	const [originalProduct, setOriginalProduct] = useState<Product | null>(
 		null
 	);
 
-	// Load product data
+	// Загрузка данных товара
 	useEffect(() => {
-		const fetchProduct = async () => {
+		const fetchData = async () => {
 			if (!productId) return;
 
 			try {
 				setLoading(true);
-				const response = await fetch(`/api/admin/product/${productId}`);
 
-				if (!response.ok) {
-					throw new Error("Failed to fetch product");
-				}
-
-				const product: Product = await response.json();
-				console.log({ product });
+				// Загрузка товара
+				const productRes = await fetch(
+					`/api/admin/product/${productId}`
+				);
+				if (!productRes.ok) throw new Error("Ошибка загрузки товара");
+				const product: Product = await productRes.json();
 
 				setOriginalProduct(product);
 
-				// Populate form data
+				// Загрузка категорий
+				const categoriesRes = await fetch("/api/admin/category");
+				if (!categoriesRes.ok)
+					throw new Error("Ошибка загрузки категорий");
+				const categoriesData = await categoriesRes.json();
+				setCategories(categoriesData);
+
+				// Обновление состояния формы
 				setFormData({
 					sku: product.sku,
 					name: product.name,
 					description: product.description || "",
-					price: product.price.toString(),
-					weight: product.weight?.toString() || "",
+					markup: product.markup,
 					type: product.type,
-					childBundles: (product?.parentBundle as any) || [],
-					preciousMetal: product.preciousMetal || "",
-					categoryId: product.categoryId.toString(),
+					childBundles: (product.parentBundle as any) || [],
+					categoryId: product.categoryId,
 				});
 
-				// Set images
+				// Изображения
 				setImages(product.images || []);
 
-				// Set sizes
+				// Размеры
 				setSizes(product.sizes || []);
-
-				// Set bundle products if it's a bundle
-				if (
-					product.type === "BUNDLE" &&
-					product.childBundles?.length > 0
-				) {
-					setBundleProducts({
-						selectedProducts: product.childBundles,
-						totalBundlePrice: product.childBundles.reduce(
-							(total: number, bundle: any) => {
-								return total + (bundle.product?.price || 0);
-							},
-							0
-						),
-						totalBundleWeight: product.childBundles.reduce(
-							(total: number, bundle: any) => {
-								return total + (bundle.product?.weight || 0);
-							},
-							0
-						),
-					});
-				}
 			} catch (error) {
-				console.error("Error fetching product:", error);
-				toast.error("Failed to load product. Please try again.");
+				console.error("Ошибка загрузки данных:", error);
+				toast.error(
+					"Не удалось загрузить данные. Пожалуйста, попробуйте снова."
+				);
 				router.push("/admin/products");
 			} finally {
 				setLoading(false);
 			}
 		};
 
-		fetchProduct();
+		fetchData();
 	}, [productId, router]);
-
-	// Load categories
-	useEffect(() => {
-		const fetchCategories = async () => {
-			try {
-				const response = await fetch("/api/admin/category");
-				if (!response.ok) {
-					throw new Error("Failed to fetch categories");
-				}
-				const data = await response.json();
-				setCategories(data);
-			} catch (error) {
-				console.error("Error fetching categories:", error);
-				toast.error("Failed to load categories. Please try again.");
-			}
-		};
-		fetchCategories();
-	}, []);
-
-	// Update form data when bundle products change
-	useEffect(() => {
-		if (bundleProducts) {
-			setFormData((prev) => ({
-				...prev,
-				weight:
-					bundleProducts?.totalBundleWeight?.toString() ||
-					prev.weight,
-				childBundles: bundleProducts?.selectedProducts || [],
-			}));
-		}
-	}, [bundleProducts]);
 
 	const handleInputChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
@@ -208,43 +135,28 @@ export default function EditProductPage() {
 
 	const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const files = event.target.files;
-		if (files) {
-			Array.from(files).forEach((file) => {
-				const reader = new FileReader();
-				reader.onload = (e) => {
-					const newImage: ProductImage = {
-						url: e.target?.result as string,
-						file: file,
-					};
-					setImages((prev) => [...prev, newImage]);
-				};
-				reader.readAsDataURL(file);
-			});
-		}
+		if (!files) return;
+
+		const newImages: ProductImage[] = [];
+
+		Array.from(files).forEach((file) => {
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				newImages.push({
+					url: e.target?.result as string,
+					file,
+				});
+
+				if (newImages.length === files.length) {
+					setImages((prev) => [...prev, ...newImages]);
+				}
+			};
+			reader.readAsDataURL(file);
+		});
 	};
 
 	const removeImage = (index: number) => {
 		setImages((prev) => prev.filter((_, i) => i !== index));
-	};
-
-	const addSize = () => {
-		setSizes((prev) => [...prev, { value: "", quantity: 0 }]);
-	};
-
-	const updateSize = (
-		index: number,
-		field: keyof ProductSize,
-		value: string | number
-	) => {
-		setSizes((prev) =>
-			prev.map((size, i) =>
-				i === index ? { ...size, [field]: value } : size
-			)
-		);
-	};
-
-	const removeSize = (index: number) => {
-		setSizes((prev) => prev.filter((_, i) => i !== index));
 	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -252,51 +164,45 @@ export default function EditProductPage() {
 		setIsSubmitting(true);
 
 		try {
-			// Prepare images for upload
+			// Подготовка изображений
 			const newImages = images.filter((img) => img.file);
 			const existingImages = images.filter((img) => !img.file);
-
-			// Upload new images
 			const uploadedImages =
 				newImages.length > 0 ? await uploadFiles(newImages) : [];
 
-			// Combine existing and new images
 			const allImages = [
 				...existingImages.map((img) => ({ url: img.url, id: img.id })),
 				...uploadedImages,
 			];
 
-			// Update product
+			// Подготовка данных
+			const payload = {
+				...formData,
+				categoryId: Number(formData.categoryId),
+				markup: Number(formData.markup),
+				images: allImages,
+				sizes: sizes,
+			};
+
+			// Отправка запроса
 			const response = await fetch(`/api/admin/product/${productId}`, {
 				method: "PATCH",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					...formData,
-					price: Number.parseFloat(formData.price),
-					weight: formData.weight
-						? Number.parseFloat(formData.weight)
-						: null,
-					categoryId: Number.parseInt(formData.categoryId),
-					images: allImages,
-					sizes: sizes.map((size) => ({
-						value: size.value,
-						quantity: size.quantity,
-					})),
-				}),
+				body: JSON.stringify(payload),
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(
-					errorData.message || "Failed to update product"
-				);
+				const error = await response.json();
+				throw new Error(error.message || "Ошибка обновления товара");
 			}
 
-			toast.success("Product updated successfully!");
-			router.replace("/admin/products");
+			toast.success("Товар успешно обновлен!");
+			router.push("/admin/products");
 		} catch (error) {
-			console.error("Error updating product:", error);
-			toast.error("Failed to update product. Please try again.");
+			console.error("Ошибка обновления товара:", error);
+			toast.error(
+				"Не удалось обновить товар. Пожалуйста, попробуйте снова."
+			);
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -305,7 +211,7 @@ export default function EditProductPage() {
 	const handleDelete = async () => {
 		if (
 			!confirm(
-				"Are you sure you want to delete this product? This action cannot be undone."
+				"Вы уверены, что хотите удалить этот товар? Это действие нельзя отменить."
 			)
 		) {
 			return;
@@ -316,15 +222,15 @@ export default function EditProductPage() {
 				method: "DELETE",
 			});
 
-			if (!response.ok) {
-				throw new Error("Failed to delete product");
-			}
+			if (!response.ok) throw new Error("Ошибка удаления товара");
 
-			toast.success("Product deleted successfully!");
-			router.replace("/admin/products");
+			toast.success("Товар успешно удален!");
+			router.push("/admin/products");
 		} catch (error) {
-			console.error("Error deleting product:", error);
-			toast.error("Failed to delete product. Please try again.");
+			console.error("Ошибка удаления товара:", error);
+			toast.error(
+				"Не удалось удалить товар. Пожалуйста, попробуйте снова."
+			);
 		}
 	};
 
@@ -337,16 +243,18 @@ export default function EditProductPage() {
 						<Link href="/admin/products">
 							<Button variant="ghost" size="sm">
 								<ArrowLeft className="h-4 w-4 mr-2" />
-								Back to Products
+								Вернуться к товарам
 							</Button>
 						</Link>
-						<h1 className="text-lg font-semibold">Edit Product</h1>
+						<h1 className="text-lg font-semibold">
+							Редактирование товара
+						</h1>
 					</div>
 				</header>
 				<div className="flex-1 flex items-center justify-center">
 					<div className="flex items-center gap-2">
 						<Loader2 className="h-6 w-6 animate-spin" />
-						<span>Loading product...</span>
+						<span>Загрузка товара...</span>
 					</div>
 				</div>
 			</div>
@@ -361,10 +269,12 @@ export default function EditProductPage() {
 					<Link href="/admin/products">
 						<Button variant="ghost" size="sm">
 							<ArrowLeft className="h-4 w-4 mr-2" />
-							Back to Products
+							Вернуться к товарам
 						</Button>
 					</Link>
-					<h1 className="text-lg font-semibold">Edit Product</h1>
+					<h1 className="text-lg font-semibold">
+						Редактирование товара
+					</h1>
 				</div>
 			</header>
 
@@ -376,10 +286,10 @@ export default function EditProductPage() {
 					<div className="flex items-center justify-between">
 						<div>
 							<h2 className="text-3xl font-bold tracking-tight">
-								Edit Product
+								Редактировать товар
 							</h2>
 							<p className="text-muted-foreground">
-								Update product information and settings
+								Обновите информацию о товаре
 							</p>
 							{originalProduct && (
 								<Badge variant="outline" className="mt-2">
@@ -389,85 +299,81 @@ export default function EditProductPage() {
 							)}
 						</div>
 						<div className="flex space-x-2">
-							<Button type="button" variant="outline">
-								<Eye className="mr-2 h-4 w-4" />
-								Preview
-							</Button>
 							<Button
 								type="button"
 								variant="destructive"
 								onClick={handleDelete}
 							>
-								Delete
+								Удалить
 							</Button>
 							<Button type="submit" disabled={isSubmitting}>
 								<Save className="mr-2 h-4 w-4" />
 								{isSubmitting
-									? "Updating..."
-									: "Update Product"}
+									? "Сохранение..."
+									: "Сохранить изменения"}
 							</Button>
 						</div>
 					</div>
 
-					{/* Basic Information */}
+					{/* Основная информация */}
 					<BasicInformation
 						formData={formData}
 						handleInputChange={handleInputChange}
 						categories={categories}
+						isBundle={formData.type === ProductType.BUNDLE}
 					/>
 
-					{/* Product Type & Metal */}
+					{/* Тип товара */}
 					<ProductTypeSelector
 						formData={formData}
 						handleInputChange={handleInputChange}
 					/>
 
-					{formData.type === "BUNDLE" && (
+					{/* Комплект товаров */}
+					{formData.type === ProductType.BUNDLE && (
 						<Card>
 							<ProductBundleTable
-								setBundleProducts={setBundleProducts}
-								initialSelectedProducts={
-									originalProduct?.parentBundle || []
-								}
+								useFormData={[
+									formData.childBundles as any[],
+									setFormData,
+								]}
+								editingElemntId={productId}
 							/>
 						</Card>
 					)}
 
-					{/* Product Images */}
+					{/* Изображения */}
 					<ProductImageUpload
 						images={images}
 						handleImageUpload={handleImageUpload}
 						removeImage={removeImage}
 					/>
 
-					{/* Product Sizes */}
-					<ProductSizes
-						sizes={sizes}
-						addSize={addSize}
-						updateSize={updateSize}
-						removeSize={removeSize}
-					/>
+					{/* Размеры */}
+					{formData.type === ProductType.SINGLE && (
+						<ProductSizes sizes={sizes} setSizes={setSizes} />
+					)}
 
-					{/* Form Actions */}
+					{/* Действия */}
 					<div className="flex justify-between pt-6">
-						<Button
+						{/* <Button
 							type="button"
 							variant="destructive"
 							onClick={handleDelete}
 						>
-							Delete Product
-						</Button>
+							Удалить товар
+						</Button> */}
 						<div className="flex space-x-4">
 							<Link href="/admin/products">
 								<Button type="button" variant="outline">
-									Cancel
+									Отмена
 								</Button>
 							</Link>
 							<Button type="submit" disabled={isSubmitting}>
 								<Save className="mr-2 h-4 w-4" />
 								{isSubmitting
-									? "Updating Product..."
-									: "Update Product"}
+									? "Сохранение..."
+									: "Сохранить изменения"}
 							</Button>
 						</div>
 					</div>
@@ -477,14 +383,19 @@ export default function EditProductPage() {
 	);
 }
 
+// Остальные компоненты (BasicInformation, ProductTypeSelector и т.д.)
+// остаются аналогичными созданию товара, но с учетом особенностей редактирования
+
 function BasicInformation({
 	formData,
 	handleInputChange,
 	categories = [],
+	isBundle,
 }: {
 	formData: any;
 	handleInputChange: (field: string, value: string) => void;
 	categories?: Category[];
+	isBundle: boolean;
 }) {
 	return (
 		<Card>
@@ -543,7 +454,7 @@ function BasicInformation({
 						<Label htmlFor="price">Price *</Label>
 						<div className="relative">
 							<span className="absolute left-3 top-2.5 text-muted-foreground">
-								$
+								сум
 							</span>
 							<Input
 								id="price"
@@ -551,27 +462,32 @@ function BasicInformation({
 								step="0.01"
 								placeholder="0"
 								className="pl-8"
-								value={formData.price}
-								onChange={(e) =>
-									handleInputChange("price", e.target.value)
-								}
+								value={0}
+								readOnly
+								// onChange={(e) =>
+								// 	handleInputChange("price", e.target.value)
+								// }
 								required
 							/>
 						</div>
 					</div>
-					<div className="space-y-2">
-						<Label htmlFor="weight">Weight (grams)</Label>
-						<Input
-							id="weight"
-							type="number"
-							step="0.1"
-							placeholder="0.0"
-							value={formData.weight}
-							onChange={(e) =>
-								handleInputChange("weight", e.target.value)
-							}
-						/>
-					</div>
+					{!isBundle && (
+						<div className="space-y-2">
+							<Label htmlFor="markup">
+								Наценка (в процентах)
+							</Label>
+							<Input
+								id="markup"
+								type="number"
+								// step="0.1"
+								placeholder="0.0"
+								value={formData.markup}
+								onChange={(e) =>
+									handleInputChange("markup", e.target.value)
+								}
+							/>
+						</div>
+					)}
 					<div className="space-y-2">
 						<Label htmlFor="category">Category *</Label>
 						<Select
@@ -717,19 +633,31 @@ function ProductImageUpload({
 
 function ProductSizes({
 	sizes,
-	addSize,
-	updateSize,
-	removeSize,
+	setSizes,
 }: {
 	sizes: ProductSize[];
-	addSize: () => void;
-	updateSize: (
+	setSizes: Dispatch<SetStateAction<ProductSize[]>>;
+}) {
+	const updateSize = (
 		index: number,
 		field: keyof ProductSize,
 		value: string | number
-	) => void;
-	removeSize: (index: number) => void;
-}) {
+	) => {
+		setSizes((prev: ProductSize[]) =>
+			prev.map((size, i) =>
+				i === index ? { ...size, [field]: value } : size
+			)
+		);
+	};
+
+	const removeSize = (index: number) => {
+		setSizes((prev) => prev.filter((_, i) => i !== index));
+	};
+
+	const addSize = () => {
+		setSizes((prev) => [...prev, { size: "", quantity: 0, weight: 0 }]);
+	};
+
 	return (
 		<Card>
 			<CardHeader>
@@ -771,11 +699,11 @@ function ProductSizes({
 									<Input
 										id={`size-${index}`}
 										placeholder="e.g., S, M, L, XL"
-										value={size.value}
+										value={size.size}
 										onChange={(e) =>
 											updateSize(
 												index,
-												"value",
+												"size",
 												e.target.value
 											)
 										}
@@ -795,6 +723,27 @@ function ProductSizes({
 											updateSize(
 												index,
 												"quantity",
+												Number.parseInt(
+													e.target.value
+												) || 0
+											)
+										}
+									/>
+								</div>
+								<div className="flex-1">
+									<Label htmlFor={`weight-${index}`}>
+										Weight
+									</Label>
+									<Input
+										id={`weight-${index}`}
+										type="number"
+										min="0"
+										placeholder="0"
+										value={size.weight}
+										onChange={(e) =>
+											updateSize(
+												index,
+												"weight",
 												Number.parseInt(
 													e.target.value
 												) || 0

@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Upload, X, Plus, Package, Save, Eye } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Category, ProductSize, ProductType } from "@/app/types";
+import { Category, Product, ProductSize, ProductType } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "./product-bundle-table";
 import { useRouter } from "next/navigation";
@@ -44,30 +44,21 @@ interface ProductImage {
 }
 
 export default function CreateProductPage() {
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<Product>({
 		sku: "",
 		name: "",
 		description: "",
-		markup: "",
-		type: "SINGLE",
+		markup: 0,
+		type: ProductType.SINGLE,
 		childBundles: [],
-		categoryId: "",
+		categoryId: 0,
 	});
 
 	const [categories, setCategories] = useState<Category[]>([]);
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [bundleProducts, setBundleProducts] = useState<any>(null);
 	const router = useRouter();
-
-	useEffect(() => {
-		setFormData((prev) => ({
-			...prev,
-			// weight: bundleProducts?.totalBundleWeight || 0,
-			childBundles: bundleProducts?.selectedProducts || [],
-		}));
-	}, [bundleProducts]);
 
 	useEffect(() => {
 		if (formData.type === ProductType.BUNDLE) {
@@ -98,7 +89,7 @@ export default function CreateProductPage() {
 		fetchCategories();
 	}, []);
 
-	const handleInputChange = (field: string, value: string) => {
+	const handleInputChange = (field: string, value: string | number) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
 
@@ -148,21 +139,14 @@ export default function CreateProductPage() {
 		setIsSubmitting(true);
 
 		try {
-			console.log(formData, sizes);
-
 			const productResponse = await fetch("/api/admin/product", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
 					...formData,
-					categoryId: Number.parseInt(formData.categoryId),
-					images: [], // Пока без изображений
+					categoryId: formData.categoryId,
+					images: [],
 					sizes: sizes,
-					// .map((size) => ({
-					// 	value: size.size,
-					// 	quantity: size.quantity,
-					// 	weight: size.weight,
-					// }))
 				}),
 			});
 
@@ -185,7 +169,7 @@ export default function CreateProductPage() {
 				body: JSON.stringify({ images: uploadedImages }),
 			});
 
-			// router.replace("/admin/products");
+			// // router.replace("/admin/products");
 			toast("Product created successfully!");
 		} catch (e) {
 			console.error("Error creating product:", e);
@@ -253,7 +237,10 @@ export default function CreateProductPage() {
 					{formData.type === "BUNDLE" && (
 						<Card>
 							<ProductBundleTable
-								setBundleProducts={setBundleProducts}
+								useFormData={[
+									formData.childBundles as any[],
+									setFormData,
+								]}
 							/>
 						</Card>
 					)}
@@ -301,7 +288,7 @@ function BasicInformation({
 	categories = [],
 }: {
 	formData: any;
-	handleInputChange: (field: string, value: string) => void;
+	handleInputChange: (field: string, value: string | number) => void;
 	categories?: Category[];
 }) {
 	return (
@@ -392,7 +379,7 @@ function BasicInformation({
 									onChange={(e) =>
 										handleInputChange(
 											"markup",
-											e.target.value
+											+e.target.value
 										)
 									}
 									placeholder="0"
@@ -421,7 +408,7 @@ function BasicInformation({
 						<Select
 							value={formData.categoryId}
 							onValueChange={(value) =>
-								handleInputChange("categoryId", value)
+								handleInputChange("categoryId", +value)
 							}
 						>
 							<SelectTrigger>
@@ -431,7 +418,7 @@ function BasicInformation({
 								{categories.map((category) => (
 									<SelectItem
 										key={category.id}
-										value={category.id.toString()}
+										value={category.id}
 									>
 										{category.name}
 									</SelectItem>

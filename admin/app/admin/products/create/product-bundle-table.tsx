@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import {
+	useState,
+	useEffect,
+	useCallback,
+	Dispatch,
+	SetStateAction,
+} from "react";
 import {
 	Search,
 	X,
@@ -25,39 +31,10 @@ import {
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { log } from "console";
+import { Product as MainProductType, ProductType } from "@/app/types";
+import { useParams } from "next/navigation";
 
-interface ProductImage {
-	id: number;
-	url: string;
-	alt?: string;
-}
-
-interface ProductCategory {
-	id: number;
-	name: string;
-}
-
-interface ProductSize {
-	id: number;
-	name: string;
-	price: number;
-}
-
-interface Product {
-	id: number;
-	sku: string;
-	name: string;
-	description?: string;
-	price: number;
-	categoryId: number;
-	type: string;
-	weight: number;
-	category: ProductCategory;
-	images: ProductImage[];
-	sizes: ProductSize[];
-	createdAt: string;
-}
+type Product = Required<MainProductType>;
 
 interface ProductBundle {
 	parentId: number;
@@ -75,21 +52,22 @@ interface ApiResponse {
 	};
 }
 
+interface ProductBundleTableProps {
+	useFormData: [any[], Dispatch<SetStateAction<MainProductType>>];
+	editingElemntId?: string;
+}
+
 const ITEMS_PER_PAGE = 10;
 const PARENT_ID = 1;
 
 export default function ProductBundle({
-	setBundleProducts,
-	initialSelectedProducts = [],
-}: {
-	setBundleProducts: (arr: any) => void;
-	initialSelectedProducts?: ProductBundle[];
-}) {
+	useFormData: [childBundles, setFormData],
+	editingElemntId,
+}: ProductBundleTableProps) {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [selectedProducts, setSelectedProducts] = useState<ProductBundle[]>(
-		initialSelectedProducts
-	);
+	const [selectedProducts, setSelectedProducts] =
+		useState<ProductBundle[]>(childBundles);
 
 	const [products, setProducts] = useState<Product[]>([]);
 	const [pagination, setPagination] = useState({
@@ -113,6 +91,7 @@ export default function ProductBundle({
 			const params = new URLSearchParams({
 				page: page.toString(),
 				limit: ITEMS_PER_PAGE.toString(),
+				type: ProductType.SINGLE,
 			});
 
 			if (search.trim()) {
@@ -155,10 +134,10 @@ export default function ProductBundle({
 	// Load initial products data
 	useEffect(() => {
 		const loadInitialProducts = async () => {
-			if (initialSelectedProducts.length > 0) {
+			if (childBundles.length > 0) {
 				try {
 					// Загружаем данные о продуктах из начального списка
-					const productIds = initialSelectedProducts.map(
+					const productIds = childBundles.map(
 						(bundle) => bundle.childId
 					);
 					const promises = productIds.map((id) =>
@@ -179,7 +158,7 @@ export default function ProductBundle({
 					});
 
 					// Устанавливаем выбранные продукты
-					setSelectedProducts(initialSelectedProducts);
+					setSelectedProducts(childBundles);
 				} catch (error) {
 					console.error("Error loading initial products:", error);
 				}
@@ -187,7 +166,7 @@ export default function ProductBundle({
 		};
 
 		loadInitialProducts();
-	}, [initialSelectedProducts]);
+	}, [childBundles]);
 
 	// Handle search with debounce
 	const handleSearchChange = (value: string) => {
@@ -260,24 +239,6 @@ export default function ProductBundle({
 		return "/placeholder.svg?height=60&width=60";
 	};
 
-	const formatPrice = (price: number) => {
-		return new Intl.NumberFormat("en-US", {
-			style: "currency",
-			currency: "USD",
-		}).format(price);
-	};
-
-	const totalBundlePrice = selectedProducts.reduce((total, bundle) => {
-		const product = getProductById(bundle.childId);
-		return total + (product?.price || 0);
-	}, 0);
-
-	const totalBundleWeight = selectedProducts.reduce((total, bundle) => {
-		const product = getProductById(bundle.childId);
-		return total + (product?.weight || 0);
-	}, 0);
-
-	// Select all visible products
 	const selectAllVisible = () => {
 		const visibleProductIds = products.map((p) => p.id);
 		const newSelections = visibleProductIds
@@ -291,7 +252,6 @@ export default function ProductBundle({
 		setSelectedProducts((prev) => [...prev, ...newSelections]);
 	};
 
-	// Deselect all visible products
 	const deselectAllVisible = () => {
 		const visibleProductIds = products.map((p) => p.id);
 		setSelectedProducts((prev) =>
@@ -300,35 +260,16 @@ export default function ProductBundle({
 	};
 
 	// Update parent component when selectedProducts change
-	useEffect(() => {
-		if (selectedProducts.length > 0) {
-			const totalBundlePrice = selectedProducts.reduce(
-				(total, bundle) => {
-					const product = getProductById(bundle.childId);
-					return total + (product?.price || 0);
-				},
-				0
-			);
-
-			const totalBundleWeight = selectedProducts.reduce(
-				(total, bundle) => {
-					const product = getProductById(bundle.childId);
-					return total + (product?.weight || 0);
-				},
-				0
-			);
-
-			setBundleProducts({
-				selectedProducts,
-				totalBundlePrice,
-				totalBundleWeight,
-			});
-		}
-	}, [selectedProducts, productsCache, setBundleProducts, getProductById]);
+	// useEffect(() => {
+	// 	if (selectedProducts.length > 0) {
+	// 		setBundleProducts({
+	// 			selectedProducts,
+	// 		});
+	// 	}
+	// }, [selectedProducts, productsCache, setBundleProducts, getProductById]);
 
 	const allVisibleSelected =
 		products.length > 0 && products.every((p) => isProductSelected(p.id));
-	const someVisibleSelected = products.some((p) => isProductSelected(p.id));
 
 	return (
 		<div className="p-6 w-full space-y-6">
@@ -354,11 +295,10 @@ export default function ProductBundle({
 					<Button
 						type="button"
 						onClick={() =>
-							setBundleProducts({
-								selectedProducts,
-								totalBundlePrice,
-								totalBundleWeight,
-							})
+							setFormData((prev) => ({
+								...prev,
+								childBundles: selectedProducts,
+							}))
 						}
 						className="flex items-center gap-2"
 						disabled={selectedProducts.length === 0}
@@ -501,69 +441,77 @@ export default function ProductBundle({
 								</TableCell>
 							</TableRow>
 						) : (
-							products.map((product) => (
-								<TableRow
-									key={product.id}
-									className={`cursor-pointer hover:bg-muted/50 ${
-										isProductSelected(product.id)
-											? "bg-muted/30"
-											: ""
-									}`}
-									onClick={() => toggleProduct(product.id)}
-								>
-									<TableCell
-										onClick={(e) => e.stopPropagation()}
+							products.map((product) => {
+								if (editingElemntId) {
+									if (product.id == +editingElemntId)
+										return null;
+								}
+								return (
+									<TableRow
+										key={product.id}
+										className={`cursor-pointer hover:bg-muted/50 ${
+											isProductSelected(product.id)
+												? "bg-muted/30"
+												: ""
+										}`}
+										onClick={() =>
+											toggleProduct(product.id)
+										}
 									>
-										<Checkbox
-											checked={isProductSelected(
-												product.id
-											)}
-											onCheckedChange={() =>
-												toggleProduct(product.id)
-											}
-										/>
-									</TableCell>
-									<TableCell>
-										<div className="h-12 w-12 rounded-md overflow-hidden">
-											<img
-												src={
-													getProductImage(product) ||
-													"/placeholder.svg"
+										<TableCell
+											onClick={(e) => e.stopPropagation()}
+										>
+											<Checkbox
+												checked={isProductSelected(
+													product.id
+												)}
+												onCheckedChange={() =>
+													toggleProduct(product.id)
 												}
-												alt={product.name}
-												className="h-full w-full object-cover"
 											/>
-										</div>
-									</TableCell>
-									<TableCell>
-										<div>
-											<div className="font-medium">
-												{product.name}
+										</TableCell>
+										<TableCell>
+											<div className="h-12 w-12 rounded-md overflow-hidden">
+												<img
+													src={
+														getProductImage(
+															product
+														) || "/placeholder.svg"
+													}
+													alt={product.name}
+													className="h-full w-full object-cover"
+												/>
 											</div>
-											{product.description && (
-												<div className="text-sm text-muted-foreground truncate max-w-[300px]">
-													{product.description}
+										</TableCell>
+										<TableCell>
+											<div>
+												<div className="font-medium">
+													{product.name}
 												</div>
-											)}
-										</div>
-									</TableCell>
-									<TableCell>
-										<Badge
-											variant="outline"
-											className="text-xs"
-										>
-											{product.category.name}
-										</Badge>
-									</TableCell>
-									<TableCell>
-										<Badge
-											variant="secondary"
-											className="text-xs"
-										>
-											{product.sku}
-										</Badge>
-									</TableCell>
-									{/* <TableCell className="text-sm">
+												{product.description && (
+													<div className="text-sm text-muted-foreground truncate max-w-[300px]">
+														{product.description}
+													</div>
+												)}
+											</div>
+										</TableCell>
+										<TableCell>
+											<Badge
+												variant="outline"
+												className="text-xs"
+											>
+												{product.category.name}
+											</Badge>
+										</TableCell>
+										<TableCell>
+											<Badge
+												variant="secondary"
+												className="text-xs"
+											>
+												{product.sku}
+											</Badge>
+										</TableCell>
+										{/* <TableCell className="text-sm">
 										{product.weight}g
 									</TableCell>
 									<TableCell className="text-right">
@@ -571,8 +519,9 @@ export default function ProductBundle({
 											{formatPrice(product.price)}
 										</span>
 									</TableCell> */}
-								</TableRow>
-							))
+									</TableRow>
+								);
+							})
 						)}
 					</TableBody>
 				</Table>

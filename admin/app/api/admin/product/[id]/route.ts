@@ -44,7 +44,6 @@ export async function GET(
 		return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
 	}
 }
-
 export async function PATCH(
 	req: NextRequest,
 	{ params }: { params: Promise<{ id: string }> }
@@ -61,14 +60,10 @@ export async function PATCH(
 		}
 
 		const data = await req.json();
+
 		// Проверка существования продукта
 		const existingProduct = await prisma.product.findUnique({
 			where: { id: productId },
-			include: {
-				images: true,
-				sizes: true,
-				childBundles: true,
-			},
 		});
 
 		if (!existingProduct) {
@@ -80,37 +75,44 @@ export async function PATCH(
 
 		// Транзакция для всех операций
 		const updatedProduct = await prisma.$transaction(async (tx) => {
-			// 1. Обновление основных полей
-			const productData: any = {
-				name: data.name ?? existingProduct.name,
-				description: data.description ?? existingProduct.description,
-				type: data.type ?? existingProduct.type,
-				categoryId: data.categoryId ?? existingProduct.categoryId,
+			// 1. Подготовка данных для обновления
+			const updateData: any = {
+				name: data.name,
+				description: data.description,
+				type: data.type,
+				markup: data.markup,
+				categoryId: data.categoryId,
 			};
+
+			// Удаляем undefined полей
+			Object.keys(updateData).forEach(
+				(key) => updateData[key] === undefined && delete updateData[key]
+			);
 
 			// 2. Обновление SKU с проверкой уникальности
 			if (data.sku && data.sku !== existingProduct.sku) {
-				const skuExists = await tx.product.findUnique({
-					where: { sku: data.sku },
-					select: { id: true },
+				const skuExists = await tx.product.findFirst({
+					where: {
+						sku: data.sku,
+						NOT: { id: productId },
+					},
 				});
 
 				if (skuExists) {
 					throw new Error("SKU уже используется другим продуктом");
 				}
-				productData.sku = data.sku;
+				updateData.sku = data.sku;
 			}
 
-			// 3. Обработка изображений (полная замена)
+			// 3. Обработка изображений (только если переданы)
 			if (data.images) {
-				// Удаляем старые изображения
+				// Полная замена изображений
 				await tx.productImage.deleteMany({
 					where: { productId },
 				});
 
-				// Добавляем новые
 				if (data.images.length > 0) {
-					productData.images = {
+					updateData.images = {
 						createMany: {
 							data: data.images,
 						},
@@ -118,78 +120,66 @@ export async function PATCH(
 				}
 			}
 
-			// 4. Обработка размеров (полная замена)
+			// 4. Обработка размеров (только если переданы)
 			if (data.sizes) {
-				// Удаляем старые размеры
+				// Полная замена размеров
 				await tx.productSize.deleteMany({
 					where: { productId },
 				});
 
-				// Добавляем новые
 				if (data.sizes.length > 0) {
-					productData.sizes = {
+					updateData.sizes = {
 						createMany: {
-							data: data.sizes.map((size: any) => ({
-								value: size.value,
-								quantity: size.quantity || 0,
-							})),
+							data: data.sizes,
 						},
 					};
 				}
 			}
 
-			// 5. Обновление основного продукта
-			const updated = await tx.product.update({
+			// 5. Обновление продукта
+			await tx.product.update({
 				where: { id: productId },
-				data: productData,
-				include: {
-					images: true,
-					sizes: true,
-				},
+				data: updateData,
 			});
 
-			// 6. Обработка комплектов (только для BUNDLE)
-			if (data.type === "BUNDLE" || existingProduct.type === "BUNDLE") {
-				// Удаляем старые связи комплекта
+			// 6. Обработка комплектов (ТОЛЬКО если явно переданы)
+			if (data.childBundles !== undefined) {
+				// Удаляем старые связи
 				await tx.productBundle.deleteMany({
 					where: { parentId: productId },
 				});
 
-				// Добавляем новые связи
+				// Создаем новые если переданы
 				if (data.childBundles && data.childBundles.length > 0) {
-					// Проверка существования дочерних товаров
 					const childIds = data.childBundles.map(
 						(b: any) => b.childId
 					);
-					const existingCount = await tx.product.count({
+					const existingChildren = await tx.product.count({
 						where: { id: { in: childIds } },
 					});
 
-					if (existingCount !== childIds.length) {
+					if (existingChildren !== childIds.length) {
 						throw new Error("Некоторые дочерние товары не найдены");
 					}
 
-					// Создаем новые связи
 					await tx.productBundle.createMany({
 						data: data.childBundles.map((bundle: any) => ({
 							parentId: productId,
 							childId: bundle.childId,
-							quantity: bundle.quantity || 1,
+							quantity: bundle.quantity || 0,
 						})),
 					});
 				}
 			}
 
-			// Получаем обновленный продукт со всеми связями
+			// Возвращаем полный обновленный продукт
 			return tx.product.findUnique({
 				where: { id: productId },
 				include: {
 					images: true,
 					sizes: true,
 					childBundles: {
-						include: {
-							child: true,
-						},
+						include: { child: true },
 					},
 				},
 			});
