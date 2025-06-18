@@ -1,50 +1,22 @@
 "use client";
 
 import type React from "react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-	ArrowLeft,
-	Upload,
-	X,
-	Plus,
-	Package,
-	Save,
-	Eye,
-	Loader2,
-} from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Category, Product, ProductSize, ProductType } from "@/app/types";
-import { formatPrice, uploadFiles } from "@/lib/utils";
+import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "../../create/product-bundle-table";
-import { usePrice } from "@/context/PriceContext";
 import ProductSizes from "../../components/ProductSizes";
-
-const ProductTypes = {
-	SINGLE: "Изделие",
-	BUNDLE: "Комплект",
-};
+import BasicInformation from "../../components/BasicInformation";
+import ProductTypeSelector from "../../components/ProductTypeSelector";
+import ProductImageUpload from "../../components/ProductImageUpload";
 
 interface ProductImage {
 	id?: number;
@@ -72,12 +44,10 @@ export default function EditProductPage() {
 	const [images, setImages] = useState<ProductImage[]>([]);
 	const [sizes, setSizes] = useState<ProductSize[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	// const [bundleProducts, setBundleProducts] = useState<any>(null);
 	const [originalProduct, setOriginalProduct] = useState<Product | null>(
 		null
 	);
 
-	// Загрузка данных товара
 	useEffect(() => {
 		const fetchData = async () => {
 			if (!productId) return;
@@ -131,7 +101,7 @@ export default function EditProductPage() {
 		fetchData();
 	}, [productId, router]);
 
-	const handleInputChange = (field: string, value: string) => {
+	const handleInputChange = (field: string, value: string | number) => {
 		setFormData((prev) => ({ ...prev, [field]: value }));
 	};
 
@@ -322,7 +292,6 @@ export default function EditProductPage() {
 						formData={formData}
 						handleInputChange={handleInputChange}
 						categories={categories}
-						isBundle={formData.type === ProductType.BUNDLE}
 					/>
 					{/* Тип товара */}
 					<ProductTypeSelector
@@ -361,13 +330,6 @@ export default function EditProductPage() {
 
 					{/* Действия */}
 					<div className="flex justify-between pt-6">
-						{/* <Button
-							type="button"
-							variant="destructive"
-							onClick={handleDelete}
-						>
-							Удалить товар
-						</Button> */}
 						<div className="flex space-x-4">
 							<Link href="/admin/products">
 								<Button type="button" variant="outline">
@@ -385,240 +347,5 @@ export default function EditProductPage() {
 				</form>
 			</div>
 		</div>
-	);
-}
-
-// Остальные компоненты (BasicInformation, ProductTypeSelector и т.д.)
-// остаются аналогичными созданию товара, но с учетом особенностей редактирования
-
-function BasicInformation({
-	formData,
-	handleInputChange,
-	categories = [],
-	isBundle,
-}: // calcualte,
-{
-	formData: any;
-	handleInputChange: (field: string, value: string) => void;
-	categories?: Category[];
-	isBundle: boolean;
-	// calcualte: ({
-	// 	weight,
-	// 	markup,
-	// }: {
-	// 	weight: number;
-	// 	markup: number;
-	// }) => number;
-}) {
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Basic Information</CardTitle>
-				<CardDescription>
-					Essential product details and identification
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-					<div className="space-y-2">
-						<Label htmlFor="sku">SKU *</Label>
-						<Input
-							id="sku"
-							placeholder="e.g., PROD-001"
-							value={formData.sku}
-							onChange={(e) =>
-								handleInputChange("sku", e.target.value)
-							}
-							required
-						/>
-						<p className="text-xs text-muted-foreground">
-							Unique product identifier
-						</p>
-					</div>
-					<div className="space-y-2">
-						<Label htmlFor="name">Product Name *</Label>
-						<Input
-							id="name"
-							placeholder="Enter product name"
-							value={formData.name}
-							onChange={(e) =>
-								handleInputChange("name", e.target.value)
-							}
-							required
-						/>
-					</div>
-				</div>
-
-				<div className="space-y-2">
-					<Label htmlFor="description">Description</Label>
-					<Textarea
-						id="description"
-						placeholder="Describe your product..."
-						value={formData.description}
-						onChange={(e) =>
-							handleInputChange("description", e.target.value)
-						}
-						rows={3}
-					/>
-				</div>
-
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					{!isBundle && (
-						<div className="space-y-2">
-							<Label htmlFor="markup">
-								Наценка (в процентах)
-							</Label>
-							<Input
-								id="markup"
-								type="number"
-								// step="0.1"
-								placeholder="0.0"
-								value={formData.markup}
-								onChange={(e) =>
-									handleInputChange("markup", e.target.value)
-								}
-							/>
-						</div>
-					)}
-					<div className="space-y-2">
-						<Label htmlFor="category">Category *</Label>
-						<Select
-							value={formData.categoryId}
-							onValueChange={(value) =>
-								handleInputChange("categoryId", value)
-							}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="Select category" />
-							</SelectTrigger>
-							<SelectContent>
-								{categories.map((category) => (
-									<SelectItem
-										key={category.id}
-										value={category.id.toString()}
-									>
-										{category.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function ProductTypeSelector({
-	formData,
-	handleInputChange,
-}: {
-	formData: any;
-	handleInputChange: (field: string, value: string) => void;
-}) {
-	return (
-		<Card className="flex flex-col sm:flex-row items-start justify-between">
-			<div className="w-full h-full">
-				<CardHeader className="mb-4">
-					<CardTitle>Product Classification</CardTitle>
-					<CardDescription>
-						Product type and material specifications
-					</CardDescription>
-				</CardHeader>
-			</div>
-			<CardContent className="space-y-4">
-				<div className="space-y-2">
-					<Label htmlFor="type">Product Type</Label>
-					<Select
-						value={formData.type}
-						onValueChange={(value) =>
-							handleInputChange("type", value)
-						}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{Object.entries(ProductTypes).map(
-								([key, label]) => (
-									<SelectItem key={key} value={key}>
-										{label}
-									</SelectItem>
-								)
-							)}
-						</SelectContent>
-					</Select>
-				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function ProductImageUpload({
-	images,
-	handleImageUpload,
-	removeImage,
-}: {
-	images: ProductImage[];
-	handleImageUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-	removeImage: (index: number) => void;
-}) {
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Product Images</CardTitle>
-				<CardDescription>
-					Upload product photos (first image will be the main image)
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-					{images.map((image, index) => (
-						<div key={index} className="relative group">
-							<img
-								src={image.url || "/placeholder.svg"}
-								alt={`Product image ${index + 1}`}
-								className="w-full h-32 object-cover rounded-lg border"
-							/>
-							<Button
-								type="button"
-								variant="destructive"
-								size="sm"
-								className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-								onClick={() => removeImage(index)}
-							>
-								<X className="h-3 w-3" />
-							</Button>
-							{index === 0 && (
-								<Badge className="absolute bottom-2 left-2">
-									Main
-								</Badge>
-							)}
-							{!image.file && image.id && (
-								<Badge
-									variant="secondary"
-									className="absolute bottom-2 right-2"
-								>
-									Existing
-								</Badge>
-							)}
-						</div>
-					))}
-					<label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
-						<Upload className="h-8 w-8 text-muted-foreground mb-2" />
-						<span className="text-sm text-muted-foreground">
-							Upload Images
-						</span>
-						<input
-							type="file"
-							multiple
-							accept="image/*"
-							className="hidden"
-							onChange={handleImageUpload}
-						/>
-					</label>
-				</div>
-			</CardContent>
-		</Card>
 	);
 }
