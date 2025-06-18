@@ -42,7 +42,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 		</Button>
 	);
 
-	const { calucalte } = usePrice();
+	const { calculate } = usePrice();
 
 	return (
 		<Dialog>
@@ -135,7 +135,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 									</label>
 									<p className="text-lg font-bold text-primary">
 										{formatPrice(
-											calucalte({
+											calculate({
 												weight:
 													product.sizes?.[0]
 														?.weight || 0,
@@ -222,7 +222,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 																Цена:
 															</span>{" "}
 															{formatPrice(
-																calucalte({
+																calculate({
 																	weight: size.weight,
 																	markup: product.markup,
 																})

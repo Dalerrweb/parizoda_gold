@@ -130,7 +130,11 @@ export async function PATCH(
 				if (data.sizes.length > 0) {
 					updateData.sizes = {
 						createMany: {
-							data: data.sizes,
+							data: data.sizes.map((size: any) => ({
+								size: size.size,
+								weight: size.weight,
+								quantity: size.quantity,
+							})),
 						},
 					};
 				}

@@ -23,13 +23,14 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Upload, X, Plus, Package, Save, Eye } from "lucide-react";
+import { ArrowLeft, Upload, X, Save } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Category, Product, ProductSize, ProductType } from "@/app/types";
 import { uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "./product-bundle-table";
 import { useRouter } from "next/navigation";
+import ProductSizes from "../components/ProductSizes";
 
 // Enums based on your Prisma schema
 const ProductTypes = {
@@ -256,9 +257,8 @@ export default function CreateProductPage() {
 					{formData.type === ProductType.SINGLE && (
 						<ProductSizes
 							sizes={sizes}
-							addSize={addSize}
-							updateSize={updateSize}
-							removeSize={removeSize}
+							setSizes={setSizes}
+							formData={formData}
 						/>
 					)}
 
@@ -538,132 +538,6 @@ function ProductImageUpload({
 						/>
 					</label>
 				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function ProductSizes({
-	sizes,
-	addSize,
-	updateSize,
-	removeSize,
-}: {
-	sizes: ProductSize[];
-	addSize: () => void;
-	updateSize: (
-		index: number,
-		field: keyof ProductSize,
-		value: string | number
-	) => void;
-	removeSize: (index: number) => void;
-}) {
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle className="flex items-center justify-between">
-					Размеры, кол-во и вес
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						onClick={addSize}
-					>
-						<Plus className="h-4 w-4 mr-2" />
-						Добавить размер
-					</Button>
-				</CardTitle>
-				<CardDescription>
-					⚠️ Даже если изделие не является комплектом вы должны
-					обязательно создать хотябы один размер так как только здесь
-					можно задать вес изделия будь то серьги или что угодно! ⚠️
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				{sizes.length === 0 ? (
-					<div className="text-center py-8 text-muted-foreground">
-						<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-						<p>
-							Пока не добавлено ни одного размера. Нажмите
-							«Добавить размер», чтобы начать.
-						</p>
-					</div>
-				) : (
-					<div className="space-y-3">
-						{sizes.map((size, index) => (
-							<div
-								key={index}
-								className="flex items-center space-x-4 p-4 border rounded-lg"
-							>
-								<div className="flex-1">
-									<Label htmlFor={`size-${index}`}>
-										Размер
-									</Label>
-									<Input
-										id={`size-${index}`}
-										placeholder="e.g., S, M, L, XL"
-										value={size.size}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"size",
-												e.target.value
-											)
-										}
-									/>
-								</div>
-								<div className="flex-1">
-									<Label htmlFor={`stock-${index}`}>
-										Кол-во
-									</Label>
-									<Input
-										id={`stock-${index}`}
-										type="number"
-										min="0"
-										placeholder="0"
-										value={size.quantity}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"quantity",
-												Number.parseInt(
-													e.target.value
-												) || 0
-											)
-										}
-									/>
-								</div>
-								<div className="flex-1">
-									<Label htmlFor={`weight-${index}`}>
-										Вес в граммах
-									</Label>
-									<Input
-										id={`weight-${index}`}
-										placeholder="e.g., 2, 3, 4"
-										value={size.weight}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"weight",
-												Number.parseInt(
-													e.target.value
-												) || 0
-											)
-										}
-									/>
-								</div>
-								<Button
-									type="button"
-									variant="outline"
-									size="sm"
-									onClick={() => removeSize(index)}
-								>
-									<X className="h-4 w-4" />
-								</Button>
-							</div>
-						))}
-					</div>
-				)}
 			</CardContent>
 		</Card>
 	);

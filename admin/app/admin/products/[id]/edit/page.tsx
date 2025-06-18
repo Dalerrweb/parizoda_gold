@@ -36,8 +36,10 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { Category, Product, ProductSize, ProductType } from "@/app/types";
-import { uploadFiles } from "@/lib/utils";
+import { formatPrice, uploadFiles } from "@/lib/utils";
 import ProductBundleTable from "../../create/product-bundle-table";
+import { usePrice } from "@/context/PriceContext";
+import ProductSizes from "../../components/ProductSizes";
 
 const ProductTypes = {
 	SINGLE: "Изделие",
@@ -322,7 +324,6 @@ export default function EditProductPage() {
 						categories={categories}
 						isBundle={formData.type === ProductType.BUNDLE}
 					/>
-
 					{/* Тип товара */}
 					<ProductTypeSelector
 						formData={formData}
@@ -351,7 +352,11 @@ export default function EditProductPage() {
 
 					{/* Размеры */}
 					{formData.type === ProductType.SINGLE && (
-						<ProductSizes sizes={sizes} setSizes={setSizes} />
+						<ProductSizes
+							sizes={sizes}
+							setSizes={setSizes}
+							formData={formData}
+						/>
 					)}
 
 					{/* Действия */}
@@ -391,11 +396,19 @@ function BasicInformation({
 	handleInputChange,
 	categories = [],
 	isBundle,
-}: {
+}: // calcualte,
+{
 	formData: any;
 	handleInputChange: (field: string, value: string) => void;
 	categories?: Category[];
 	isBundle: boolean;
+	// calcualte: ({
+	// 	weight,
+	// 	markup,
+	// }: {
+	// 	weight: number;
+	// 	markup: number;
+	// }) => number;
 }) {
 	return (
 		<Card>
@@ -450,27 +463,6 @@ function BasicInformation({
 				</div>
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					<div className="space-y-2">
-						<Label htmlFor="price">Price *</Label>
-						<div className="relative">
-							<span className="absolute left-3 top-2.5 text-muted-foreground">
-								сум
-							</span>
-							<Input
-								id="price"
-								type="number"
-								step="0.01"
-								placeholder="0"
-								className="pl-8"
-								value={0}
-								readOnly
-								// onChange={(e) =>
-								// 	handleInputChange("price", e.target.value)
-								// }
-								required
-							/>
-						</div>
-					</div>
 					{!isBundle && (
 						<div className="space-y-2">
 							<Label htmlFor="markup">
@@ -626,143 +618,6 @@ function ProductImageUpload({
 						/>
 					</label>
 				</div>
-			</CardContent>
-		</Card>
-	);
-}
-
-function ProductSizes({
-	sizes,
-	setSizes,
-}: {
-	sizes: ProductSize[];
-	setSizes: Dispatch<SetStateAction<ProductSize[]>>;
-}) {
-	const updateSize = (
-		index: number,
-		field: keyof ProductSize,
-		value: string | number
-	) => {
-		setSizes((prev: ProductSize[]) =>
-			prev.map((size, i) =>
-				i === index ? { ...size, [field]: value } : size
-			)
-		);
-	};
-
-	const removeSize = (index: number) => {
-		setSizes((prev) => prev.filter((_, i) => i !== index));
-	};
-
-	const addSize = () => {
-		setSizes((prev) => [...prev, { size: "", quantity: 0, weight: 0 }]);
-	};
-
-	return (
-		<Card>
-			<CardHeader>
-				<CardTitle className="flex items-center justify-between">
-					Product Sizes & Stock
-					<Button
-						type="button"
-						variant="outline"
-						size="sm"
-						onClick={addSize}
-					>
-						<Plus className="h-4 w-4 mr-2" />
-						Add Size
-					</Button>
-				</CardTitle>
-				<CardDescription>
-					Manage different sizes and their stock levels
-				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				{sizes.length === 0 ? (
-					<div className="text-center py-8 text-muted-foreground">
-						<Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-						<p>
-							No sizes added yet. Click "Add Size" to get started.
-						</p>
-					</div>
-				) : (
-					<div className="space-y-3">
-						{sizes.map((size, index) => (
-							<div
-								key={index}
-								className="flex items-center space-x-4 p-4 border rounded-lg"
-							>
-								<div className="flex-1">
-									<Label htmlFor={`size-${index}`}>
-										Size
-									</Label>
-									<Input
-										id={`size-${index}`}
-										placeholder="e.g., S, M, L, XL"
-										value={size.size}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"size",
-												e.target.value
-											)
-										}
-									/>
-								</div>
-								<div className="flex-1">
-									<Label htmlFor={`stock-${index}`}>
-										Stock
-									</Label>
-									<Input
-										id={`stock-${index}`}
-										type="number"
-										min="0"
-										placeholder="0"
-										value={size.quantity}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"quantity",
-												Number.parseInt(
-													e.target.value
-												) || 0
-											)
-										}
-									/>
-								</div>
-								<div className="flex-1">
-									<Label htmlFor={`weight-${index}`}>
-										Weight
-									</Label>
-									<Input
-										id={`weight-${index}`}
-										type="number"
-										min="0"
-										placeholder="0"
-										value={size.weight}
-										onChange={(e) =>
-											updateSize(
-												index,
-												"weight",
-												Number.parseInt(
-													e.target.value
-												) || 0
-											)
-										}
-									/>
-								</div>
-								<Button
-									type="button"
-									variant="outline"
-									size="sm"
-									onClick={() => removeSize(index)}
-								>
-									<X className="h-4 w-4" />
-								</Button>
-							</div>
-						))}
-					</div>
-				)}
 			</CardContent>
 		</Card>
 	);

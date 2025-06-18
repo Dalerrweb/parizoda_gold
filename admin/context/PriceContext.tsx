@@ -20,7 +20,7 @@ export function PriceProvider({
 export function usePrice() {
 	const AuPrice = useContext(PriceContext);
 
-	const calucalte = useCallback(
+	const calculate = useCallback(
 		({ weight, markup }: { weight: number; markup: number }) => {
 			console.count("calced");
 
@@ -28,7 +28,7 @@ export function usePrice() {
 				return 0;
 			}
 			const priceWithoutMarkup = Number(AuPrice?.pricePerGram) * weight;
-			const priceWithMarkup = priceWithoutMarkup * (1 + markup);
+			const priceWithMarkup = priceWithoutMarkup * (1 + markup / 100);
 
 			return priceWithMarkup;
 		},
@@ -37,6 +37,6 @@ export function usePrice() {
 
 	return {
 		AuPrice,
-		calucalte,
+		calculate,
 	};
 }

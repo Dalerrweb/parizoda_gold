@@ -87,17 +87,6 @@ const ProductItemRow: React.FC<ProductItemProps> = ({ product }) => {
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<ProductPreviewModal
-								product={product}
-								trigger={
-									<DropdownMenuItem
-										onSelect={(e) => e.preventDefault()}
-									>
-										<Eye className="mr-2 h-4 w-4" />
-										View Details
-									</DropdownMenuItem>
-								}
-							/>
 							<Link href={`/admin/products/${product.id}/edit`}>
 								<DropdownMenuItem>
 									<Edit className="mr-2 h-4 w-4" />
