@@ -23,7 +23,7 @@ import {
 	ImageIcon,
 } from "lucide-react";
 import { type Product, ProductType } from "@/app/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
 import { useState } from "react";
 import { usePrice } from "@/context/PriceContext";
 
@@ -34,7 +34,6 @@ interface ProductPreviewModalProps {
 
 const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 	product,
-	trigger,
 }) => {
 	const defaultTrigger = (
 		<Button variant="ghost" size="sm">
@@ -43,13 +42,12 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 		</Button>
 	);
 
-	const [selectedSize, setSelectedSize] = useState<number>(0); // Index of selected size
-	const price = usePrice();
+	const { calucalte } = usePrice();
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-			<DialogContent className="max-w-4xl max-h-[90vh]">
+			<DialogTrigger asChild>{defaultTrigger}</DialogTrigger>
+			<DialogContent className="max-w-5xl max-h-[90vh]">
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
 						<Package className="h-5 w-5" />
@@ -63,7 +61,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
 									<Tag className="h-4 w-4" />
-									Basic Information
+									Информация о продукте
 								</CardTitle>
 							</CardHeader>
 							<CardContent className="space-y-4">
@@ -85,7 +83,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 								</div>
 								<div>
 									<label className="text-sm font-medium text-muted-foreground">
-										Name
+										Название
 									</label>
 									<p className="text-lg font-semibold">
 										{product.name}
@@ -93,7 +91,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 								</div>
 								<div>
 									<label className="text-sm font-medium text-muted-foreground">
-										Description
+										Описание
 									</label>
 									<p className="text-sm">
 										{product.description ||
@@ -103,7 +101,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 								<div className="grid grid-cols-2 gap-4">
 									<div>
 										<label className="text-sm font-medium text-muted-foreground">
-											Type
+											Тип
 										</label>
 										<div className="mt-1">
 											<Badge
@@ -114,13 +112,16 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 														: "secondary"
 												}
 											>
-												{product.type}
+												{product.type ===
+												ProductType.BUNDLE
+													? "Комплект"
+													: "Изделие"}
 											</Badge>
 										</div>
 									</div>
 									<div>
 										<label className="text-sm font-medium text-muted-foreground">
-											Markup
+											Наценка
 										</label>
 										<p className="text-sm font-medium">
 											{product.markup}%
@@ -129,32 +130,25 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 								</div>
 								<div>
 									<label className="text-sm font-medium text-muted-foreground">
-										Current Price (Selected Size)
+										Цена на сегондя (Первый размер по
+										умолчанию)
 									</label>
 									<p className="text-lg font-bold text-primary">
-										{/* {price &&
-										product.sizes &&
-										product.sizes[selectedSize]
-											? `$${(
-													price.pricePerGram *
-													product.sizes[selectedSize]
-														.weight *
-													(1 + product.markup / 100)
-											  ).toFixed(2)}`
-											: "Select a size to see price"} */}
+										{formatPrice(
+											calucalte({
+												weight:
+													product.sizes?.[0]
+														?.weight || 0,
+												markup: product.markup,
+											})
+										)}
 									</p>
-									{price && (
-										<p className="text-xs text-muted-foreground">
-											Base: ${price.pricePerGram}/g +{" "}
-											{product.markup}% markup
-										</p>
-									)}
 								</div>
 							</CardContent>
 						</Card>
 
 						{/* Category Information */}
-						<Card>
+						{/* <Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
 									<Layers className="h-4 w-4" />
@@ -182,14 +176,73 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 									</div>
 								</div>
 							</CardContent>
-						</Card>
+						</Card> */}
+
+						{/* Sizes */}
+						{product.sizes && product.sizes.length > 0 && (
+							<Card>
+								<CardHeader>
+									<CardTitle className="flex items-center gap-2">
+										<Ruler className="h-4 w-4" />
+										Размеры ({product.sizes.length})
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<div className="space-y-3">
+										{product.sizes.map((size) => {
+											return (
+												<div
+													key={size.id}
+													className="flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors"
+												>
+													<div className="flex items-center gap-4">
+														<Badge>
+															{size.size}
+														</Badge>
+														<div className="text-sm">
+															<span className="font-medium">
+																Кол-во:
+															</span>{" "}
+															{size.quantity}
+														</div>
+														<div className="text-sm">
+															<span className="font-medium">
+																Вес:
+															</span>{" "}
+															{size.weight} грамм
+														</div>
+														<div className="text-sm">
+															<span className="font-medium">
+																Наценка:
+															</span>{" "}
+															{product.markup} %
+														</div>
+														<div className="text-sm">
+															<span className="font-medium">
+																Цена:
+															</span>{" "}
+															{formatPrice(
+																calucalte({
+																	weight: size.weight,
+																	markup: product.markup,
+																})
+															)}
+														</div>
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</CardContent>
+							</Card>
+						)}
 
 						{/* Images */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="flex items-center gap-2">
 									<ImageIcon className="h-4 w-4" />
-									Images ({product.images?.length || 0})
+									Картинки ({product.images?.length || 0})
 								</CardTitle>
 							</CardHeader>
 							<CardContent>
@@ -221,202 +274,6 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 								)}
 							</CardContent>
 						</Card>
-
-						{/* Sizes */}
-						{product.sizes && product.sizes.length > 0 && (
-							<Card>
-								<CardHeader>
-									<CardTitle className="flex items-center gap-2">
-										<Ruler className="h-4 w-4" />
-										Sizes ({product.sizes.length})
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className="space-y-3">
-										{product.sizes.map((size, index) => {
-											{
-												/* TODO: показать правильную цену продукта здесь */
-											}
-
-											// Calculate price for this size
-											// const sizePrice =
-											// 	price && size.weight
-											// 		? price.pricePerGram *
-											// 		  size.weight *
-											// 		  (1 + product.markup / 100)
-											// 		: 0;
-
-											const isSelected =
-												selectedSize === index;
-
-											return (
-												<div
-													key={size.id || index}
-													className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
-														isSelected
-															? "border-primary bg-primary/5"
-															: "hover:border-primary/50"
-													}`}
-													onClick={() =>
-														setSelectedSize(index)
-													}
-												>
-													<div className="flex items-center gap-4">
-														<Badge
-															variant={
-																isSelected
-																	? "default"
-																	: "outline"
-															}
-														>
-															{size.size}
-														</Badge>
-														<div className="text-sm">
-															<span className="font-medium">
-																Qty:
-															</span>{" "}
-															{size.quantity}
-														</div>
-														<div className="text-sm">
-															<span className="font-medium">
-																Weight:
-															</span>{" "}
-															{size.weight}g
-														</div>
-													</div>
-													<div className="text-right">
-														{/* TODO: показать правильную цену продукта здесь */}
-
-														{/* {price &&
-														sizePrice > 0 ? (
-															<div className="text-lg font-bold text-primary">
-																$
-																{sizePrice.toFixed(
-																	2
-																)}
-															</div>
-														) : (
-															<div className="text-sm text-muted-foreground">
-																Price not
-																available
-															</div>
-														)} */}
-													</div>
-												</div>
-											);
-										})}
-									</div>
-
-									{/* Selected Size Summary */}
-									{product.sizes[selectedSize] && (
-										<div className="mt-4 p-4 bg-muted rounded-lg">
-											<h4 className="font-medium mb-2">
-												Selected Size Details
-											</h4>
-											<div className="grid grid-cols-2 gap-4 text-sm">
-												<div>
-													<span className="text-muted-foreground">
-														Size:
-													</span>
-													<span className="ml-2 font-medium">
-														{
-															product.sizes[
-																selectedSize
-															].size
-														}
-													</span>
-												</div>
-												<div>
-													<span className="text-muted-foreground">
-														Weight:
-													</span>
-													<span className="ml-2 font-medium">
-														{
-															product.sizes[
-																selectedSize
-															].weight
-														}
-														g
-													</span>
-												</div>
-												<div>
-													<span className="text-muted-foreground">
-														Quantity Available:
-													</span>
-													<span className="ml-2 font-medium">
-														{
-															product.sizes[
-																selectedSize
-															].quantity
-														}
-													</span>
-												</div>
-												<div>
-													<span className="text-muted-foreground">
-														Final Price:
-													</span>
-													<span className="ml-2 font-bold text-primary">
-														{/* TODO: показать правильную цену продукта здесь */}
-														{/* {price &&
-														product.sizes[
-															selectedSize
-														].weight
-															? `$${(
-																	price.pricePerGram *
-																	product
-																		.sizes[
-																		selectedSize
-																	].weight *
-																	(1 +
-																		product.markup /
-																			100)
-															  ).toFixed(2)}`
-															: "Not available"} */}
-													</span>
-												</div>
-											</div>
-											{price && (
-												<div className="mt-3 pt-3 border-t text-xs text-muted-foreground">
-													<div>
-														Base price: $
-														{price.pricePerGram}/g
-													</div>
-													<div>
-														Markup: {product.markup}
-														%
-													</div>
-													<div>
-														Calculation: $
-														{price.pricePerGram} ×{" "}
-														{
-															product.sizes[
-																selectedSize
-															].weight
-														}
-														g ×{" "}
-														{(
-															1 +
-															product.markup / 100
-														).toFixed(2)}{" "}
-														= $
-														{/* TODO: показать правильную цену продукта здесь */}
-														{/* {(
-															price.pricePerGram *
-															product.sizes[
-																selectedSize
-															].weight *
-															(1 +
-																product.markup /
-																	100)
-														).toFixed(2)} */}
-													</div>
-												</div>
-											)}
-										</div>
-									)}
-								</CardContent>
-							</Card>
-						)}
 
 						{/* Bundle Relationships */}
 						{((product.parentBundle &&

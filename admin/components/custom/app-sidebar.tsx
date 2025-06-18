@@ -74,7 +74,7 @@ const navigationItems = [
 
 export function AppSidebar() {
 	const pathname = usePathname();
-	const auPrice = usePrice();
+	const { AuPrice } = usePrice();
 
 	return (
 		<Sidebar>
@@ -140,7 +140,7 @@ export function AppSidebar() {
 				<SidebarGroup>
 					<SidebarGroupLabel>
 						<b className="text-yellow-600 capitalize text-lg">
-							{auPrice?.name}
+							{AuPrice?.name}
 						</b>
 					</SidebarGroupLabel>
 					<SidebarGroupContent>
@@ -150,7 +150,7 @@ export function AppSidebar() {
 									<Link href="/settings">
 										<span>
 											{formatPrice(
-												auPrice?.pricePerGram ?? 0
+												AuPrice?.pricePerGram ?? 0
 											)}
 										</span>
 									</Link>
