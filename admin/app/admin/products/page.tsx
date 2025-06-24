@@ -67,6 +67,15 @@ export default async function ProductsPage({ searchParams }: any) {
 			images: true,
 			orders: true,
 			sizes: true,
+			parentBundle: {
+				include: {
+					child: {
+						include: {
+							sizes: true,
+						},
+					},
+				},
+			},
 		},
 		orderBy: {
 			createdAt: "desc",

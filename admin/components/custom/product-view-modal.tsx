@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { type Product, ProductType } from "@/app/types";
 import { formatDate, formatPrice } from "@/lib/utils";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { usePrice } from "@/context/PriceContext";
 
 interface ProductPreviewModalProps {
@@ -35,14 +35,32 @@ interface ProductPreviewModalProps {
 const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 	product,
 }) => {
+	const { calculate } = usePrice();
+
+	const calculatedPrice = useMemo(() => {
+		let price = 0;
+		if (product.type !== ProductType.BUNDLE) {
+			return calculate({
+				weight: product.sizes?.[0]?.weight || 0,
+				markup: product.markup,
+			});
+		}
+		for (let item of product.parentBundle) {
+			price += calculate({
+				weight: item.child.sizes?.[0]?.weight || 0,
+				markup: item.child.markup,
+			});
+		}
+
+		return price;
+	}, []);
+
 	const defaultTrigger = (
 		<Button variant="ghost" size="sm">
 			<Eye className="h-4 w-4 mr-2" />
 			Preview
 		</Button>
 	);
-
-	const { calculate } = usePrice();
 
 	return (
 		<Dialog>
@@ -134,14 +152,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 										умолчанию)
 									</label>
 									<p className="text-lg font-bold text-primary">
-										{formatPrice(
-											calculate({
-												weight:
-													product.sizes?.[0]
-														?.weight || 0,
-												markup: product.markup,
-											})
-										)}
+										{formatPrice(calculatedPrice)}
 									</p>
 								</div>
 							</CardContent>
@@ -196,12 +207,12 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 													className="flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors"
 												>
 													<div className="flex items-center gap-4">
-														<Badge>
+														<Badge className="bg-green-700">
 															{size.size}
 														</Badge>
 														<div className="text-sm">
 															<span className="font-medium">
-																Кол-во:
+																Кол:
 															</span>{" "}
 															{size.quantity}
 														</div>
@@ -209,24 +220,23 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 															<span className="font-medium">
 																Вес:
 															</span>{" "}
-															{size.weight} грамм
-														</div>
-														<div className="text-sm">
-															<span className="font-medium">
-																Наценка:
-															</span>{" "}
-															{product.markup} %
+															{size.weight} г
 														</div>
 														<div className="text-sm">
 															<span className="font-medium">
 																Цена:
 															</span>{" "}
-															{formatPrice(
-																calculate({
-																	weight: size.weight,
-																	markup: product.markup,
-																})
-															)}
+															<Badge
+																variant="default"
+																className="bg-green-700"
+															>
+																{formatPrice(
+																	calculate({
+																		weight: size.weight,
+																		markup: product.markup,
+																	})
+																)}
+															</Badge>
 														</div>
 													</div>
 												</div>
@@ -276,79 +286,32 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 						</Card>
 
 						{/* Bundle Relationships */}
-						{((product.parentBundle &&
-							product.parentBundle.length > 0) ||
-							(product.childBundles &&
-								product.childBundles.length > 0)) && (
-							<Card>
-								<CardHeader>
-									<CardTitle className="flex items-center gap-2">
-										<Package className="h-4 w-4" />
-										Bundle Relationships
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="space-y-4">
-									{product.parentBundle &&
-										product.parentBundle.length > 0 && (
-											<div>
-												<label className="text-sm font-medium text-muted-foreground">
-													Part of Bundles (
-													{
-														product.parentBundle
-															.length
-													}
-													)
-												</label>
-												<div className="mt-2 flex flex-wrap gap-2">
+						{product.parentBundle &&
+							product.parentBundle.length > 0 && (
+								<Card>
+									<CardHeader>
+										<CardTitle className="flex items-center gap-2">
+											<Package className="h-4 w-4" />
+											Состовляющие комплекта
+										</CardTitle>
+									</CardHeader>
+									<CardContent>
+										{product.parentBundle &&
+											product.parentBundle.length > 0 && (
+												<div className="space-y-3">
 													{product.parentBundle.map(
-														(parent, index) => (
-															<Badge
-																key={index}
-																variant="secondary"
-															>
-																{parent.name ||
-																	`Bundle ${
-																		index +
-																		1
-																	}`}
-															</Badge>
+														({ child }) => (
+															<BandleItem
+																key={child.id}
+																child={child}
+															/>
 														)
 													)}
 												</div>
-											</div>
-										)}
-									{product.childBundles &&
-										product.childBundles.length > 0 && (
-											<div>
-												<label className="text-sm font-medium text-muted-foreground">
-													Contains Products (
-													{
-														product.childBundles
-															.length
-													}
-													)
-												</label>
-												<div className="mt-2 flex flex-wrap gap-2">
-													{product.childBundles.map(
-														(child, index) => (
-															<Badge
-																key={index}
-																variant="outline"
-															>
-																{child.name ||
-																	`Product ${
-																		index +
-																		1
-																	}`}
-															</Badge>
-														)
-													)}
-												</div>
-											</div>
-										)}
-								</CardContent>
-							</Card>
-						)}
+											)}
+									</CardContent>
+								</Card>
+							)}
 
 						{/* Orders */}
 						<Card>
@@ -434,3 +397,60 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 };
 
 export default ProductPreviewModal;
+
+function BandleItem({ child }: { child: any }) {
+	const [selectedSize, setSelectedSize] = useState(child.sizes[0] || null);
+	const { calculate } = usePrice();
+
+	return (
+		<div>
+			<div className="flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors">
+				<div className="flex items-center gap-4 justify-between w-full">
+					<div className="flex items-center gap-2">
+						<Badge className="bg-green-700">{child.sku}</Badge>
+						<div className="text-sm truncate max-w-[5ch]">
+							<span className="font-medium">{child.name}</span>
+						</div>
+						<div className="text-sm ml-3">
+							<span className="font-medium">
+								Вес: {selectedSize.weight} г
+							</span>
+						</div>
+					</div>
+
+					<div className="flex items-center gap-2 text-sm">
+						<span className="font-medium">Цена:</span>{" "}
+						<Badge variant="default" className="bg-green-700">
+							{formatPrice(
+								calculate({
+									weight: selectedSize.weight || 0,
+									markup: child.markup,
+								})
+							)}{" "}
+						</Badge>
+						<span>{child.markup}%</span>
+					</div>
+				</div>
+			</div>
+			<div className="flex items-center gap-2 mt-2">
+				<Badge variant="outline">Размеры:</Badge>
+				{child.sizes.map((size: any) => {
+					return (
+						<Badge
+							key={size.id}
+							variant={
+								size.id === selectedSize.id
+									? "default"
+									: "secondary"
+							}
+							className="cursor-pointer"
+							onClick={() => setSelectedSize(size)}
+						>
+							{size.size}{" "}
+						</Badge>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
