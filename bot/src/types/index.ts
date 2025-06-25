@@ -1,70 +1,48 @@
+export type AuPrice = {
+	id: number;
+	name: string;
+	pricePerGram: bigint;
+};
+
+export type Category = {
+	id: string;
+	name: string;
+	imageUrl?: string;
+	products: Product[];
+	createdAt: Date;
+};
+
 export type Product = {
 	id: number;
 	sku: string;
 	name: string;
-	description: string | null;
-	weight: number;
-	type: "SINGLE" | "BUNDLE";
-	price: number;
+	description?: string;
+	markup: number;
+	type: ProductType; // enum: SINGLE | BUNDLE и т.п.
 	categoryId: number;
-	tags?: string[];
-	images: ProductImage[];
+	category: Category;
+	images: any[];
+	orders?: Order[];
 	sizes: ProductSize[];
-	parentBundle: BundleItem[]; // More specific type for bundle items
-	isActive: boolean;
-	isFeatured?: boolean;
+
+	parentBundle: any[]; // продукты, в которые этот входит
+	childBundles?: any[]; // продукты, из которых этот состоит
+
 	createdAt: Date;
 	updatedAt: Date;
-	publishedAt?: Date;
 };
+export enum ProductType {
+	SINGLE = "SINGLE",
+	BUNDLE = "BUNDLE",
+}
 
-type ProductImage = {
-	id: number;
-	url: string;
-	alt?: string;
-	productId: number;
-	isPrimary?: boolean;
-	sortOrder?: number;
-};
-
-type ProductSize = {
-	id: number;
-	productId: number;
+export type ProductSize = {
+	id?: number;
+	size: string;
 	quantity: number;
-	value: string;
-	isAvailable?: boolean;
-	price?: number; // Different sizes might have different prices
-};
-
-type BundleItem = {
-	id: number;
-	parentId: number;
-	bundleId: number;
-	childId: number;
-	quantity: number;
-	child: Omit<Product, "parentBundle" | "sizes">; // Avoid circular reference
-};
-
-export type Category = {
-	id: number;
-	name: string;
-	imageUrl: string;
-	products: Product[];
-};
-
-export type OrderStatus =
-	| "PENDING"
-	| "PROCESSING"
-	| "SHIPPED"
-	| "DELIVERED"
-	| "CANCELLED";
-
-export type Order = {
-	id: number;
-	userId: number;
-	productId: number;
-	status: OrderStatus;
-	createdAt: string;
+	weight: number;
+	product?: Product;
+	productId?: number;
 };
 
 export type User = {
@@ -79,11 +57,6 @@ export type User = {
 	createdAt: Date;
 };
 
-export type CartItem = {
-	product: Product;
-	quantity: number;
-};
-
 export type Banner = {
 	id: number;
 	imageUrl: string;
@@ -94,3 +67,21 @@ export type Banner = {
 	createdAt: Date;
 	updatedAt: Date;
 };
+
+export type Order = {
+	id: number;
+	user: User;
+	userId: number;
+	product: Product;
+	productId: number;
+	status: OrderStatus;
+	createdAt: Date;
+};
+
+enum OrderStatus {
+	PENDING = "PENDING",
+	PAID = "PAID",
+	SHIPPED = "SHIPPED",
+	COMPLETED = "COMPLETED",
+	CANCELLED = "CANCELLED",
+}

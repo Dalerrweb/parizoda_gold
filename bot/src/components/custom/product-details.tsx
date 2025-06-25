@@ -5,10 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { ChevronLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import Slider from "./product-page/slider";
-import { Product } from "@/types";
+import { Product, ProductType } from "@/types";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -29,11 +29,9 @@ function ProductDetails({
 	const [quantity, setQuantity] = useState(1);
 
 	const [selectedSize, setSelectedSize] = useState<string | null>(
-		product.sizes.length > 0 ? product.sizes[0].value : null
+		product.sizes.length > 0 ? product.sizes[0].size : null
 	);
 	const navigate = useNavigate();
-
-	console.log(product);
 
 	const incrementQuantity = (): void => {
 		setQuantity((prev) => prev + 1);
@@ -80,9 +78,7 @@ function ProductDetails({
 						<h1 className="text-3xl font-bold tracking-tight">
 							{product.name}
 						</h1>
-						<p className="mt-4 text-2xl font-semibold text-primary">
-							{formatPrice(product.price)}
-						</p>
+						<p className="mt-4 text-2xl font-semibold text-primary"></p>
 					</div>
 
 					{product.sizes.length > 0 && (
@@ -93,17 +89,17 @@ function ProductDetails({
 									<Button
 										key={size.id}
 										variant={
-											selectedSize === size.value
+											selectedSize === size.size
 												? "default"
 												: "outline"
 										}
 										size="sm"
 										onClick={() =>
-											setSelectedSize(size.value)
+											setSelectedSize(size.size)
 										}
-										disabled={size.isAvailable === false}
+										disabled={size.quantity === 0}
 									>
-										{size.value}
+										{size.size}
 									</Button>
 								))}
 							</div>
@@ -113,7 +109,7 @@ function ProductDetails({
 					<Separator />
 
 					{/* Bundle Items - Show only for BUNDLE type products */}
-					{product.type === "BUNDLE" &&
+					{product.type === ProductType.BUNDLE &&
 						product.parentBundle.length > 0 && (
 							<div className="space-y-4">
 								<h2 className="text-xl font-semibold">
@@ -177,11 +173,7 @@ function ProductDetails({
 												</div>
 
 												{/* Quantity and Price */}
-												<p className="text-sm font-semibold text-primary">
-													{formatPrice(
-														bundleItem.child.price
-													)}
-												</p>
+												<p className="text-sm font-semibold text-primary"></p>
 											</div>
 										</Card>
 									))}

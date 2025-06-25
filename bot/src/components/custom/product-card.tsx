@@ -13,7 +13,7 @@ export function ProductCard({ id, name, description, images }: Product) {
 						className="h-full w-full object-cover transition-transform hover:scale-105"
 					/>
 				</div>
-				<CardContent className="p-2">
+				<CardContent className="px-2">
 					<h3
 						className="font-medium text-sm line-clamp-1"
 						title={name}
