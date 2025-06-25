@@ -2,7 +2,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Product } from "@/types";
 import { Link } from "react-router-dom";
 
-export function ProductCard({ id, name, description, price, images }: Product) {
+export function ProductCard({ id, name, description, images }: Product) {
 	return (
 		<Link to={`/product/${id}`} className="block h-full">
 			<Card className="h-full overflow-hidden transition-all hover:shadow-md border-0 shadow-sm">
@@ -25,9 +25,7 @@ export function ProductCard({ id, name, description, price, images }: Product) {
 					</p>
 				</CardContent>
 				<CardFooter className="p-2 pt-0">
-					<p className="font-semibold text-sm">
-						{price.toLocaleString("uz")} сум
-					</p>
+					<p className="font-semibold text-sm">Price сум</p>
 				</CardFooter>
 			</Card>
 		</Link>

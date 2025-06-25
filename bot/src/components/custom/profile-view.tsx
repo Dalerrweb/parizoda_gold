@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { User } from "@/types";
+import { formatPrice } from "@/lib/utils";
 
 export default function ProfileView({ user }: { user: User }) {
 	const [isEditing, setIsEditing] = useState(false);
@@ -47,13 +48,6 @@ export default function ProfileView({ user }: { user: User }) {
 			month: "long",
 			day: "numeric",
 		}).format(new Date(date));
-	};
-
-	const formatPrice = (price: number) => {
-		return new Intl.NumberFormat("en-US", {
-			style: "currency",
-			currency: "USD",
-		}).format(price / 100);
 	};
 
 	const getStatusColor = (status: string) => {

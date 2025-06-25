@@ -5,9 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { ChevronLeft, Minus, Plus, ShoppingCart } from "lucide-react";
-import { formatPrice } from "@/lib/data";
 import Slider from "./product-page/slider";
 import { Product } from "@/types";
 
