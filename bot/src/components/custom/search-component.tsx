@@ -119,7 +119,7 @@ export function SearchDropdown({
 							{data?.products?.map((product: Product) => (
 								<Link
 									key={product.id}
-									to={`/products/${product.id}`}
+									to={`/product/${product.id}`}
 									className="flex items-center justify-between px-4 py-3 hover:bg-accent transition-colors"
 									onClick={() => setIsOpen(false)}
 								>
