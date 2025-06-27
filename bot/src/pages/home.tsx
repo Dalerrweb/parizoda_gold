@@ -118,7 +118,7 @@ export default function HomePage() {
 							>
 								<ProductSection
 									title={category.name}
-									viewAllHref={`/catalog/${category.name}`}
+									viewAllHref={`/catalog/${category.id}`}
 									categoryId={category.id}
 								/>
 							</div>

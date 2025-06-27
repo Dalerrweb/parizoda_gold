@@ -22,14 +22,14 @@ export function ProductSection({
 		data: products,
 		error,
 		isLoading,
-	} = useGetProductsQuery({ categoryId });
+	} = useGetProductsQuery({ categoryId, limit: 5 });
 
 	function RenderProducts() {
 		if (!products || products.products.length === 0)
 			return "Тут пока что пусто";
 
 		return products.products.map((product) => (
-			<div key={product.id} className="flex-none w-[140px]">
+			<div key={product.id} className="flex-none w-[170px]">
 				<ProductCard {...product} />
 			</div>
 		));
@@ -41,6 +41,7 @@ export function ProductSection({
 				<h2 className="text-xl font-semibold">{title}</h2>
 				<Link
 					to={viewAllHref}
+					state={{ title }}
 					className="flex items-center text-sm font-medium text-primary"
 				>
 					Посмотреть все
@@ -50,7 +51,7 @@ export function ProductSection({
 
 			<div
 				className={cn(
-					"flex overflow-x-auto gap-3 pb-4 snap-x -mx-4 px-4",
+					"flex overflow-x-auto gap-4 pb-4 snap-x -mx-4 px-4",
 					scrollbarHideClass
 				)}
 			>

@@ -1,8 +1,28 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Product } from "@/types";
+import { usePrice } from "@/context/PriceContext";
+import { formatPrice } from "@/lib/utils";
+import { Product, ProductType } from "@/types";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 
-export function ProductCard({ id, name, description, images }: Product) {
+export function ProductCard({
+	id,
+	name,
+	description,
+	images,
+	sizes,
+	markup,
+	type,
+}: Product) {
+	const { calculate } = usePrice();
+
+	const price = useMemo(() => {
+		return calculate({
+			weight: sizes?.[0]?.weight || 0,
+			markup: markup || 0,
+		});
+	}, []);
+
 	return (
 		<Link to={`/product/${id}`} className="block h-full">
 			<Card className="h-full overflow-hidden transition-all hover:shadow-md border-0 shadow-sm">
@@ -24,9 +44,13 @@ export function ProductCard({ id, name, description, images }: Product) {
 						{description}
 					</p>
 				</CardContent>
-				<CardFooter className="p-2 pt-0">
-					<p className="font-semibold text-sm">Price сум</p>
-				</CardFooter>
+				{type !== ProductType.BUNDLE && (
+					<CardFooter className="p-2 pt-0">
+						<p className="font-semibold text-sm">
+							{formatPrice(price)}
+						</p>
+					</CardFooter>
+				)}
 			</Card>
 		</Link>
 	);

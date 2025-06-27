@@ -20,12 +20,13 @@ export const api = createApi({
 	endpoints: (builder) => ({
 		getProducts: builder.query<
 			ProductResponse,
-			{ limit?: number; categoryId?: number }
+			{ limit?: number; categoryId?: number; page?: number }
 		>({
-			query: ({ limit, categoryId }) => {
+			query: ({ limit, categoryId, page }) => {
 				const params = new URLSearchParams();
 
 				if (limit) params.append("limit", limit.toString());
+				if (page) params.append("page", page.toString());
 				if (categoryId)
 					params.append("categoryId", categoryId.toString());
 
