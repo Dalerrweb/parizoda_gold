@@ -1,18 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-	Check,
-	ChevronLeft,
-	Flame,
-	Minus,
-	Plus,
-	ShoppingCart,
-} from "lucide-react";
+import { Check, ChevronLeft, Flame } from "lucide-react";
 import Slider from "./product-page/slider";
 import { Product, ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
@@ -24,25 +17,11 @@ interface ProductDetailsProps {
 }
 
 function ProductDetails({ product }: ProductDetailsProps) {
-	const [quantity, setQuantity] = useState(1);
-	const { calculate } = usePrice();
-
 	const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
-	const navigate = useNavigate();
 	const isBundle = product.type === ProductType.BUNDLE;
+	const navigate = useNavigate();
 
-	const incrementQuantity = (): void => {
-		setQuantity((prev) => prev + 1);
-	};
-
-	const decrementQuantity = (): void => {
-		setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
-	};
-
-	const handleAddToCart = (): void => {
-		console.log(`Added ${quantity} of product ${product.id} to cart`);
-		alert(`Added ${quantity} of ${product.name} to cart`);
-	};
+	const { calculate } = usePrice();
 
 	return (
 		<div className="container mx-auto px-4 pb-8">
@@ -74,75 +53,56 @@ function ProductDetails({ product }: ProductDetailsProps) {
 						<p className="mt-4 text-2xl font-semibold text-primary"></p>
 					</div>
 
-					{/* {product.sizes.length > 0 && ( */}
-					<div className="w-full flex items-center justify-between">
-						{!isBundle ? (
-							<div className="space-y-2">
-								<h2 className="text-xl font-semibold">
-									Размеры
-								</h2>
-								<SizeSelector
-									sizes={product.sizes}
-									selectedSize={selectedSize}
-									onSelectSize={setSelectedSize}
-								/>{" "}
-							</div>
-						) : null}
-						<div
-							className={`flex ${
-								isBundle ? "items-start" : "items-end"
-							} flex-col gap-2`}
-						>
-							<span className="text-2xl text-primary">
-								{formatPrice(
-									calculate({
-										weight: selectedSize?.weight || 0,
-										markup: product.markup,
-									})
-								)}
-							</span>
-							<span>{selectedSize?.weight} грам </span>
-						</div>
-					</div>
-
-					{/* TODO: Оптимизировать компонент */}
-
 					{!isBundle && (
-						<div className="w-fit flex items-center gap-2">
-							{selectedSize?.quantity < 3 ? (
-								<div className="bg-red-300 p-2 rounded-md">
-									<Flame />
+						<>
+							<div className="w-full flex items-center justify-between">
+								<div className="space-y-2">
+									<h2 className="text-xl font-semibold">
+										Размеры
+									</h2>
+									<SizeSelector
+										sizes={product.sizes}
+										selectedSize={selectedSize}
+										onSelectSize={setSelectedSize}
+									/>{" "}
 								</div>
-							) : (
-								<div className="bg-[#CEF1D7] p-2 rounded-md">
-									<Check />
+								<div className="flex items-end flex-col gap-2">
+									<span className="text-2xl text-primary">
+										{formatPrice(
+											calculate({
+												weight:
+													selectedSize?.weight || 0,
+												markup: product.markup,
+											})
+										)}
+									</span>
+									<span>{selectedSize?.weight} грам </span>
 								</div>
-							)}
-							<p className="text-sm text-muted-foreground">
-								В наличии: {selectedSize?.quantity} шт
-							</p>
-						</div>
+							</div>
+
+							<div className="w-fit flex items-center gap-2">
+								{selectedSize?.quantity < 3 ? (
+									<div className="bg-red-300 p-2 rounded-md">
+										<Flame />
+									</div>
+								) : (
+									<div className="bg-[#CEF1D7] p-2 rounded-md">
+										<Check />
+									</div>
+								)}
+								<p className="text-sm text-muted-foreground">
+									В наличии: {selectedSize?.quantity} шт
+								</p>
+							</div>
+						</>
 					)}
 
 					<Separator />
 
 					{/* Bundle Items - Show only for BUNDLE type products */}
-					{product.type === ProductType.BUNDLE &&
-						product.parentBundle.length > 0 && (
-							<div className="space-y-4">
-								<h2 className="text-xl font-semibold">
-									Что входит в комплект
-								</h2>
-								<div className="grid gap-4">
-									{product.parentBundle.map((bundleItem) => (
-										<BundleItemCard
-											key={bundleItem.bundleId}
-											bundleItem={bundleItem}
-										/>
-									))}
-								</div>
-							</div>
-						)}
+					{isBundle && product.parentBundle.length > 0 && (
+						<BundleContainer product={product} />
+					)}
 
 					<Separator />
 
@@ -154,107 +114,139 @@ function ProductDetails({ product }: ProductDetailsProps) {
 							</p>
 						</div>
 					)}
-
-					<div className="fixed bottom-0 left-0 w-full bg-white border-t-2 p-4 shadow-md">
-						<div className="flex flex-wrap items-center justify-between gap-4">
-							<div className="flex items-center gap-3">
-								<Button
-									variant="outline"
-									size="icon"
-									onClick={decrementQuantity}
-									disabled={quantity <= 1}
-									aria-label="Decrease quantity"
-								>
-									<Minus className="h-4 w-4" />
-								</Button>
-								<Card className="h-10 w-12 flex items-center justify-center rounded-md shadow-sm border">
-									<span className="font-semibold">
-										{quantity}
-									</span>
-								</Card>
-								<Button
-									variant="outline"
-									size="icon"
-									onClick={incrementQuantity}
-									aria-label="Increase quantity"
-								>
-									<Plus className="h-4 w-4" />
-								</Button>
-							</div>
-
-							<Button
-								className="flex items-center gap-2 px-5 py-2 text-base font-medium"
-								size="lg"
-								onClick={handleAddToCart}
-							>
-								<ShoppingCart className="h-5 w-5" />
-								Add to Cart
-							</Button>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-function BundleItemCard({ bundleItem }: { bundleItem: any }) {
-	const { child } = bundleItem;
-	const [selectedSize, setSelectedSize] = useState(child.sizes[0]);
-	const { calculate } = usePrice();
+function BundleContainer({ product }: { product: Product }) {
+	const [items, setItems] = useState({});
+
+	const total: any = useMemo(() => {
+		if (product.parentBundle.length === 0) return 0;
+		let price = 0;
+		let weight = 0;
+
+		for (let id in items) {
+			const item: any = items[id as keyof typeof items];
+
+			if (item) {
+				price += item.price;
+				weight += item.weight;
+			}
+		}
+
+		return { weight, price };
+	}, [items]);
 
 	return (
-		<Card className="p-4 hover:shadow-md transition-shadow">
-			<div className="flex items-start justify-between gap-4">
-				<div className="flex items-center gap-2">
-					<div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md">
-						{child.images && child.images.length > 0 ? (
-							<img
-								src={child.images[0].url || "/placeholder.svg"}
-								alt={child.name}
-								className="object-cover w-full h-full"
-							/>
-						) : (
-							<div className="flex h-full items-center justify-center bg-secondary/20">
-								<span className="text-xs text-muted-foreground">
-									No image
-								</span>
-							</div>
-						)}
-					</div>
-
-					{/* Product Info */}
-					<div className="text-left hover:text-primary transition-colors">
-						<h3 className="font-medium text-sm truncate">
-							{child.name}
-						</h3>
-						<p className="text-sm text-muted-foreground">
-							Вес: {selectedSize.weight} г
-						</p>
-						<p className="text-sm text-muted-foreground">
-							В наличии: {selectedSize.quantity}
-						</p>
-					</div>
-				</div>
-
-				<div className="flex flex-col items-end gap-2">
-					<SizeSelector
-						sizes={child.sizes}
-						selectedSize={selectedSize}
-						onSelectSize={setSelectedSize}
-					/>
-					<p>
-						{formatPrice(
-							calculate({
-								weight: selectedSize?.weight || 0,
-								markup: child.markup,
-							})
-						)}
-					</p>
-				</div>
+		<div className="space-y-4">
+			<div className="flex items-start flex-col gap-2">
+				<p className="text-lg font-semibold">
+					Цена: {formatPrice(total.price)}
+				</p>
+				<p className="text-sm text-muted-foreground">
+					Общий вес в граммах: {total.weight}
+				</p>
 			</div>
-		</Card>
+			<Separator className="mb-4" />
+			<h2 className="text-xl font-semibold">Что входит в комплект</h2>
+			<div className="grid gap-4">
+				{product.parentBundle.map((bundleItem) => (
+					<BundleItemCard
+						key={bundleItem.bundleId}
+						bundleItem={bundleItem}
+						setItem={setItems}
+					/>
+				))}
+			</div>
+		</div>
 	);
 }
+
+const BundleItemCard = memo(
+	({ bundleItem, setItem }: { bundleItem: any; setItem: any }) => {
+		const { child } = bundleItem;
+		const [selectedSize, setSelectedSize] = useState(child.sizes[0]);
+		const { calculate } = usePrice();
+
+		const price = useMemo(
+			() =>
+				calculate({
+					weight: selectedSize?.weight || 0,
+					markup: bundleItem.child.markup,
+				}),
+			[selectedSize, bundleItem.child.markup]
+		);
+
+		useEffect(() => {
+			setItem((prev: any) => ({
+				...prev,
+				[bundleItem.bundleId]: {
+					weight: selectedSize.weight,
+					markup: child.markup,
+					price: price,
+				},
+			}));
+			return () => {
+				setItem((prev: any) => {
+					const newItems = { ...prev };
+					delete newItems[bundleItem.bundleId];
+					return newItems;
+				});
+			};
+		}, [selectedSize, price]);
+
+		return (
+			<Card className="p-4 hover:shadow-md transition-shadow">
+				<div className="flex items-start justify-between gap-4">
+					<div className="flex items-center gap-2">
+						<div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-md">
+							{child.images && child.images.length > 0 ? (
+								<img
+									src={
+										child.images[0].url ||
+										"/placeholder.svg"
+									}
+									alt={child.name}
+									className="object-cover w-full h-full"
+								/>
+							) : (
+								<div className="flex h-full items-center justify-center bg-secondary/20">
+									<span className="text-xs text-muted-foreground">
+										No image
+									</span>
+								</div>
+							)}
+						</div>
+
+						{/* Product Info */}
+						<div className="text-left hover:text-primary transition-colors">
+							<h3 className="font-medium text-sm truncate">
+								{child.name}
+							</h3>
+							<p className="text-sm text-muted-foreground">
+								Вес: {selectedSize.weight} г
+							</p>
+							<p className="text-sm text-muted-foreground">
+								В наличии: {selectedSize.quantity}
+							</p>
+						</div>
+					</div>
+
+					<div className="flex flex-col items-end gap-2">
+						<SizeSelector
+							sizes={child.sizes}
+							selectedSize={selectedSize}
+							onSelectSize={setSelectedSize}
+						/>
+						<p>{formatPrice(price)}</p>
+					</div>
+				</div>
+			</Card>
+		);
+	}
+);
 
 export default ProductDetails;
