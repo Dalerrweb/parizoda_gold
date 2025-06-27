@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Search } from "lucide-react";
+// import { Search } from "lucide-react";
 
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductSection } from "@/components/custom/product-section";
 
 import Banners from "@/components/custom/banners";
 import { useGetCategoriesQuery } from "@/services/api";
+import { SearchDropdown } from "@/components/custom/search-component";
 
 export default function HomePage() {
 	const [activeCategory, setActiveCategory] = useState("rings");
@@ -65,10 +66,7 @@ export default function HomePage() {
 		<div className="flex min-h-screen flex-col">
 			<main className="flex-1 pb-8">
 				<div className="pt-4 pb-2 px-4">
-					<div className="relative mt-4">
-						<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-						<Input placeholder="Enter value" className="pl-9" />
-					</div>
+					<SearchDropdown placeholder="Search for products" />
 
 					<Banners />
 				</div>
