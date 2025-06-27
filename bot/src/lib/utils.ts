@@ -10,7 +10,7 @@ export function formatPrice(price: number | bigint): string {
 	const fixed = num.toFixed(2); // округление до двух знаков
 
 	const [integerPart, decimalPart] = fixed.split(".");
-	const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+	const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
 	return decimalPart === "00"
 		? `${formattedInt} сум`

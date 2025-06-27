@@ -1,11 +1,11 @@
 export type AuPrice = {
 	id: number;
 	name: string;
-	pricePerGram: bigint;
+	pricePerGram: number;
 };
 
 export type Category = {
-	id: string;
+	id: number;
 	name: string;
 	imageUrl?: string;
 	products: Product[];
@@ -85,3 +85,8 @@ enum OrderStatus {
 	COMPLETED = "COMPLETED",
 	CANCELLED = "CANCELLED",
 }
+
+export type CartItem = {
+	product: Product;
+	quantity: number;
+};
