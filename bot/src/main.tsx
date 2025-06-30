@@ -7,15 +7,18 @@ import { UserProvider } from "./context/UserProvider";
 import { Provider } from "react-redux";
 import { store } from "./store.ts";
 import { PriceProvider } from "./context/PriceContext.tsx";
+import { CartProvider } from "./context/CartProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<Provider store={store}>
 			<BrowserRouter>
 				<PriceProvider>
-					<UserProvider>
-						<App />
-					</UserProvider>
+					<CartProvider>
+						<UserProvider>
+							<App />
+						</UserProvider>
+					</CartProvider>
 				</PriceProvider>
 			</BrowserRouter>
 		</Provider>

@@ -11,6 +11,7 @@ import { Product, ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import SizeSelector from "./SizeSelector";
+import CartFooter from "@/layout/cart-footer";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -116,6 +117,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
 					)}
 				</div>
 			</div>
+			<CartFooter product={product} />
 		</div>
 	);
 }
