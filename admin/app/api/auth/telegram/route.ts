@@ -48,7 +48,7 @@ function validateInitData(initData: string): boolean {
 
 // 	const user = existingUser;
 
-// 	const token = jwt.sign({ userId: 16 }, JWT_SECRET, {
+// 	const token = jwt.sign({ userId: 24 }, JWT_SECRET, {
 // 		expiresIn: "7d",
 // 	});
 
