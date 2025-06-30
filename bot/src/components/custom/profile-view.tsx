@@ -31,7 +31,22 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { User } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
+
+const getStatusColor = (status: string) => {
+	switch (status.toUpperCase()) {
+		case "DELIVERED":
+			return "bg-green-500";
+		case "PROCESSING":
+			return "bg-blue-500";
+		case "CANCELLED":
+			return "bg-red-500";
+		case "PENDING":
+			return "bg-yellow-500";
+		default:
+			return "bg-gray-500";
+	}
+};
 
 export default function ProfileView({ user }: { user: User }) {
 	const [isEditing, setIsEditing] = useState(false);
@@ -41,29 +56,6 @@ export default function ProfileView({ user }: { user: User }) {
 		last_name: user.last_name || "",
 	});
 	const navigate = useNavigate();
-
-	const formatDate = (date: Date) => {
-		return new Intl.DateTimeFormat("en-US", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		}).format(new Date(date));
-	};
-
-	const getStatusColor = (status: string) => {
-		switch (status.toUpperCase()) {
-			case "DELIVERED":
-				return "bg-green-500";
-			case "PROCESSING":
-				return "bg-blue-500";
-			case "CANCELLED":
-				return "bg-red-500";
-			case "PENDING":
-				return "bg-yellow-500";
-			default:
-				return "bg-gray-500";
-		}
-	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = e.target;
