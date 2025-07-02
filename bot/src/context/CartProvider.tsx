@@ -8,8 +8,10 @@ import {
 } from "react";
 
 export interface CartItem {
+	localId: number;
 	id: number;
 	type: ProductType;
+	image: string;
 	variantId: number;
 	weight: number;
 	markup: number;
@@ -19,8 +21,10 @@ export interface CartItem {
 }
 
 type CartBundleItem = {
+	localId: number;
 	id: number;
 	variantId: string;
+	image: string;
 	weight: number;
 	markup: number;
 	title: string;

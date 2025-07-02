@@ -26,8 +26,10 @@ function ProductDetails({ product }: ProductDetailsProps) {
 	const { calculate } = usePrice();
 
 	const cartElement: CartItem = {
+		localId: Math.random(),
 		id: product.id,
 		type: product.type,
+		image: product.images?.[0]?.url,
 		variantId: selectedSize.id || 0,
 		weight: selectedSize.weight,
 		markup: product.markup,
@@ -127,6 +129,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
 					)}
 				</div>
 			</div>
+			{/* TODO: this cart footer for Bundle products */}
 			<CartFooter
 				product={product}
 				cartElement={cartElement}
