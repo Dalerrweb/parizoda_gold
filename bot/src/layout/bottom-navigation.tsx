@@ -1,6 +1,7 @@
 import { Heart, Home, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/context/CartProvider";
 
 interface BottomNavigationProps {
 	className?: string;
@@ -8,6 +9,7 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ className }: BottomNavigationProps) {
 	const location = useLocation();
+	const { cartLength } = useCart();
 
 	const navItems = [
 		{
@@ -15,11 +17,6 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 			icon: Home,
 			label: "Home",
 		},
-		// {
-		// 	to: "/history",
-		// 	icon: History,
-		// 	label: "History",
-		// },
 		{
 			to: "/favorites",
 			icon: Heart,
@@ -29,6 +26,7 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 			to: "/cart",
 			icon: ShoppingCart,
 			label: "Cart",
+			badgeCount: cartLength,
 		},
 		{
 			to: "/profile",
@@ -61,14 +59,23 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 								isActive && "text-primary bg-primary/10"
 							)}
 						>
-							<Icon
-								className={cn(
-									"h-5 w-5 mb-1",
-									isActive
-										? "text-primary"
-										: "text-muted-foreground"
-								)}
-							/>
+							<div className="relative">
+								<Icon
+									className={cn(
+										"h-5 w-5 mb-1",
+										isActive
+											? "text-primary"
+											: "text-muted-foreground"
+									)}
+								/>
+								{item.badgeCount && item.badgeCount > 0 ? (
+									<span className="absolute text-white -top-2 -right-2 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-xs font-medium flex items-center justify-center min-w-[16px] px-1">
+										{item.badgeCount > 99
+											? "99+"
+											: item.badgeCount}
+									</span>
+								) : null}
+							</div>
 							<span
 								className={cn(
 									"text-xs font-medium truncate",

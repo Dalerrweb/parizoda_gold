@@ -1,3 +1,4 @@
+import { Product, ProductType } from "@/types";
 import {
 	createContext,
 	useContext,
@@ -6,38 +7,48 @@ import {
 	useCallback,
 } from "react";
 
-interface CartItem {
-	id: string | number;
+export interface CartItem {
+	id: number;
+	type: ProductType;
+	variantId: number;
+	weight: number;
+	markup: number;
+	title: string;
 	quantity: number;
+	items?: CartBundleItem[];
 }
+
+type CartBundleItem = {
+	id: number;
+	variantId: string;
+	weight: number;
+	markup: number;
+	title: string;
+};
 
 interface CartContextType {
 	cart: CartItem[];
 	cartLength: number;
 	addToCart: (item: CartItem) => void;
 	removeFromCart: (id: CartItem["id"]) => void;
-	changeQuantity: (id: CartItem["id"], newQuantity: number) => void;
+	increment: (id: CartItem["id"], variantId: CartItem["variantId"]) => void;
+	decrement: (id: CartItem["id"], variantId: CartItem["variantId"]) => void;
 	emptyCart: () => void;
+	Item: (productId: Product["id"], variantId: any) => CartItem | undefined;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-	const [cart, setCart] = useState<CartItem[]>([]);
-
-	// Инициализация корзины из localStorage
-	useEffect(() => {
-		const rawCart = localStorage.getItem("cart");
-		if (rawCart) {
-			try {
-				const parsed = JSON.parse(rawCart);
-				setCart(Array.isArray(parsed) ? parsed : []);
-			} catch {
-				localStorage.removeItem("cart");
-				setCart([]);
-			}
+	const [cart, setCart] = useState<CartItem[]>(() => {
+		try {
+			const raw = localStorage.getItem("cart");
+			return raw ? JSON.parse(raw) : [];
+		} catch (err) {
+			localStorage.removeItem("cart");
+			return [];
 		}
-	}, []);
+	});
 
 	// Синхронизация с localStorage при изменении корзины
 	useEffect(() => {
@@ -46,18 +57,17 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 	const addToCart = useCallback((item: CartItem) => {
 		setCart((prev) => {
-			// Проверка на существование товара в корзине
-			const existing = prev.find((i) => i.id === item.id);
+			const existing = prev.find(
+				(i) => i.id === item.id && item.variantId === i.variantId
+			);
 
 			if (existing) {
-				// Обновляем количество если товар уже есть
 				return prev.map((i) =>
-					i.id === item.id
+					i.id === item.id && item.variantId === i.variantId
 						? { ...i, quantity: i.quantity + item.quantity }
 						: i
 				);
 			} else {
-				// Добавляем новый товар
 				return [...prev, item];
 			}
 		});
@@ -67,35 +77,57 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		setCart((prev) => prev.filter((item) => item.id !== id));
 	}, []);
 
-	const changeQuantity = useCallback(
-		(id: CartItem["id"], newQuantity: number) => {
-			setCart(
-				(prev) =>
-					prev
-						.map((item) =>
-							item.id === id
-								? {
-										...item,
-										quantity: Math.max(1, newQuantity),
-								  }
-								: item
-						)
-						.filter((item) => item.quantity > 0) // Автоматическое удаление при нуле
+	const increment = useCallback(
+		(id: CartItem["id"], variantId: CartItem["variantId"]) => {
+			setCart((prev) =>
+				prev.map((item) =>
+					item.id === id && item.variantId === variantId
+						? {
+								...item,
+								quantity: item.quantity + 1,
+						  }
+						: item
+				)
 			);
 		},
 		[]
 	);
+	const decrement = useCallback(
+		(id: CartItem["id"], variantId: CartItem["variantId"]) => {
+			setCart((prev) =>
+				prev
+					.map((item) =>
+						item.id === id && item.variantId === variantId
+							? {
+									...item,
+									quantity: item.quantity - 1,
+							  }
+							: item
+					)
+					.filter((item) => item.quantity > 0)
+			);
+		},
+		[]
+	);
+	// .filter((item) => item.quantity > 0) // Автоматическое удаление при нуле
+	const Item = (productId: Product["id"], variantId: any) => {
+		return cart.find(
+			(elem) => elem.id === productId && variantId === elem.variantId
+		);
+	};
 
 	const emptyCart = useCallback(() => {
 		setCart([]);
 	}, []);
 
 	const contextValue: CartContextType = {
+		Item,
 		cart,
 		cartLength: cart.reduce((sum, item) => sum + item.quantity, 0),
 		addToCart,
 		removeFromCart,
-		changeQuantity,
+		increment,
+		decrement,
 		emptyCart,
 	};
 

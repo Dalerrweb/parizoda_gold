@@ -12,6 +12,7 @@ import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import SizeSelector from "./SizeSelector";
 import CartFooter from "@/layout/cart-footer";
+import { CartItem } from "@/context/CartProvider";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -23,6 +24,16 @@ function ProductDetails({ product }: ProductDetailsProps) {
 	const navigate = useNavigate();
 
 	const { calculate } = usePrice();
+
+	const cartElement: CartItem = {
+		id: product.id,
+		type: product.type,
+		variantId: selectedSize.id || 0,
+		weight: selectedSize.weight,
+		markup: product.markup,
+		title: product.name,
+		quantity: 1,
+	};
 
 	return (
 		<div className="container mx-auto px-4 pb-8">
@@ -40,7 +51,6 @@ function ProductDetails({ product }: ProductDetailsProps) {
 					{product.name}
 				</h1>
 			</div>
-
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Product Images */}
 				<Slider product={product} />
@@ -117,7 +127,12 @@ function ProductDetails({ product }: ProductDetailsProps) {
 					)}
 				</div>
 			</div>
-			<CartFooter product={product} />
+			<CartFooter
+				product={product}
+				cartElement={cartElement}
+				selectedSize={selectedSize}
+			/>
+			<br />
 		</div>
 	);
 }
