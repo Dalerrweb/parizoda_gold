@@ -1,52 +1,22 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
 	Minus,
 	Plus,
 	MoreVertical,
-	// AlertCircle,
-	// Check,
 	Heart,
 	Trash2,
+	Package,
+	ShoppingBag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/CartProvider";
 import { ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
-
-// const mockCartData = [
-// 	{
-// 		productId: "ring-001",
-// 		title: "Кольцо с бриллиантом",
-// 		quantity: 1,
-// 		image: "/placeholder.svg?height=80&width=80",
-// 		deliveryDate: "12 июля",
-// 		inStock: true,
-// 		type: "single",
-// 	},
-// 	{
-// 		productId: "set-002",
-// 		title: "Подарочный набор: кольцо + серьги",
-// 		quantity: 1,
-// 		image: "/placeholder.svg?height=80&width=80",
-// 		deliveryDate: "15 июля",
-// 		inStock: true,
-// 		type: "bundle",
-// 		items: [
-// 			{ title: "Кольцо из белого золота" },
-// 			{ title: "Серьги с изумрудами" },
-// 		],
-// 	},
-// 	{
-// 		productId: "necklace-003",
-// 		title: "Колье с жемчугом",
-// 		quantity: 1,
-// 		image: "/placeholder.svg?height=80&width=80",
-// 		inStock: false,
-// 		type: "single",
-// 	},
-// ];
 
 export default function CartPage() {
 	const [total, setTotal] = useState(0);
@@ -79,13 +49,16 @@ export default function CartPage() {
 	}, [cart, calculate]);
 
 	return (
-		<div className="min-h-screen bg-white">
+		<div className="min-h-screen bg-gray-50">
 			{/* Header */}
-			<div className="bg-white border-b border-gray-200 px-4 py-3">
+			<div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
 				<div className="flex items-center justify-between">
-					<div className="flex items-center space-x-2">
+					<div className="flex items-center space-x-3">
 						<Checkbox className="rounded-md" />
 						<span className="text-sm font-medium">Выбрать все</span>
+						<Badge variant="secondary" className="text-xs">
+							{cart.length} товаров
+						</Badge>
 					</div>
 					<Button
 						variant="ghost"
@@ -98,21 +71,17 @@ export default function CartPage() {
 			</div>
 
 			{/* Cart Items */}
-			<div className="px-4 py-2 space-y-4">
+			<div className="px-4 py-4 space-y-3">
 				{cart.map((item) => (
-					<CartItem
-						key={item.configKey}
-						item={item}
-						setTotal={setTotal}
-					/>
+					<CartItem key={item.configKey} item={item} />
 				))}
 			</div>
 
 			{/* Bottom spacing */}
-			<div className="h-20" />
+			<div className="h-24" />
 
 			{/* Checkout Summary Bar */}
-			<div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3 shadow-md">
+			<div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
 				<div className="flex items-center justify-between">
 					<div>
 						<p className="text-sm text-gray-500">Итого:</p>
@@ -120,7 +89,7 @@ export default function CartPage() {
 							{formatPrice(total)}
 						</p>
 					</div>
-					<Button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md text-sm font-medium">
+					<Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium">
 						Оформить заказ
 					</Button>
 				</div>
@@ -131,7 +100,8 @@ export default function CartPage() {
 
 function CartItem({ item }: any) {
 	const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-	const { increment, decrement } = useCart();
+	const [showBundleDetails, setShowBundleDetails] = useState(false);
+	const { increment, decrement, removeFromCart } = useCart();
 	const { calculate } = usePrice();
 
 	const price =
@@ -149,116 +119,194 @@ function CartItem({ item }: any) {
 			  item.quantity;
 
 	return (
-		<div className="bg-white border border-gray-200 rounded-lg relative overflow-hidden">
-			{/* Action buttons behind the card */}
+		<div className="bg-white rounded-xl shadow-sm border border-gray-100 relative overflow-hidden">
+			{/* Swipe Actions */}
 			<div className="absolute right-0 top-0 bottom-0 flex">
-				<button className="bg-orange-500 hover:bg-orange-600 text-white px-6 flex items-center justify-center min-w-[120px] transition-colors duration-200">
-					<Heart className="w-5 h-5 mr-2" />
+				<button className="bg-orange-500 hover:bg-orange-600 text-white px-4 flex items-center justify-center min-w-[80px] transition-colors duration-200">
+					<Heart className="w-4 h-4" />
 				</button>
-				<button className="bg-pink-500 hover:bg-pink-600 text-white px-6 flex items-center justify-center min-w-[120px] transition-colors duration-200">
-					<Trash2 className="w-5 h-5 mr-2" />
+				<button
+					onClick={() => removeFromCart(item.configKey)}
+					className="bg-red-500 hover:bg-red-600 text-white px-4 flex items-center justify-center min-w-[80px] transition-colors duration-200"
+				>
+					<Trash2 className="w-4 h-4" />
 				</button>
 			</div>
 
-			{/* Main card content that slides */}
+			{/* Main Content */}
 			<div
-				className={`bg-white p-4 transition-transform duration-300 ease-out relative z-10 ${
+				className={`bg-white transition-transform duration-300 ease-out relative z-10 ${
 					activeMenuId === item.configKey
-						? "-translate-x-60"
+						? "-translate-x-40"
 						: "translate-x-0"
 				}`}
 			>
-				<div className="flex items-start space-x-3">
-					<Checkbox className="mt-1 rounded-md" />
+				<div className="p-4">
+					<div className="flex items-start space-x-3">
+						<Checkbox className="mt-1 rounded-md" />
 
-					<div className="flex-shrink-0">
-						<img
-							src={item?.image || "/placeholder.svg"}
-							alt={item.title}
-							className="rounded-lg object-cover size-[80px]"
-						/>
-					</div>
-
-					<div className="flex-1 min-w-0">
-						<div className="flex items-start justify-between">
-							<div className="flex-1">
-								<h3 className="font-medium text-gray-900 mb-1">
-									{item.title}
-								</h3>
-
-								{item.type === ProductType.BUNDLE &&
-									item.items && (
-										<div className="text-sm text-gray-600 mb-2">
-											{item.items.map(
-												(
-													bundleItem: any,
-													index: number
-												) => (
-													<div key={index}>
-														• {bundleItem.title}
-													</div>
-												)
-											)}
-										</div>
-									)}
-							</div>
-
-							<Button
-								variant="ghost"
-								size="sm"
-								className="text-gray-400"
-								onClick={() =>
-									setActiveMenuId(
-										activeMenuId === item.configKey
-											? null
-											: item.configKey
-									)
-								}
-							>
-								<MoreVertical className="w-4 h-4" />
-							</Button>
+						{/* Product Image */}
+						<div className="flex-shrink-0">
+							<img
+								src={item?.image || "/placeholder.svg"}
+								alt={item.title}
+								className="rounded-lg object-cover w-16 h-16"
+							/>
 						</div>
 
-						<div className="flex items-center justify-between mt-4">
-							<div className="flex items-center space-x-3 bg-gray-100 rounded-lg px-3 py-2">
+						{/* Product Info */}
+						<div className="flex-1 min-w-0">
+							<div className="flex items-start justify-between mb-2">
+								<div className="flex-1">
+									<div className="flex items-center gap-2 mb-1">
+										<h3 className="font-medium text-gray-900 text-sm leading-tight">
+											{item.title}
+										</h3>
+										{item.type === ProductType.BUNDLE && (
+											<Badge
+												variant="outline"
+												className="text-xs"
+											>
+												<Package className="w-3 h-3 mr-1" />
+												Набор
+											</Badge>
+										)}
+									</div>
+
+									{/* Bundle Items - Compact View */}
+									{item.type === ProductType.BUNDLE &&
+										item.items && (
+											<div className="mt-2">
+												<div className="space-y-1">
+													{item.items
+														.slice(
+															0,
+															showBundleDetails
+																? item.items
+																		.length
+																: 2
+														)
+														.map(
+															(
+																bundleItem: any,
+																index: number
+															) => (
+																<div
+																	key={index}
+																	className="flex items-center justify-between text-xs text-gray-600 bg-gray-50 rounded-md px-2 py-1"
+																>
+																	<div className="flex items-center gap-2">
+																		<div className="w-1 h-1 bg-purple-400 rounded-full" />
+																		<span className="font-medium">
+																			{
+																				bundleItem.title
+																			}
+																		</span>
+																		{bundleItem.selectedSize && (
+																			<Badge
+																				variant="secondary"
+																				className="text-xs px-1 py-0"
+																			>
+																				{
+																					bundleItem.selectedSize
+																				}
+																			</Badge>
+																		)}
+																	</div>
+																	<span className="text-gray-500">
+																		{
+																			bundleItem.weight
+																		}
+																	</span>
+																</div>
+															)
+														)}
+
+													{item.items.length > 2 && (
+														<button
+															onClick={() =>
+																setShowBundleDetails(
+																	!showBundleDetails
+																)
+															}
+															className="text-xs text-purple-600 hover:text-purple-700 font-medium"
+														>
+															{showBundleDetails
+																? "Скрыть"
+																: `Показать ещё ${
+																		item
+																			.items
+																			.length -
+																		2
+																  }`}
+														</button>
+													)}
+												</div>
+											</div>
+										)}
+								</div>
+
 								<Button
-									onClick={() => decrement(item.configKey)}
 									variant="ghost"
 									size="sm"
-									className="p-1 h-6 w-6"
+									className="text-gray-400 p-1 h-8 w-8"
+									onClick={() =>
+										setActiveMenuId(
+											activeMenuId === item.configKey
+												? null
+												: item.configKey
+										)
+									}
 								>
-									<Minus className="w-4 h-4" />
-								</Button>
-								<span className="font-medium min-w-[20px] text-center">
-									{item.quantity}
-								</span>
-								<Button
-									onClick={() => increment(item.configKey)}
-									variant="ghost"
-									size="sm"
-									className="p-1 h-6 w-6"
-								>
-									<Plus className="w-4 h-4" />
+									<MoreVertical className="w-4 h-4" />
 								</Button>
 							</div>
-							<div className="flex flex-col gap-2">
-								<p>{formatPrice(price)}</p>
-								<Button className="bg-purple-600 hover:bg-purple-700 text-white px-6">
-									Buy
-								</Button>
+
+							{/* Price and Quantity Controls */}
+							<div className="flex items-center justify-between">
+								<div className="flex items-center space-x-2 bg-gray-100 rounded-lg px-2 py-1">
+									<Button
+										onClick={() =>
+											decrement(item.configKey)
+										}
+										variant="ghost"
+										size="sm"
+										className="p-0 h-6 w-6 hover:bg-gray-200"
+									>
+										<Minus className="w-3 h-3" />
+									</Button>
+									<span className="font-medium text-sm min-w-[20px] text-center">
+										{item.quantity}
+									</span>
+									<Button
+										onClick={() =>
+											increment(item.configKey)
+										}
+										variant="ghost"
+										size="sm"
+										className="p-0 h-6 w-6 hover:bg-gray-200"
+									>
+										<Plus className="w-3 h-3" />
+									</Button>
+								</div>
+
+								<div className="text-right">
+									<p className="font-semibold text-gray-900 text-sm">
+										{formatPrice(price)}
+									</p>
+									<Button
+										size="sm"
+										className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1 text-xs mt-1"
+									>
+										<ShoppingBag className="w-3 h-3 mr-1" />
+										Купить
+									</Button>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-
-			{/* Overlay to close menu when clicking outside */}
-			{activeMenuId === item.configKey && (
-				<div
-					className="absolute inset-0 bg-transparent z-20"
-					onClick={() => setActiveMenuId(null)}
-				/>
-			)}
 		</div>
 	);
 }
