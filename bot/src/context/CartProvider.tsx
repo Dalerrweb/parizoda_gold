@@ -1,4 +1,4 @@
-import { Product, ProductType } from "@/types";
+import { ProductType } from "@/types";
 import {
 	createContext,
 	useContext,
@@ -8,11 +8,10 @@ import {
 } from "react";
 
 export interface CartItem {
-	localId: number;
+	configKey: string;
 	id: number;
 	type: ProductType;
 	image: string;
-	variantId: number;
 	weight: number;
 	markup: number;
 	title: string;
@@ -21,7 +20,6 @@ export interface CartItem {
 }
 
 type CartBundleItem = {
-	localId: number;
 	id: number;
 	variantId: string;
 	image: string;
@@ -34,11 +32,27 @@ interface CartContextType {
 	cart: CartItem[];
 	cartLength: number;
 	addToCart: (item: CartItem) => void;
-	removeFromCart: (id: CartItem["id"]) => void;
-	increment: (id: CartItem["id"], variantId: CartItem["variantId"]) => void;
-	decrement: (id: CartItem["id"], variantId: CartItem["variantId"]) => void;
+	removeFromCart: (configKey: string) => void;
+	increment: (configKey: string) => void;
+	decrement: (configKey: string) => void;
 	emptyCart: () => void;
-	Item: (productId: Product["id"], variantId: any) => CartItem | undefined;
+	Item: (configKey: string) => CartItem | undefined;
+}
+
+export function generateConfigKey(
+	productId: number,
+	variantId?: number,
+	bundleItems?: Record<string, any>
+): string {
+	if (bundleItems && Object.keys(bundleItems).length > 0) {
+		const parts = Object.values(bundleItems)
+			.slice()
+			.sort((a, b) => a.childId - b.childId)
+			.map((item) => `${item.childId}:${item.selectedSizeId}`);
+		return `bundle-${productId}|${parts.join("|")}`;
+	} else {
+		return `single-${productId}|${variantId}`;
+	}
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -54,20 +68,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		}
 	});
 
-	// Синхронизация с localStorage при изменении корзины
 	useEffect(() => {
 		localStorage.setItem("cart", JSON.stringify(cart));
 	}, [cart]);
 
 	const addToCart = useCallback((item: CartItem) => {
 		setCart((prev) => {
-			const existing = prev.find(
-				(i) => i.id === item.id && item.variantId === i.variantId
-			);
-
+			const existing = prev.find((i) => i.configKey === item.configKey);
 			if (existing) {
 				return prev.map((i) =>
-					i.id === item.id && item.variantId === i.variantId
+					i.configKey === item.configKey
 						? { ...i, quantity: i.quantity + item.quantity }
 						: i
 				);
@@ -77,47 +87,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		});
 	}, []);
 
-	const removeFromCart = useCallback((id: CartItem["id"]) => {
-		setCart((prev) => prev.filter((item) => item.id !== id));
+	const removeFromCart = useCallback((configKey: string) => {
+		setCart((prev) => prev.filter((item) => item.configKey !== configKey));
 	}, []);
 
-	const increment = useCallback(
-		(id: CartItem["id"], variantId: CartItem["variantId"]) => {
-			setCart((prev) =>
-				prev.map((item) =>
-					item.id === id && item.variantId === variantId
+	const increment = useCallback((configKey: string) => {
+		setCart((prev) =>
+			prev.map((item) =>
+				item.configKey === configKey
+					? {
+							...item,
+							quantity: item.quantity + 1,
+					  }
+					: item
+			)
+		);
+	}, []);
+	const decrement = useCallback((configKey: string) => {
+		setCart((prev) =>
+			prev
+				.map((item) =>
+					item.configKey === configKey
 						? {
 								...item,
-								quantity: item.quantity + 1,
+								quantity: item.quantity - 1,
 						  }
 						: item
 				)
-			);
-		},
-		[]
-	);
-	const decrement = useCallback(
-		(id: CartItem["id"], variantId: CartItem["variantId"]) => {
-			setCart((prev) =>
-				prev
-					.map((item) =>
-						item.id === id && item.variantId === variantId
-							? {
-									...item,
-									quantity: item.quantity - 1,
-							  }
-							: item
-					)
-					.filter((item) => item.quantity > 0)
-			);
-		},
-		[]
-	);
-	// .filter((item) => item.quantity > 0) // Автоматическое удаление при нуле
-	const Item = (productId: Product["id"], variantId: any) => {
-		return cart.find(
-			(elem) => elem.id === productId && variantId === elem.variantId
+				.filter((item) => item.quantity > 0)
 		);
+	}, []);
+	// .filter((item) => item.quantity > 0) // Автоматическое удаление при нуле
+	const Item = (configKey: string) => {
+		return cart.find((elem) => elem.configKey === configKey);
 	};
 
 	const emptyCart = useCallback(() => {

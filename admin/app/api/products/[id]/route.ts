@@ -27,6 +27,7 @@ export async function GET(
 					include: {
 						child: {
 							select: {
+								id: true,
 								name: true,
 								images: true,
 								sku: true,

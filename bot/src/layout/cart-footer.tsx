@@ -10,16 +10,12 @@ interface cartFooterProps {
 	selectedSize: any;
 }
 
-const CartFooter: React.FC<cartFooterProps> = ({
-	product,
-	cartElement,
-	selectedSize,
-}) => {
+const CartFooter: React.FC<cartFooterProps> = ({ cartElement }) => {
 	const { Item, addToCart, increment, decrement } = useCart();
-	const cartItem = Item(product.id, selectedSize.id);
+	const cartItem = Item(cartElement.configKey);
 
 	return (
-		<div className="fixed bottom-[100px] left-0 right-0 z-100 w-full px-2">
+		<div className="fixed bottom-[100px] left-0 right-0 z-100 w-full px-2 ">
 			<div className="grid grid-cols-2 gap-2 w-full m-auto">
 				{/* Buy Now Button */}
 				<Button
@@ -33,9 +29,7 @@ const CartFooter: React.FC<cartFooterProps> = ({
 				{cartItem ? (
 					<div className="flex h-12 items-center bg-gray-50 rounded-lg border border-gray-200 px-1 py-3">
 						<Button
-							onClick={() =>
-								decrement(product.id, selectedSize.id)
-							}
+							onClick={() => decrement(cartItem.configKey)}
 							variant="ghost"
 							size="sm"
 							className="h-full w-10 rounded-md hover:bg-gray-200 transition-colors duration-200"
@@ -50,15 +44,9 @@ const CartFooter: React.FC<cartFooterProps> = ({
 						</div>
 
 						<Button
-							onClick={() =>
-								cartItem.quantity < selectedSize.quantity &&
-								increment(product.id, selectedSize.id)
-							}
+							onClick={() => increment(cartItem.configKey)}
 							variant="ghost"
 							size="sm"
-							disabled={
-								cartItem.quantity === selectedSize.quantity
-							}
 							className="h-full w-10 rounded-md hover:bg-gray-200 transition-colors duration-200"
 						>
 							<Plus className="h-4 w-4" />
@@ -67,7 +55,7 @@ const CartFooter: React.FC<cartFooterProps> = ({
 				) : (
 					<Button
 						variant="outline"
-						className=" h-12 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 font-semibold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 bg-transparent"
+						className=" h-12 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 font-semibold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 "
 						size="lg"
 						onClick={() => addToCart(cartElement)}
 					>

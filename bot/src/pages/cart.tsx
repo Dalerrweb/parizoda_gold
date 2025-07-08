@@ -47,7 +47,7 @@ import { ProductType } from "@/types";
 // ];
 
 export default function CartPage() {
-	const [activeMenuId, setActiveMenuId] = useState<number | null>(0);
+	const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 	const { cart, increment, decrement } = useCart();
 
 	return (
@@ -73,7 +73,7 @@ export default function CartPage() {
 			<div className="px-4 py-2 space-y-4">
 				{cart.map((item) => (
 					<div
-						key={item.localId}
+						key={item.configKey}
 						className="bg-white border border-gray-200 rounded-lg relative overflow-hidden"
 					>
 						{/* Action buttons behind the card */}
@@ -89,7 +89,7 @@ export default function CartPage() {
 						{/* Main card content that slides */}
 						<div
 							className={`bg-white p-4 transition-transform duration-300 ease-out relative z-10 ${
-								activeMenuId === item.localId
+								activeMenuId === item.configKey
 									? "-translate-x-60"
 									: "translate-x-0"
 							}`}
@@ -144,9 +144,9 @@ export default function CartPage() {
 											onClick={() =>
 												setActiveMenuId(
 													activeMenuId ===
-														item.localId
+														item.configKey
 														? null
-														: item.localId
+														: item.configKey
 												)
 											}
 										>
@@ -158,10 +158,7 @@ export default function CartPage() {
 										<div className="flex items-center space-x-3 bg-gray-100 rounded-lg px-3 py-2">
 											<Button
 												onClick={() =>
-													decrement(
-														item.id,
-														item.variantId
-													)
+													decrement(item.configKey)
 												}
 												variant="ghost"
 												size="sm"
@@ -174,10 +171,7 @@ export default function CartPage() {
 											</span>
 											<Button
 												onClick={() =>
-													increment(
-														item.id,
-														item.variantId
-													)
+													increment(item.configKey)
 												}
 												variant="ghost"
 												size="sm"
@@ -210,7 +204,7 @@ export default function CartPage() {
 						</div>
 
 						{/* Overlay to close menu when clicking outside */}
-						{activeMenuId === item.localId && (
+						{activeMenuId === item.configKey && (
 							<div
 								className="absolute inset-0 bg-transparent z-20"
 								onClick={() => setActiveMenuId(null)}

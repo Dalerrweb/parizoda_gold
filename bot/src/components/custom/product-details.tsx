@@ -12,7 +12,7 @@ import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import SizeSelector from "./SizeSelector";
 import CartFooter from "@/layout/cart-footer";
-import { CartItem } from "@/context/CartProvider";
+import { CartItem, generateConfigKey } from "@/context/CartProvider";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -22,19 +22,24 @@ function ProductDetails({ product }: ProductDetailsProps) {
 	const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
 	const isBundle = product.type === ProductType.BUNDLE;
 	const navigate = useNavigate();
-
 	const { calculate } = usePrice();
+	const [bundleItems, setBundleItems] = useState<Record<string, any>>({});
+
+	const configKey =
+		product.type === ProductType.SINGLE
+			? generateConfigKey(product.id, selectedSize.id, undefined)
+			: generateConfigKey(product.id, undefined, bundleItems);
 
 	const cartElement: CartItem = {
-		localId: Math.random(),
+		configKey,
 		id: product.id,
 		type: product.type,
 		image: product.images?.[0]?.url,
-		variantId: selectedSize.id || 0,
-		weight: selectedSize.weight,
+		weight: selectedSize?.weight || 0,
 		markup: product.markup,
 		title: product.name,
 		quantity: 1,
+		items: Object.values(bundleItems),
 	};
 
 	return (
@@ -114,7 +119,11 @@ function ProductDetails({ product }: ProductDetailsProps) {
 
 					{/* Bundle Items - Show only for BUNDLE type products */}
 					{isBundle && product.parentBundle.length > 0 && (
-						<BundleContainer product={product} />
+						<BundleContainer
+							product={product}
+							bundleItems={bundleItems}
+							setBundleItems={setBundleItems}
+						/>
 					)}
 
 					<Separator />
@@ -140,25 +149,29 @@ function ProductDetails({ product }: ProductDetailsProps) {
 	);
 }
 
-function BundleContainer({ product }: { product: Product }) {
-	const [items, setItems] = useState({});
-
+function BundleContainer({
+	product,
+	bundleItems,
+	setBundleItems,
+}: {
+	product: Product;
+	bundleItems: Record<string, any>;
+	setBundleItems: React.Dispatch<React.SetStateAction<Record<string, any>>>;
+}) {
 	const total: any = useMemo(() => {
 		if (product.parentBundle.length === 0) return 0;
 		let price = 0;
 		let weight = 0;
 
-		for (let id in items) {
-			const item: any = items[id as keyof typeof items];
-
+		for (let id in bundleItems) {
+			const item: any = bundleItems[id as keyof typeof bundleItems];
 			if (item) {
 				price += item.price;
 				weight += item.weight;
 			}
 		}
-
 		return { weight, price };
-	}, [items]);
+	}, [bundleItems]);
 
 	return (
 		<div className="space-y-4">
@@ -177,7 +190,7 @@ function BundleContainer({ product }: { product: Product }) {
 					<BundleItemCard
 						key={bundleItem.bundleId}
 						bundleItem={bundleItem}
-						setItem={setItems}
+						setItem={setBundleItems}
 					/>
 				))}
 			</div>
@@ -207,6 +220,11 @@ const BundleItemCard = memo(
 					weight: selectedSize.weight,
 					markup: child.markup,
 					price: price,
+					selectedSizeId: selectedSize.id,
+					childId: child.id,
+					maxAmount: selectedSize.quantity,
+					image: child.images?.[0]?.url || "",
+					title: child.name,
 				},
 			}));
 			return () => {
