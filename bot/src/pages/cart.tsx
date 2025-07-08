@@ -51,7 +51,7 @@ export default function CartPage() {
 	return (
 		<div className="min-h-screen bg-gray-50">
 			{/* Header */}
-			<div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
+			<div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-200">
 				<div className="flex items-center justify-between">
 					<div className="flex items-center space-x-3">
 						<Checkbox className="rounded-md" />
@@ -81,7 +81,7 @@ export default function CartPage() {
 			<div className="h-24" />
 
 			{/* Checkout Summary Bar */}
-			<div className="fixed bottom-20 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
+			<div className="fixed z-200 bottom-20 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4 shadow-lg">
 				<div className="flex items-center justify-between">
 					<div>
 						<p className="text-sm text-gray-500">Итого:</p>
