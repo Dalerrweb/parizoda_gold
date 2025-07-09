@@ -225,6 +225,7 @@ const Catalog: React.FC<catalogProps> = () => {
 					)}
 				</div>
 			</main>
+			<br />
 		</div>
 	);
 };
