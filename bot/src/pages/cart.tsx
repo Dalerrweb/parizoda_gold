@@ -216,7 +216,8 @@ function CartItem({ item }: any) {
 																	<span className="text-gray-500">
 																		{
 																			bundleItem.weight
-																		}
+																		}{" "}
+																		г
 																	</span>
 																</div>
 															)

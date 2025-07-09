@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/components/custom/header";
 import { ProductCard } from "@/components/custom/product-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +16,6 @@ import {
 import { useGetProductsQuery } from "@/services/api";
 import { ChevronLeft, AlertCircle } from "lucide-react";
 import type React from "react";
-import { useState } from "react";
 import {
 	useLocation,
 	useNavigate,
@@ -28,7 +26,6 @@ import {
 type catalogProps = {};
 
 const Catalog: React.FC<catalogProps> = () => {
-	const [_, setSidebarOpen] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { category } = useParams();
@@ -92,7 +89,6 @@ const Catalog: React.FC<catalogProps> = () => {
 
 	return (
 		<div className="flex min-h-screen flex-col">
-			<Header onMenuClick={() => setSidebarOpen(true)} />
 			<main className="flex-1">
 				<div className="flex items-center p-4 border-b">
 					<Button
