@@ -60,7 +60,7 @@ const ProductItemRow: React.FC<ProductItemProps> = ({ product }) => {
 				<div className="flex items-center space-x-2">
 					<span className="font-medium">{product.images.length}</span>
 					<span className="text-muted-foreground text-sm">
-						{product.images.length === 1 ? "image" : "images"}
+						{product.images.length === 1 ? "картина" : "картинок"}
 					</span>
 				</div>
 			</TableCell>
@@ -90,7 +90,7 @@ const ProductItemRow: React.FC<ProductItemProps> = ({ product }) => {
 							<Link href={`/admin/products/${product.id}/edit`}>
 								<DropdownMenuItem>
 									<Edit className="mr-2 h-4 w-4" />
-									Edit Product
+									Изменить товар
 								</DropdownMenuItem>
 							</Link>
 						</DropdownMenuContent>

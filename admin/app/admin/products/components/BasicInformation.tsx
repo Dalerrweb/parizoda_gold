@@ -158,7 +158,7 @@ export default function BasicInformation({
 								{categories.map((category) => (
 									<SelectItem
 										key={category.id}
-										value={category.id}
+										value={category.id.toString()}
 									>
 										{category.name}
 									</SelectItem>

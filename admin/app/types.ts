@@ -5,7 +5,7 @@ export type AuPrice = {
 };
 
 export type Category = {
-	id: string;
+	id: number;
 	name: string;
 	imageUrl?: string;
 	products: Product[];

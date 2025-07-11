@@ -8,17 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
 	Table,
 	TableBody,
-	TableCell,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -26,9 +18,6 @@ import {
 import {
 	Search,
 	Plus,
-	MoreHorizontal,
-	Eye,
-	Edit,
 	Package,
 	DollarSign,
 	FolderOpen,
@@ -38,30 +27,48 @@ import {
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import ProductItemRow from "./ProductItemRow";
-import { Product } from "@/app/types";
+import { CategoryFilter } from "./components/category-filter";
+import { PaginationControls } from "@/components/custom/pagination-controls";
+
+const ITEMS_PER_PAGE = 10;
 
 export default async function ProductsPage({ searchParams }: any) {
 	const params = await searchParams;
 	const searchQuery =
 		typeof params.search === "string" ? params.search : undefined;
+	const categoryFilter =
+		typeof params.category === "string" ? params.category : undefined;
+	const currentPage =
+		typeof params.page === "string" ? Number.parseInt(params.page) : 1;
+	const itemsPerPage =
+		typeof params.limit === "string"
+			? Number.parseInt(params.limit)
+			: ITEMS_PER_PAGE;
 
-	const auPrice = await prisma.auPrice.findFirst();
+	const categories = await prisma.category.findMany({
+		orderBy: { name: "asc" },
+	});
+
+	const whereClause = {
+		...(searchQuery && {
+			OR: [
+				{ sku: { contains: searchQuery, mode: "insensitive" } },
+				{ name: { contains: searchQuery, mode: "insensitive" } },
+				{ description: { contains: searchQuery, mode: "insensitive" } },
+			],
+		}),
+		...(categoryFilter &&
+			categoryFilter !== "all" && {
+				categoryId: Number(categoryFilter),
+			}),
+	};
+
+	const totalProducts = await prisma.product.count({
+		where: whereClause,
+	});
 
 	const products = await prisma.product.findMany({
-		where: {
-			...(searchQuery && {
-				OR: [
-					{ sku: { contains: searchQuery, mode: "insensitive" } },
-					{ name: { contains: searchQuery, mode: "insensitive" } },
-					{
-						description: {
-							contains: searchQuery,
-							mode: "insensitive",
-						},
-					},
-				],
-			}),
-		},
+		where: whereClause,
 		include: {
 			category: true,
 			images: true,
@@ -80,21 +87,53 @@ export default async function ProductsPage({ searchParams }: any) {
 		orderBy: {
 			createdAt: "desc",
 		},
+		skip: (currentPage - 1) * itemsPerPage,
+		take: itemsPerPage,
 	});
 
-	const totalProducts = products.length;
-	const productsWithOrders = products.filter(
+	const totalPages = Math.ceil(totalProducts / itemsPerPage);
+	const hasNextPage = currentPage < totalPages;
+	const hasPrevPage = currentPage > 1;
+
+	const allProducts = await prisma.product.findMany({
+		include: {
+			orders: true,
+		},
+	});
+
+	const totalProductsCount = allProducts.length;
+	const productsWithOrders = allProducts.filter(
 		(product) => product.orders.length > 0
 	).length;
-	// const totalRevenue = products.reduce(
-	// 	(sum, product) => sum + product.price * product.orders.length,
-	// 	0
-	// );
-	const recentProducts = products.filter((product) => {
+
+	const recentProducts = allProducts.filter((product) => {
 		const daysDiff =
 			(Date.now() - product.createdAt.getTime()) / (1000 * 60 * 60 * 24);
 		return daysDiff <= 7;
 	}).length;
+
+	const buildUrl = (
+		newParams: Record<string, string | number | undefined>
+	) => {
+		const url = new URLSearchParams();
+
+		if (searchQuery) url.set("search", searchQuery);
+		if (categoryFilter && categoryFilter !== "all")
+			url.set("category", categoryFilter);
+		if (currentPage > 1) url.set("page", currentPage.toString());
+		if (itemsPerPage !== ITEMS_PER_PAGE)
+			url.set("limit", itemsPerPage.toString());
+
+		Object.entries(newParams).forEach(([key, value]) => {
+			if (value !== undefined && value !== "") {
+				url.set(key, value.toString());
+			} else {
+				url.delete(key);
+			}
+		});
+
+		return `/admin/products?${url.toString()}`;
+	};
 
 	return (
 		<div className="flex flex-col min-h-screen">
@@ -108,12 +147,12 @@ export default async function ProductsPage({ searchParams }: any) {
 			<div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
 				<div className="flex items-center justify-between space-y-2">
 					<h2 className="text-3xl font-bold tracking-tight">
-						Products Management
+						Управления товарами
 					</h2>
 					<Link href="/admin/products/create">
 						<Button>
 							<Plus className="mr-2 h-4 w-4" />
-							Add Product
+							Добавить товар
 						</Button>
 					</Link>
 				</div>
@@ -123,16 +162,16 @@ export default async function ProductsPage({ searchParams }: any) {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								Total Products
+								Общее кол-во товаров
 							</CardTitle>
 							<Package className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{totalProducts}
+								{totalProductsCount}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								In inventory
+								на складе
 							</p>
 						</CardContent>
 					</Card>
@@ -140,7 +179,7 @@ export default async function ProductsPage({ searchParams }: any) {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								Products Sold
+								Продуктов продано
 							</CardTitle>
 							<DollarSign className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -149,32 +188,15 @@ export default async function ProductsPage({ searchParams }: any) {
 								{productsWithOrders}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								With orders
+								Заказано
 							</p>
 						</CardContent>
 					</Card>
 
-					{/* <Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">
-								Revenue
-							</CardTitle>
-							<DollarSign className="h-4 w-4 text-muted-foreground" />
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{formatPrice(totalRevenue)}
-							</div>
-							<p className="text-xs text-muted-foreground">
-								Total sales
-							</p>
-						</CardContent>
-					</Card> */}
-
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								New This Week
+								Новые товары за последнюю неделю
 							</CardTitle>
 							<Clock className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -183,7 +205,7 @@ export default async function ProductsPage({ searchParams }: any) {
 								{recentProducts}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								Recent additions
+								Недавно добавленные
 							</p>
 						</CardContent>
 					</Card>
@@ -193,81 +215,174 @@ export default async function ProductsPage({ searchParams }: any) {
 				<Card>
 					<CardHeader className="flex items-start justify-between">
 						<div>
-							<CardTitle>Products</CardTitle>
+							<CardTitle>Товары</CardTitle>
 							<CardDescription>
-								Manage your product inventory and details
+								Управляйте складом и деталями товаров
 							</CardDescription>
 						</div>
-						<Button variant="outline">
-							<FolderOpen className="mr-2 h-4 w-4" />
-							Categories
-						</Button>
+						{/* Category Filter */}
+						<CategoryFilter
+							categories={categories}
+							currentCategory={categoryFilter || "all"}
+							searchQuery={searchQuery}
+							currentPage={currentPage}
+							itemsPerPage={itemsPerPage}
+						/>
 					</CardHeader>
 					<CardContent>
-						<form
-							action="/admin/products"
-							method="GET"
-							className="relative flex-1 mb-4 "
-						>
-							<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-							<Input
-								placeholder="Search products..."
-								className="pl-8"
-								name="search" // Имя параметра в URL
-								defaultValue={searchQuery || ""} // Текущее значение поиска
-							/>
-							{/* Кнопка сброса поиска */}
-							{searchQuery && (
+						{/* Filters */}
+						<div className="flex flex-col sm:flex-row gap-4 mb-4">
+							{/* Search Form */}
+							<form
+								action="/admin/products"
+								method="GET"
+								className="relative flex-1"
+							>
+								<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+								<Input
+									placeholder="Search products..."
+									className="pl-8"
+									name="search"
+									defaultValue={searchQuery || ""}
+								/>
+								{/* Hidden inputs to preserve other filters */}
+								{categoryFilter && categoryFilter !== "all" && (
+									<input
+										type="hidden"
+										name="category"
+										value={categoryFilter}
+									/>
+								)}
+								{currentPage > 1 && (
+									<input
+										type="hidden"
+										name="page"
+										value={currentPage}
+									/>
+								)}
+								{itemsPerPage !== ITEMS_PER_PAGE && (
+									<input
+										type="hidden"
+										name="limit"
+										value={itemsPerPage}
+									/>
+								)}
+
+								{/* Clear search button */}
+								{searchQuery && (
+									<Link
+										href={buildUrl({
+											search: undefined,
+											page: 1,
+										})}
+										className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
+									>
+										<X className="h-4 w-4" />
+									</Link>
+								)}
+							</form>
+						</div>
+
+						{/* Active Filters Display */}
+						{(searchQuery ||
+							(categoryFilter && categoryFilter !== "all")) && (
+							<div className="flex flex-wrap gap-2 mb-4">
+								<span className="text-sm text-muted-foreground">
+									Активные фильтры:
+								</span>
+								{searchQuery && (
+									<div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm">
+										<span>Поиск: {searchQuery}</span>
+										<Link
+											href={buildUrl({
+												search: undefined,
+												page: 1,
+											})}
+											className="text-muted-foreground hover:text-foreground"
+										>
+											<X className="h-3 w-3" />
+										</Link>
+									</div>
+								)}
+								{categoryFilter && categoryFilter !== "all" && (
+									<div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm">
+										<span>
+											Категория:{" "}
+											{
+												categories.find(
+													(c) =>
+														c.id === categoryFilter
+												)?.name
+											}
+										</span>
+										<Link
+											href={buildUrl({
+												category: undefined,
+												page: 1,
+											})}
+											className="text-muted-foreground hover:text-foreground"
+										>
+											<X className="h-3 w-3" />
+										</Link>
+									</div>
+								)}
 								<Link
 									href="/admin/products"
-									className="absolute right-2 top-2.5 text-muted-foreground hover:text-foreground"
+									className="text-sm text-muted-foreground hover:text-foreground underline"
 								>
-									<X className="h-4 w-4" />
+									Очистить все
 								</Link>
-							)}
-						</form>
-
-						{/* <Button variant="outline">Filter</Button> */}
+							</div>
+						)}
 
 						<div className="rounded-md border">
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>Product</TableHead>
-										<TableHead>Category</TableHead>
-										<TableHead>Images</TableHead>
-										<TableHead>Orders</TableHead>
-										<TableHead>Updated</TableHead>
+										<TableHead>Товар</TableHead>
+										<TableHead>Категория</TableHead>
+										<TableHead>Картинки</TableHead>
+										<TableHead>Заказы</TableHead>
+										<TableHead>Обновлено</TableHead>
 										<TableHead className="text-right">
-											Actions
+											Действия
 										</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{products.map((product) => (
-										<ProductItemRow
-											key={product.id}
-											product={product as any}
-										/>
-									))}
+									{products.length === 0 ? (
+										<tr>
+											<td
+												colSpan={6}
+												className="text-center py-8 text-muted-foreground"
+											>
+												Товары не найдены
+											</td>
+										</tr>
+									) : (
+										products.map((product) => (
+											<ProductItemRow
+												key={product.id}
+												product={product as any}
+											/>
+										))
+									)}
 								</TableBody>
 							</Table>
 						</div>
 
-						<div className="flex items-center justify-between space-x-2 py-4">
-							<div className="text-sm text-muted-foreground">
-								Showing 1-{products.length} of {products.length}{" "}
-								products
-							</div>
-							<div className="flex space-x-2">
-								<Button variant="outline" size="sm" disabled>
-									Previous
-								</Button>
-								<Button variant="outline" size="sm" disabled>
-									Next
-								</Button>
-							</div>
-						</div>
+						{/* Pagination */}
+						<PaginationControls
+							currentPage={currentPage}
+							totalPages={totalPages}
+							totalAmount={totalProducts}
+							itemsPerPage={itemsPerPage}
+							hasNextPage={hasNextPage}
+							hasPrevPage={hasPrevPage}
+							searchQuery={searchQuery}
+							categoryFilter={categoryFilter}
+							pathName="products"
+						/>
 					</CardContent>
 				</Card>
 			</div>

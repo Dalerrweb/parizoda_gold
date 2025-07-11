@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import {
 	Table,
 	TableBody,
@@ -20,28 +19,58 @@ import { Search, Plus, FolderOpen, Package, Clock, X } from "lucide-react";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 import CategoryRow from "@/components/custom/CategoryRow";
+import { PaginationControls } from "@/components/custom/pagination-controls";
+
+const ITEMS_PER_PAGE = 10;
 
 export default async function CategoriesPage({ searchParams }: any) {
 	const params = await searchParams;
 	const searchQuery =
 		typeof params.search === "string" ? params.search : undefined;
+	const currentPage =
+		typeof params.page === "string" ? Number.parseInt(params.page) : 1;
+	const itemsPerPage =
+		typeof params.limit === "string"
+			? Number.parseInt(params.limit)
+			: ITEMS_PER_PAGE;
+
+	const whereClause = {
+		...(searchQuery && {
+			OR: [{ name: { contains: searchQuery, mode: "insensitive" } }],
+		}),
+	};
+
+	const totalCategories = await prisma.category.count({
+		where: whereClause,
+	});
 
 	const categories = await prisma.category.findMany({
-		where: {
-			...(searchQuery && {
-				OR: [{ name: { contains: searchQuery, mode: "insensitive" } }],
-			}),
+		where: whereClause,
+		include: {
+			products: true,
 		},
+		orderBy: {
+			createdAt: "desc",
+		},
+		skip: (currentPage - 1) * itemsPerPage,
+		take: itemsPerPage,
+	});
+
+	const totalPages = Math.ceil(totalCategories / itemsPerPage);
+	const hasNextPage = currentPage < totalPages;
+	const hasPrevPage = currentPage > 1;
+
+	const allCategories = await prisma.category.findMany({
 		include: {
 			products: true,
 		},
 	});
 
-	const totalCategories = categories.length;
-	const categoriesWithProducts = categories.filter(
+	const totalCategoriesCount = allCategories.length;
+	const categoriesWithProducts = allCategories.filter(
 		(cat) => cat.products.length > 0
 	).length;
-	const totalProducts = categories.reduce(
+	const totalProducts = allCategories.reduce(
 		(sum, cat) => sum + cat.products.length,
 		0
 	);
@@ -51,19 +80,19 @@ export default async function CategoriesPage({ searchParams }: any) {
 			<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 				<SidebarTrigger className="-ml-1" />
 				<div className="flex flex-1 items-center gap-2">
-					<h1 className="text-lg font-semibold">Categories</h1>
+					<h1 className="text-lg font-semibold">Категории</h1>
 				</div>
 			</header>
 
 			<div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
 				<div className="flex items-center justify-between space-y-2">
 					<h2 className="text-3xl font-bold tracking-tight">
-						Categories Management
+						Управление категориями
 					</h2>
 					<Link href="/admin/categories/create">
 						<Button>
 							<Plus className="mr-2 h-4 w-4" />
-							Add Category
+							Добавить категорию
 						</Button>
 					</Link>
 				</div>
@@ -73,16 +102,16 @@ export default async function CategoriesPage({ searchParams }: any) {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								Total Categories
+								Общее кол-во категорий
 							</CardTitle>
 							<FolderOpen className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{totalCategories}
+								{totalCategoriesCount}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								Product categories
+								Категорий товаров
 							</p>
 						</CardContent>
 					</Card>
@@ -90,7 +119,7 @@ export default async function CategoriesPage({ searchParams }: any) {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								Active Categories
+								Активные категории
 							</CardTitle>
 							<Package className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -99,7 +128,7 @@ export default async function CategoriesPage({ searchParams }: any) {
 								{categoriesWithProducts}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								With products
+								К товарам
 							</p>
 						</CardContent>
 					</Card>
@@ -107,7 +136,7 @@ export default async function CategoriesPage({ searchParams }: any) {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">
-								Total Products
+								Общее кол-во продуктов
 							</CardTitle>
 							<Clock className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
@@ -116,7 +145,7 @@ export default async function CategoriesPage({ searchParams }: any) {
 								{totalProducts}
 							</div>
 							<p className="text-xs text-muted-foreground">
-								Across all categories
+								По всем категриям
 							</p>
 						</CardContent>
 					</Card>
@@ -125,25 +154,42 @@ export default async function CategoriesPage({ searchParams }: any) {
 				{/* Categories Table */}
 				<Card>
 					<CardHeader>
-						<CardTitle>Categories</CardTitle>
+						<CardTitle>Категории</CardTitle>
 						<CardDescription>
-							Manage product categories and their organization
+							Управление категориями
 						</CardDescription>
 					</CardHeader>
 					<CardContent>
+						{/* Search Form */}
 						<form
 							action="/admin/categories"
 							method="GET"
-							className="relative flex-1 mb-4 "
+							className="relative flex-1 mb-4"
 						>
 							<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
 							<Input
 								placeholder="Search categories..."
 								className="pl-8"
-								name="search" // Имя параметра в URL
-								defaultValue={searchQuery || ""} // Текущее значение поиска
+								name="search"
+								defaultValue={searchQuery || ""}
 							/>
-							{/* Кнопка сброса поиска */}
+							{/* Hidden inputs to preserve pagination settings */}
+							{currentPage > 1 && (
+								<input
+									type="hidden"
+									name="page"
+									value={currentPage}
+								/>
+							)}
+							{itemsPerPage !== ITEMS_PER_PAGE && (
+								<input
+									type="hidden"
+									name="limit"
+									value={itemsPerPage}
+								/>
+							)}
+
+							{/* Clear search button */}
 							{searchQuery && (
 								<Link
 									href="/admin/categories"
@@ -154,44 +200,76 @@ export default async function CategoriesPage({ searchParams }: any) {
 							)}
 						</form>
 
+						{/* Active Search Filter Display */}
+						{searchQuery && (
+							<div className="flex flex-wrap gap-2 mb-4">
+								<span className="text-sm text-muted-foreground">
+									Фильтры:
+								</span>
+								<div className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm">
+									<span>Поиск: {searchQuery}</span>
+									<Link
+										href="/admin/categories"
+										className="text-muted-foreground hover:text-foreground"
+									>
+										<X className="h-3 w-3" />
+									</Link>
+								</div>
+								<Link
+									href="/admin/categories"
+									className="text-sm text-muted-foreground hover:text-foreground underline"
+								>
+									Очистить все
+								</Link>
+							</div>
+						)}
+
 						<div className="rounded-md border">
 							<Table>
 								<TableHeader>
 									<TableRow>
-										<TableHead>Category</TableHead>
-										<TableHead>Products Count</TableHead>
-										<TableHead>Status</TableHead>
-										<TableHead>Created</TableHead>
+										<TableHead>Категория</TableHead>
+										<TableHead>Кол-во товаров</TableHead>
+										<TableHead>Статус</TableHead>
+										<TableHead>Создано</TableHead>
 										<TableHead className="text-right">
-											Actions
+											Действия
 										</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
-									{categories.map((category) => (
-										<CategoryRow
-											key={category.id}
-											category={category as any}
-										/>
-									))}
+									{categories.length === 0 ? (
+										<tr>
+											<td
+												colSpan={5}
+												className="text-center py-8 text-muted-foreground"
+											>
+												Категорий не найдено
+											</td>
+										</tr>
+									) : (
+										categories.map((category) => (
+											<CategoryRow
+												key={category.id}
+												category={category as any}
+											/>
+										))
+									)}
 								</TableBody>
 							</Table>
 						</div>
 
-						<div className="flex items-center justify-between space-x-2 py-4">
-							<div className="text-sm text-muted-foreground">
-								Showing 1-{categories.length} of{" "}
-								{categories.length} categories
-							</div>
-							<div className="flex space-x-2">
-								<Button variant="outline" size="sm" disabled>
-									Previous
-								</Button>
-								<Button variant="outline" size="sm" disabled>
-									Next
-								</Button>
-							</div>
-						</div>
+						{/* Pagination Controls */}
+						<PaginationControls
+							currentPage={currentPage}
+							totalPages={totalPages}
+							itemsPerPage={itemsPerPage}
+							hasNextPage={hasNextPage}
+							hasPrevPage={hasPrevPage}
+							searchQuery={searchQuery}
+							totalAmount={totalCategories}
+							pathName="categories"
+						/>
 					</CardContent>
 				</Card>
 			</div>

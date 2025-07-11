@@ -58,7 +58,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 	const defaultTrigger = (
 		<Button variant="ghost" size="sm">
 			<Eye className="h-4 w-4 mr-2" />
-			Preview
+			Просмотр
 		</Button>
 	);
 
@@ -69,7 +69,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 				<DialogHeader>
 					<DialogTitle className="flex items-center gap-2">
 						<Package className="h-5 w-5" />
-						Product Preview
+						Просмотр товара
 					</DialogTitle>
 				</DialogHeader>
 				<ScrollArea className="max-h-[calc(90vh-120px)]">
