@@ -71,7 +71,6 @@ export default async function UsersPage({ searchParams }: any) {
 				{ first_name: { contains: searchQuery, mode: "insensitive" } },
 				{ last_name: { contains: searchQuery, mode: "insensitive" } },
 				{ username: { contains: searchQuery, mode: "insensitive" } },
-				{ telegramId: { contains: searchQuery, mode: "insensitive" } },
 			],
 		}),
 	};

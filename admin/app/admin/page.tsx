@@ -7,8 +7,21 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Users, ShoppingBag, Package, ImageIcon } from "lucide-react";
+import prisma from "@/lib/prisma";
+import { formatPrice } from "@/lib/utils";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+	const [totalUsers, totalProduct, totalBanners, totalOrders, GoldPrice] =
+		await Promise.all([
+			prisma.user.count(),
+			prisma.product.count(),
+			prisma.banner.count(),
+			prisma.order.count(),
+			prisma.auPrice.findFirst(),
+		]);
+
+	console.log(totalUsers);
+
 	return (
 		<div className="flex flex-col min-h-screen">
 			<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -34,9 +47,11 @@ export default function DashboardPage() {
 							<Users className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">1,234</div>
+							<div className="text-2xl font-bold">
+								{totalUsers}
+							</div>
 							<p className="text-xs text-muted-foreground">
-								+20.1% from last month
+								All time
 							</p>
 						</CardContent>
 					</Card>
@@ -49,9 +64,11 @@ export default function DashboardPage() {
 							<ShoppingBag className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">856</div>
+							<div className="text-2xl font-bold">
+								{totalOrders}
+							</div>
 							<p className="text-xs text-muted-foreground">
-								+12.5% from last month
+								All time
 							</p>
 						</CardContent>
 					</Card>
@@ -64,9 +81,11 @@ export default function DashboardPage() {
 							<Package className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">342</div>
+							<div className="text-2xl font-bold">
+								{totalProduct}
+							</div>
 							<p className="text-xs text-muted-foreground">
-								+8.2% from last month
+								All time
 							</p>
 						</CardContent>
 					</Card>
@@ -79,9 +98,11 @@ export default function DashboardPage() {
 							<ImageIcon className="h-4 w-4 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
-							<div className="text-2xl font-bold">12</div>
+							<div className="text-2xl font-bold">
+								{totalBanners}
+							</div>
 							<p className="text-xs text-muted-foreground">
-								+2 from last month
+								Amount of active banner
 							</p>
 						</CardContent>
 					</Card>
@@ -90,47 +111,14 @@ export default function DashboardPage() {
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
 					<Card className="col-span-4">
 						<CardHeader>
-							<CardTitle>Recent Activity</CardTitle>
+							<CardTitle>Золото</CardTitle>
 							<CardDescription>
-								Overview of recent dashboard activity
+								Цена за грам золота
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<div className="space-y-4">
-								<div className="flex items-center space-x-4">
-									<div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-									<div className="flex-1 space-y-1">
-										<p className="text-sm font-medium">
-											New user registered
-										</p>
-										<p className="text-xs text-muted-foreground">
-											2 minutes ago
-										</p>
-									</div>
-								</div>
-								<div className="flex items-center space-x-4">
-									<div className="w-2 h-2 bg-green-500 rounded-full"></div>
-									<div className="flex-1 space-y-1">
-										<p className="text-sm font-medium">
-											Product updated
-										</p>
-										<p className="text-xs text-muted-foreground">
-											5 minutes ago
-										</p>
-									</div>
-								</div>
-								<div className="flex items-center space-x-4">
-									<div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-									<div className="flex-1 space-y-1">
-										<p className="text-sm font-medium">
-											New order received
-										</p>
-										<p className="text-xs text-muted-foreground">
-											10 minutes ago
-										</p>
-									</div>
-								</div>
-							</div>
+							{formatPrice(Number(GoldPrice?.pricePerGram))} за
+							один грам золота
 						</CardContent>
 					</Card>
 
