@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { Role } from "./app/types";
 
 // Конфигурация безопасности
 const securityConfig = {
@@ -174,7 +175,7 @@ export async function middleware(request: NextRequest) {
 
 		try {
 			const decoded = await verifyJWT(token);
-			if (decoded.role !== "admin") throw new Error("Invalid role");
+			if (decoded.role !== Role.ADMIN) throw new Error("Invalid role");
 
 			// Передача данных пользователя через headers
 			const headers = new Headers(request.headers);
@@ -200,7 +201,7 @@ export async function middleware(request: NextRequest) {
 		if (token) {
 			try {
 				const decoded = await verifyJWT(token);
-				if (decoded.role === "admin") {
+				if (decoded.role === Role.ADMIN) {
 					return NextResponse.redirect(
 						new URL("/admin", request.url)
 					);

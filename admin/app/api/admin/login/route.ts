@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		const token = sign({ userId: admin.id, role: "admin" }, JWT_SECRET, {
+		const token = sign({ userId: admin.id, role: admin.role }, JWT_SECRET, {
 			expiresIn: "8h",
 		});
 

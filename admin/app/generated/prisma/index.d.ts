@@ -64,6 +64,11 @@ export type AdminUser = $Result.DefaultSelection<Prisma.$AdminUserPayload>
  */
 export type AdminSession = $Result.DefaultSelection<Prisma.$AdminSessionPayload>
 /**
+ * Model OtpCode
+ * 
+ */
+export type OtpCode = $Result.DefaultSelection<Prisma.$OtpCodePayload>
+/**
  * Model Banner
  * 
  */
@@ -91,6 +96,14 @@ export const OrderStatus: {
 
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
+
+export const Role: {
+  ADMIN: 'ADMIN',
+  SUPERADMIN: 'SUPERADMIN'
+};
+
+export type Role = (typeof Role)[keyof typeof Role]
+
 }
 
 export type ProductType = $Enums.ProductType
@@ -100,6 +113,10 @@ export const ProductType: typeof $Enums.ProductType
 export type OrderStatus = $Enums.OrderStatus
 
 export const OrderStatus: typeof $Enums.OrderStatus
+
+export type Role = $Enums.Role
+
+export const Role: typeof $Enums.Role
 
 /**
  * ##  Prisma Client ʲˢ
@@ -325,6 +342,16 @@ export class PrismaClient<
     * ```
     */
   get adminSession(): Prisma.AdminSessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.otpCode`: Exposes CRUD operations for the **OtpCode** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more OtpCodes
+    * const otpCodes = await prisma.otpCode.findMany()
+    * ```
+    */
+  get otpCode(): Prisma.OtpCodeDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.banner`: Exposes CRUD operations for the **Banner** model.
@@ -785,6 +812,7 @@ export namespace Prisma {
     Order: 'Order',
     AdminUser: 'AdminUser',
     AdminSession: 'AdminSession',
+    OtpCode: 'OtpCode',
     Banner: 'Banner'
   };
 
@@ -804,7 +832,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "auPrice" | "user" | "category" | "product" | "productSize" | "productBundle" | "productImage" | "order" | "adminUser" | "adminSession" | "banner"
+      modelProps: "auPrice" | "user" | "category" | "product" | "productSize" | "productBundle" | "productImage" | "order" | "adminUser" | "adminSession" | "otpCode" | "banner"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1548,6 +1576,80 @@ export namespace Prisma {
           }
         }
       }
+      OtpCode: {
+        payload: Prisma.$OtpCodePayload<ExtArgs>
+        fields: Prisma.OtpCodeFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.OtpCodeFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.OtpCodeFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          findFirst: {
+            args: Prisma.OtpCodeFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.OtpCodeFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          findMany: {
+            args: Prisma.OtpCodeFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>[]
+          }
+          create: {
+            args: Prisma.OtpCodeCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          createMany: {
+            args: Prisma.OtpCodeCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.OtpCodeCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>[]
+          }
+          delete: {
+            args: Prisma.OtpCodeDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          update: {
+            args: Prisma.OtpCodeUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          deleteMany: {
+            args: Prisma.OtpCodeDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.OtpCodeUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.OtpCodeUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>[]
+          }
+          upsert: {
+            args: Prisma.OtpCodeUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$OtpCodePayload>
+          }
+          aggregate: {
+            args: Prisma.OtpCodeAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateOtpCode>
+          }
+          groupBy: {
+            args: Prisma.OtpCodeGroupByArgs<ExtArgs>
+            result: $Utils.Optional<OtpCodeGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.OtpCodeCountArgs<ExtArgs>
+            result: $Utils.Optional<OtpCodeCountAggregateOutputType> | number
+          }
+        }
+      }
       Banner: {
         payload: Prisma.$BannerPayload<ExtArgs>
         fields: Prisma.BannerFieldRefs
@@ -1716,6 +1818,7 @@ export namespace Prisma {
     order?: OrderOmit
     adminUser?: AdminUserOmit
     adminSession?: AdminSessionOmit
+    otpCode?: OtpCodeOmit
     banner?: BannerOmit
   }
 
@@ -10944,6 +11047,7 @@ export namespace Prisma {
     id: number | null
     email: string | null
     password: string | null
+    role: $Enums.Role | null
     createdAt: Date | null
   }
 
@@ -10951,6 +11055,7 @@ export namespace Prisma {
     id: number | null
     email: string | null
     password: string | null
+    role: $Enums.Role | null
     createdAt: Date | null
   }
 
@@ -10958,6 +11063,7 @@ export namespace Prisma {
     id: number
     email: number
     password: number
+    role: number
     createdAt: number
     _all: number
   }
@@ -10975,6 +11081,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    role?: true
     createdAt?: true
   }
 
@@ -10982,6 +11089,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    role?: true
     createdAt?: true
   }
 
@@ -10989,6 +11097,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    role?: true
     createdAt?: true
     _all?: true
   }
@@ -11083,6 +11192,7 @@ export namespace Prisma {
     id: number
     email: string
     password: string
+    role: $Enums.Role
     createdAt: Date
     _count: AdminUserCountAggregateOutputType | null
     _avg: AdminUserAvgAggregateOutputType | null
@@ -11109,6 +11219,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    role?: boolean
     createdAt?: boolean
     sessions?: boolean | AdminUser$sessionsArgs<ExtArgs>
     _count?: boolean | AdminUserCountOutputTypeDefaultArgs<ExtArgs>
@@ -11118,6 +11229,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    role?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["adminUser"]>
 
@@ -11125,6 +11237,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    role?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["adminUser"]>
 
@@ -11132,10 +11245,11 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    role?: boolean
     createdAt?: boolean
   }
 
-  export type AdminUserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "createdAt", ExtArgs["result"]["adminUser"]>
+  export type AdminUserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "role" | "createdAt", ExtArgs["result"]["adminUser"]>
   export type AdminUserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | AdminUser$sessionsArgs<ExtArgs>
     _count?: boolean | AdminUserCountOutputTypeDefaultArgs<ExtArgs>
@@ -11152,6 +11266,7 @@ export namespace Prisma {
       id: number
       email: string
       password: string
+      role: $Enums.Role
       createdAt: Date
     }, ExtArgs["result"]["adminUser"]>
     composites: {}
@@ -11580,6 +11695,7 @@ export namespace Prisma {
     readonly id: FieldRef<"AdminUser", 'Int'>
     readonly email: FieldRef<"AdminUser", 'String'>
     readonly password: FieldRef<"AdminUser", 'String'>
+    readonly role: FieldRef<"AdminUser", 'Role'>
     readonly createdAt: FieldRef<"AdminUser", 'DateTime'>
   }
     
@@ -13108,6 +13224,1001 @@ export namespace Prisma {
 
 
   /**
+   * Model OtpCode
+   */
+
+  export type AggregateOtpCode = {
+    _count: OtpCodeCountAggregateOutputType | null
+    _min: OtpCodeMinAggregateOutputType | null
+    _max: OtpCodeMaxAggregateOutputType | null
+  }
+
+  export type OtpCodeMinAggregateOutputType = {
+    id: string | null
+    type: string | null
+    code: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type OtpCodeMaxAggregateOutputType = {
+    id: string | null
+    type: string | null
+    code: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type OtpCodeCountAggregateOutputType = {
+    id: number
+    type: number
+    code: number
+    expiresAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type OtpCodeMinAggregateInputType = {
+    id?: true
+    type?: true
+    code?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type OtpCodeMaxAggregateInputType = {
+    id?: true
+    type?: true
+    code?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type OtpCodeCountAggregateInputType = {
+    id?: true
+    type?: true
+    code?: true
+    expiresAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type OtpCodeAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OtpCode to aggregate.
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OtpCodes to fetch.
+     */
+    orderBy?: OtpCodeOrderByWithRelationInput | OtpCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: OtpCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OtpCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OtpCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned OtpCodes
+    **/
+    _count?: true | OtpCodeCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: OtpCodeMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: OtpCodeMaxAggregateInputType
+  }
+
+  export type GetOtpCodeAggregateType<T extends OtpCodeAggregateArgs> = {
+        [P in keyof T & keyof AggregateOtpCode]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateOtpCode[P]>
+      : GetScalarType<T[P], AggregateOtpCode[P]>
+  }
+
+
+
+
+  export type OtpCodeGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OtpCodeWhereInput
+    orderBy?: OtpCodeOrderByWithAggregationInput | OtpCodeOrderByWithAggregationInput[]
+    by: OtpCodeScalarFieldEnum[] | OtpCodeScalarFieldEnum
+    having?: OtpCodeScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: OtpCodeCountAggregateInputType | true
+    _min?: OtpCodeMinAggregateInputType
+    _max?: OtpCodeMaxAggregateInputType
+  }
+
+  export type OtpCodeGroupByOutputType = {
+    id: string
+    type: string
+    code: string
+    expiresAt: Date
+    createdAt: Date
+    _count: OtpCodeCountAggregateOutputType | null
+    _min: OtpCodeMinAggregateOutputType | null
+    _max: OtpCodeMaxAggregateOutputType | null
+  }
+
+  type GetOtpCodeGroupByPayload<T extends OtpCodeGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<OtpCodeGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof OtpCodeGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], OtpCodeGroupByOutputType[P]>
+            : GetScalarType<T[P], OtpCodeGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type OtpCodeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["otpCode"]>
+
+  export type OtpCodeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["otpCode"]>
+
+  export type OtpCodeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    type?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["otpCode"]>
+
+  export type OtpCodeSelectScalar = {
+    id?: boolean
+    type?: boolean
+    code?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type OtpCodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "code" | "expiresAt" | "createdAt", ExtArgs["result"]["otpCode"]>
+
+  export type $OtpCodePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "OtpCode"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      type: string
+      code: string
+      expiresAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["otpCode"]>
+    composites: {}
+  }
+
+  type OtpCodeGetPayload<S extends boolean | null | undefined | OtpCodeDefaultArgs> = $Result.GetResult<Prisma.$OtpCodePayload, S>
+
+  type OtpCodeCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<OtpCodeFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: OtpCodeCountAggregateInputType | true
+    }
+
+  export interface OtpCodeDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['OtpCode'], meta: { name: 'OtpCode' } }
+    /**
+     * Find zero or one OtpCode that matches the filter.
+     * @param {OtpCodeFindUniqueArgs} args - Arguments to find a OtpCode
+     * @example
+     * // Get one OtpCode
+     * const otpCode = await prisma.otpCode.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends OtpCodeFindUniqueArgs>(args: SelectSubset<T, OtpCodeFindUniqueArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one OtpCode that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {OtpCodeFindUniqueOrThrowArgs} args - Arguments to find a OtpCode
+     * @example
+     * // Get one OtpCode
+     * const otpCode = await prisma.otpCode.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends OtpCodeFindUniqueOrThrowArgs>(args: SelectSubset<T, OtpCodeFindUniqueOrThrowArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OtpCode that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeFindFirstArgs} args - Arguments to find a OtpCode
+     * @example
+     * // Get one OtpCode
+     * const otpCode = await prisma.otpCode.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends OtpCodeFindFirstArgs>(args?: SelectSubset<T, OtpCodeFindFirstArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first OtpCode that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeFindFirstOrThrowArgs} args - Arguments to find a OtpCode
+     * @example
+     * // Get one OtpCode
+     * const otpCode = await prisma.otpCode.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends OtpCodeFindFirstOrThrowArgs>(args?: SelectSubset<T, OtpCodeFindFirstOrThrowArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more OtpCodes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all OtpCodes
+     * const otpCodes = await prisma.otpCode.findMany()
+     * 
+     * // Get first 10 OtpCodes
+     * const otpCodes = await prisma.otpCode.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const otpCodeWithIdOnly = await prisma.otpCode.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends OtpCodeFindManyArgs>(args?: SelectSubset<T, OtpCodeFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a OtpCode.
+     * @param {OtpCodeCreateArgs} args - Arguments to create a OtpCode.
+     * @example
+     * // Create one OtpCode
+     * const OtpCode = await prisma.otpCode.create({
+     *   data: {
+     *     // ... data to create a OtpCode
+     *   }
+     * })
+     * 
+     */
+    create<T extends OtpCodeCreateArgs>(args: SelectSubset<T, OtpCodeCreateArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many OtpCodes.
+     * @param {OtpCodeCreateManyArgs} args - Arguments to create many OtpCodes.
+     * @example
+     * // Create many OtpCodes
+     * const otpCode = await prisma.otpCode.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends OtpCodeCreateManyArgs>(args?: SelectSubset<T, OtpCodeCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many OtpCodes and returns the data saved in the database.
+     * @param {OtpCodeCreateManyAndReturnArgs} args - Arguments to create many OtpCodes.
+     * @example
+     * // Create many OtpCodes
+     * const otpCode = await prisma.otpCode.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many OtpCodes and only return the `id`
+     * const otpCodeWithIdOnly = await prisma.otpCode.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends OtpCodeCreateManyAndReturnArgs>(args?: SelectSubset<T, OtpCodeCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a OtpCode.
+     * @param {OtpCodeDeleteArgs} args - Arguments to delete one OtpCode.
+     * @example
+     * // Delete one OtpCode
+     * const OtpCode = await prisma.otpCode.delete({
+     *   where: {
+     *     // ... filter to delete one OtpCode
+     *   }
+     * })
+     * 
+     */
+    delete<T extends OtpCodeDeleteArgs>(args: SelectSubset<T, OtpCodeDeleteArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one OtpCode.
+     * @param {OtpCodeUpdateArgs} args - Arguments to update one OtpCode.
+     * @example
+     * // Update one OtpCode
+     * const otpCode = await prisma.otpCode.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends OtpCodeUpdateArgs>(args: SelectSubset<T, OtpCodeUpdateArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more OtpCodes.
+     * @param {OtpCodeDeleteManyArgs} args - Arguments to filter OtpCodes to delete.
+     * @example
+     * // Delete a few OtpCodes
+     * const { count } = await prisma.otpCode.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends OtpCodeDeleteManyArgs>(args?: SelectSubset<T, OtpCodeDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OtpCodes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many OtpCodes
+     * const otpCode = await prisma.otpCode.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends OtpCodeUpdateManyArgs>(args: SelectSubset<T, OtpCodeUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more OtpCodes and returns the data updated in the database.
+     * @param {OtpCodeUpdateManyAndReturnArgs} args - Arguments to update many OtpCodes.
+     * @example
+     * // Update many OtpCodes
+     * const otpCode = await prisma.otpCode.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more OtpCodes and only return the `id`
+     * const otpCodeWithIdOnly = await prisma.otpCode.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends OtpCodeUpdateManyAndReturnArgs>(args: SelectSubset<T, OtpCodeUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one OtpCode.
+     * @param {OtpCodeUpsertArgs} args - Arguments to update or create a OtpCode.
+     * @example
+     * // Update or create a OtpCode
+     * const otpCode = await prisma.otpCode.upsert({
+     *   create: {
+     *     // ... data to create a OtpCode
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the OtpCode we want to update
+     *   }
+     * })
+     */
+    upsert<T extends OtpCodeUpsertArgs>(args: SelectSubset<T, OtpCodeUpsertArgs<ExtArgs>>): Prisma__OtpCodeClient<$Result.GetResult<Prisma.$OtpCodePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of OtpCodes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeCountArgs} args - Arguments to filter OtpCodes to count.
+     * @example
+     * // Count the number of OtpCodes
+     * const count = await prisma.otpCode.count({
+     *   where: {
+     *     // ... the filter for the OtpCodes we want to count
+     *   }
+     * })
+    **/
+    count<T extends OtpCodeCountArgs>(
+      args?: Subset<T, OtpCodeCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], OtpCodeCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a OtpCode.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends OtpCodeAggregateArgs>(args: Subset<T, OtpCodeAggregateArgs>): Prisma.PrismaPromise<GetOtpCodeAggregateType<T>>
+
+    /**
+     * Group by OtpCode.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {OtpCodeGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends OtpCodeGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: OtpCodeGroupByArgs['orderBy'] }
+        : { orderBy?: OtpCodeGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, OtpCodeGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetOtpCodeGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the OtpCode model
+   */
+  readonly fields: OtpCodeFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for OtpCode.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__OtpCodeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the OtpCode model
+   */
+  interface OtpCodeFieldRefs {
+    readonly id: FieldRef<"OtpCode", 'String'>
+    readonly type: FieldRef<"OtpCode", 'String'>
+    readonly code: FieldRef<"OtpCode", 'String'>
+    readonly expiresAt: FieldRef<"OtpCode", 'DateTime'>
+    readonly createdAt: FieldRef<"OtpCode", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * OtpCode findUnique
+   */
+  export type OtpCodeFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which OtpCode to fetch.
+     */
+    where: OtpCodeWhereUniqueInput
+  }
+
+  /**
+   * OtpCode findUniqueOrThrow
+   */
+  export type OtpCodeFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which OtpCode to fetch.
+     */
+    where: OtpCodeWhereUniqueInput
+  }
+
+  /**
+   * OtpCode findFirst
+   */
+  export type OtpCodeFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which OtpCode to fetch.
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OtpCodes to fetch.
+     */
+    orderBy?: OtpCodeOrderByWithRelationInput | OtpCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OtpCodes.
+     */
+    cursor?: OtpCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OtpCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OtpCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OtpCodes.
+     */
+    distinct?: OtpCodeScalarFieldEnum | OtpCodeScalarFieldEnum[]
+  }
+
+  /**
+   * OtpCode findFirstOrThrow
+   */
+  export type OtpCodeFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which OtpCode to fetch.
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OtpCodes to fetch.
+     */
+    orderBy?: OtpCodeOrderByWithRelationInput | OtpCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for OtpCodes.
+     */
+    cursor?: OtpCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OtpCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OtpCodes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of OtpCodes.
+     */
+    distinct?: OtpCodeScalarFieldEnum | OtpCodeScalarFieldEnum[]
+  }
+
+  /**
+   * OtpCode findMany
+   */
+  export type OtpCodeFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter, which OtpCodes to fetch.
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of OtpCodes to fetch.
+     */
+    orderBy?: OtpCodeOrderByWithRelationInput | OtpCodeOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing OtpCodes.
+     */
+    cursor?: OtpCodeWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` OtpCodes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` OtpCodes.
+     */
+    skip?: number
+    distinct?: OtpCodeScalarFieldEnum | OtpCodeScalarFieldEnum[]
+  }
+
+  /**
+   * OtpCode create
+   */
+  export type OtpCodeCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * The data needed to create a OtpCode.
+     */
+    data: XOR<OtpCodeCreateInput, OtpCodeUncheckedCreateInput>
+  }
+
+  /**
+   * OtpCode createMany
+   */
+  export type OtpCodeCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many OtpCodes.
+     */
+    data: OtpCodeCreateManyInput | OtpCodeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OtpCode createManyAndReturn
+   */
+  export type OtpCodeCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * The data used to create many OtpCodes.
+     */
+    data: OtpCodeCreateManyInput | OtpCodeCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * OtpCode update
+   */
+  export type OtpCodeUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * The data needed to update a OtpCode.
+     */
+    data: XOR<OtpCodeUpdateInput, OtpCodeUncheckedUpdateInput>
+    /**
+     * Choose, which OtpCode to update.
+     */
+    where: OtpCodeWhereUniqueInput
+  }
+
+  /**
+   * OtpCode updateMany
+   */
+  export type OtpCodeUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update OtpCodes.
+     */
+    data: XOR<OtpCodeUpdateManyMutationInput, OtpCodeUncheckedUpdateManyInput>
+    /**
+     * Filter which OtpCodes to update
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * Limit how many OtpCodes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OtpCode updateManyAndReturn
+   */
+  export type OtpCodeUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * The data used to update OtpCodes.
+     */
+    data: XOR<OtpCodeUpdateManyMutationInput, OtpCodeUncheckedUpdateManyInput>
+    /**
+     * Filter which OtpCodes to update
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * Limit how many OtpCodes to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * OtpCode upsert
+   */
+  export type OtpCodeUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * The filter to search for the OtpCode to update in case it exists.
+     */
+    where: OtpCodeWhereUniqueInput
+    /**
+     * In case the OtpCode found by the `where` argument doesn't exist, create a new OtpCode with this data.
+     */
+    create: XOR<OtpCodeCreateInput, OtpCodeUncheckedCreateInput>
+    /**
+     * In case the OtpCode was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<OtpCodeUpdateInput, OtpCodeUncheckedUpdateInput>
+  }
+
+  /**
+   * OtpCode delete
+   */
+  export type OtpCodeDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+    /**
+     * Filter which OtpCode to delete.
+     */
+    where: OtpCodeWhereUniqueInput
+  }
+
+  /**
+   * OtpCode deleteMany
+   */
+  export type OtpCodeDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which OtpCodes to delete
+     */
+    where?: OtpCodeWhereInput
+    /**
+     * Limit how many OtpCodes to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * OtpCode without action
+   */
+  export type OtpCodeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OtpCode
+     */
+    select?: OtpCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OtpCode
+     */
+    omit?: OtpCodeOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Model Banner
    */
 
@@ -14275,6 +15386,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     password: 'password',
+    role: 'role',
     createdAt: 'createdAt'
   };
 
@@ -14290,6 +15402,17 @@ export namespace Prisma {
   };
 
   export type AdminSessionScalarFieldEnum = (typeof AdminSessionScalarFieldEnum)[keyof typeof AdminSessionScalarFieldEnum]
+
+
+  export const OtpCodeScalarFieldEnum: {
+    id: 'id',
+    type: 'type',
+    code: 'code',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt'
+  };
+
+  export type OtpCodeScalarFieldEnum = (typeof OtpCodeScalarFieldEnum)[keyof typeof OtpCodeScalarFieldEnum]
 
 
   export const BannerScalarFieldEnum: {
@@ -14429,6 +15552,20 @@ export namespace Prisma {
    * Reference to a field of type 'OrderStatus[]'
    */
   export type ListEnumOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrderStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role'
+   */
+  export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
+    
+
+
+  /**
+   * Reference to a field of type 'Role[]'
+   */
+  export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role[]'>
     
 
 
@@ -14938,6 +16075,7 @@ export namespace Prisma {
     id?: IntFilter<"AdminUser"> | number
     email?: StringFilter<"AdminUser"> | string
     password?: StringFilter<"AdminUser"> | string
+    role?: EnumRoleFilter<"AdminUser"> | $Enums.Role
     createdAt?: DateTimeFilter<"AdminUser"> | Date | string
     sessions?: AdminSessionListRelationFilter
   }
@@ -14946,6 +16084,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     sessions?: AdminSessionOrderByRelationAggregateInput
   }
@@ -14957,6 +16096,7 @@ export namespace Prisma {
     OR?: AdminUserWhereInput[]
     NOT?: AdminUserWhereInput | AdminUserWhereInput[]
     password?: StringFilter<"AdminUser"> | string
+    role?: EnumRoleFilter<"AdminUser"> | $Enums.Role
     createdAt?: DateTimeFilter<"AdminUser"> | Date | string
     sessions?: AdminSessionListRelationFilter
   }, "id" | "email">
@@ -14965,6 +16105,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     _count?: AdminUserCountOrderByAggregateInput
     _avg?: AdminUserAvgOrderByAggregateInput
@@ -14980,6 +16121,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"AdminUser"> | number
     email?: StringWithAggregatesFilter<"AdminUser"> | string
     password?: StringWithAggregatesFilter<"AdminUser"> | string
+    role?: EnumRoleWithAggregatesFilter<"AdminUser"> | $Enums.Role
     createdAt?: DateTimeWithAggregatesFilter<"AdminUser"> | Date | string
   }
 
@@ -15038,6 +16180,58 @@ export namespace Prisma {
     userId?: IntWithAggregatesFilter<"AdminSession"> | number
     expires?: DateTimeWithAggregatesFilter<"AdminSession"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"AdminSession"> | Date | string
+  }
+
+  export type OtpCodeWhereInput = {
+    AND?: OtpCodeWhereInput | OtpCodeWhereInput[]
+    OR?: OtpCodeWhereInput[]
+    NOT?: OtpCodeWhereInput | OtpCodeWhereInput[]
+    id?: StringFilter<"OtpCode"> | string
+    type?: StringFilter<"OtpCode"> | string
+    code?: StringFilter<"OtpCode"> | string
+    expiresAt?: DateTimeFilter<"OtpCode"> | Date | string
+    createdAt?: DateTimeFilter<"OtpCode"> | Date | string
+  }
+
+  export type OtpCodeOrderByWithRelationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OtpCodeWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: OtpCodeWhereInput | OtpCodeWhereInput[]
+    OR?: OtpCodeWhereInput[]
+    NOT?: OtpCodeWhereInput | OtpCodeWhereInput[]
+    type?: StringFilter<"OtpCode"> | string
+    code?: StringFilter<"OtpCode"> | string
+    expiresAt?: DateTimeFilter<"OtpCode"> | Date | string
+    createdAt?: DateTimeFilter<"OtpCode"> | Date | string
+  }, "id">
+
+  export type OtpCodeOrderByWithAggregationInput = {
+    id?: SortOrder
+    type?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: OtpCodeCountOrderByAggregateInput
+    _max?: OtpCodeMaxOrderByAggregateInput
+    _min?: OtpCodeMinOrderByAggregateInput
+  }
+
+  export type OtpCodeScalarWhereWithAggregatesInput = {
+    AND?: OtpCodeScalarWhereWithAggregatesInput | OtpCodeScalarWhereWithAggregatesInput[]
+    OR?: OtpCodeScalarWhereWithAggregatesInput[]
+    NOT?: OtpCodeScalarWhereWithAggregatesInput | OtpCodeScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"OtpCode"> | string
+    type?: StringWithAggregatesFilter<"OtpCode"> | string
+    code?: StringWithAggregatesFilter<"OtpCode"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"OtpCode"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"OtpCode"> | Date | string
   }
 
   export type BannerWhereInput = {
@@ -15573,6 +16767,7 @@ export namespace Prisma {
   export type AdminUserCreateInput = {
     email: string
     password: string
+    role?: $Enums.Role
     createdAt?: Date | string
     sessions?: AdminSessionCreateNestedManyWithoutUserInput
   }
@@ -15581,6 +16776,7 @@ export namespace Prisma {
     id?: number
     email: string
     password: string
+    role?: $Enums.Role
     createdAt?: Date | string
     sessions?: AdminSessionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -15588,6 +16784,7 @@ export namespace Prisma {
   export type AdminUserUpdateInput = {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: AdminSessionUpdateManyWithoutUserNestedInput
   }
@@ -15596,6 +16793,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: AdminSessionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -15604,12 +16802,14 @@ export namespace Prisma {
     id?: number
     email: string
     password: string
+    role?: $Enums.Role
     createdAt?: Date | string
   }
 
   export type AdminUserUpdateManyMutationInput = {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15617,6 +16817,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -15669,6 +16870,62 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     userId?: IntFieldUpdateOperationsInput | number
     expires?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OtpCodeCreateInput = {
+    id?: string
+    type: string
+    code: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type OtpCodeUncheckedCreateInput = {
+    id?: string
+    type: string
+    code: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type OtpCodeUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OtpCodeUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OtpCodeCreateManyInput = {
+    id?: string
+    type: string
+    code: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type OtpCodeUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type OtpCodeUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -16335,6 +17592,13 @@ export namespace Prisma {
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
   }
 
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
   export type AdminSessionListRelationFilter = {
     every?: AdminSessionWhereInput
     some?: AdminSessionWhereInput
@@ -16349,6 +17613,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16360,6 +17625,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -16367,11 +17633,22 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
   }
 
   export type AdminUserSumOrderByAggregateInput = {
     id?: SortOrder
+  }
+
+  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type AdminUserScalarRelationFilter = {
@@ -16411,6 +17688,30 @@ export namespace Prisma {
   export type AdminSessionSumOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
+  }
+
+  export type OtpCodeCountOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OtpCodeMaxOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type OtpCodeMinOrderByAggregateInput = {
+    id?: SortOrder
+    type?: SortOrder
+    code?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -16924,6 +18225,10 @@ export namespace Prisma {
     connect?: AdminSessionWhereUniqueInput | AdminSessionWhereUniqueInput[]
   }
 
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
+  }
+
   export type AdminSessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<AdminSessionCreateWithoutUserInput, AdminSessionUncheckedCreateWithoutUserInput> | AdminSessionCreateWithoutUserInput[] | AdminSessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AdminSessionCreateOrConnectWithoutUserInput | AdminSessionCreateOrConnectWithoutUserInput[]
@@ -17208,6 +18513,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumOrderStatusFilter<$PrismaModel>
     _max?: NestedEnumOrderStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -18132,6 +19454,7 @@ export namespace Prisma {
   export type AdminUserCreateWithoutSessionsInput = {
     email: string
     password: string
+    role?: $Enums.Role
     createdAt?: Date | string
   }
 
@@ -18139,6 +19462,7 @@ export namespace Prisma {
     id?: number
     email: string
     password: string
+    role?: $Enums.Role
     createdAt?: Date | string
   }
 
@@ -18161,6 +19485,7 @@ export namespace Prisma {
   export type AdminUserUpdateWithoutSessionsInput = {
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18168,6 +19493,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

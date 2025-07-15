@@ -108,8 +108,14 @@ model AdminUser {
   id        Int            @id @default(autoincrement())
   email     String         @unique
   password  String
+  role      Role           @default(ADMIN)
   createdAt DateTime       @default(now())
   sessions  AdminSession[]
+}
+
+enum Role {
+  ADMIN
+  SUPERADMIN
 }
 
 model AdminSession {
@@ -119,6 +125,14 @@ model AdminSession {
   userId    Int
   expires   DateTime
   createdAt DateTime  @default(now())
+}
+
+model OtpCode {
+  id        String   @id @default(cuid())
+  type      String // например, "superadmin"
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Banner {

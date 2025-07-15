@@ -191,6 +191,7 @@ exports.Prisma.AdminUserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   password: 'password',
+  role: 'role',
   createdAt: 'createdAt'
 };
 
@@ -199,6 +200,14 @@ exports.Prisma.AdminSessionScalarFieldEnum = {
   token: 'token',
   userId: 'userId',
   expires: 'expires',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.OtpCodeScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  code: 'code',
+  expiresAt: 'expiresAt',
   createdAt: 'createdAt'
 };
 
@@ -239,6 +248,11 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
   CANCELLED: 'CANCELLED'
 };
 
+exports.Role = exports.$Enums.Role = {
+  ADMIN: 'ADMIN',
+  SUPERADMIN: 'SUPERADMIN'
+};
+
 exports.Prisma.ModelName = {
   AuPrice: 'AuPrice',
   User: 'User',
@@ -250,6 +264,7 @@ exports.Prisma.ModelName = {
   Order: 'Order',
   AdminUser: 'AdminUser',
   AdminSession: 'AdminSession',
+  OtpCode: 'OtpCode',
   Banner: 'Banner'
 };
 

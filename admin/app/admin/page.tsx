@@ -20,8 +20,6 @@ export default async function DashboardPage() {
 			prisma.auPrice.findFirst(),
 		]);
 
-	console.log(totalUsers);
-
 	return (
 		<div className="flex flex-col min-h-screen">
 			<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">

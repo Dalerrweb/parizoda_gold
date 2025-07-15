@@ -80,5 +80,11 @@ export type AdminUser = {
 	id: number;
 	email: string;
 	password: string;
+	role: Role;
 	createdAt: Date;
 };
+
+export enum Role {
+	ADMIN = "ADMIN",
+	SUPERADMIN = "SUPERADMIN",
+}
