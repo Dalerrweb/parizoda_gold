@@ -18,18 +18,15 @@ import {
 } from "@/components/ui/input-otp";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Shield, Clock, RefreshCw } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-export default function SuperadminLogin({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function SuperadminLogin({}: {}) {
 	const [code, setCode] = useState("");
 	const [sent, setSent] = useState(false);
-	const [verified, setVerified] = useState(false);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [timeLeft, setTimeLeft] = useState(0);
+	const router = useRouter();
 
 	// Таймер обратного отсчета
 	useEffect(() => {
@@ -83,7 +80,7 @@ export default function SuperadminLogin({
 			});
 
 			if (res.ok) {
-				setVerified(true);
+				router.push("/admin/trusted");
 			} else {
 				const { error } = await res.json();
 				setError(error || "Неверный код");
@@ -95,8 +92,6 @@ export default function SuperadminLogin({
 			setLoading(false);
 		}
 	}
-
-	if (verified) return <>{children}</>;
 
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">

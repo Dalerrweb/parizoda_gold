@@ -147,7 +147,7 @@ export function AppSidebar() {
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton asChild>
-									<Link href="/settings">
+									<Link href="/admin/trusted">
 										<span>
 											{formatPrice(
 												AuPrice?.pricePerGram ?? 0

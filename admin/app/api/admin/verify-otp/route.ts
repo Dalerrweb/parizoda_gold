@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
 	const { code } = await req.json();
@@ -27,5 +28,17 @@ export async function POST(req: Request) {
 	}
 
 	await prisma.otpCode.delete({ where: { id: latest.id } });
-	return NextResponse.json({ success: true });
+
+	const token = jwt.sign({ verified: true }, process.env.JWT_SECRET!);
+
+	const response = NextResponse.json({ success: true });
+	response.cookies.set({
+		name: "otp_token",
+		value: token,
+		httpOnly: true,
+		path: "/",
+		maxAge: 300, // 5 minutes
+	});
+
+	return response;
 }
