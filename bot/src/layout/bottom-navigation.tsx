@@ -1,8 +1,7 @@
 import { Heart, Home, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useCart } from "@/context/CartProvider";
-import { usePrice } from "@/context/PriceContext";
 
 interface BottomNavigationProps {
 	className?: string;
