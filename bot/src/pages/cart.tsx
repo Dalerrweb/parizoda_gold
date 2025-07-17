@@ -63,7 +63,7 @@ export default function CartPage() {
 					<Button
 						variant="ghost"
 						size="sm"
-						className="text-purple-600"
+						className="text-default-btn"
 					>
 						Действия
 					</Button>
@@ -89,7 +89,7 @@ export default function CartPage() {
 							{formatPrice(total)}
 						</p>
 					</div>
-					<Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium">
+					<Button className="bg-default-btn hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium">
 						Оформить заказ
 					</Button>
 				</div>
@@ -230,7 +230,7 @@ function CartItem({ item }: any) {
 																	!showBundleDetails
 																)
 															}
-															className="text-xs text-purple-600 hover:text-purple-700 font-medium"
+															className="text-xs text-default-btn hover:text-purple-700 font-medium"
 														>
 															{showBundleDetails
 																? "Скрыть"
@@ -297,7 +297,7 @@ function CartItem({ item }: any) {
 									</p>
 									<Button
 										size="sm"
-										className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-1 text-xs mt-1"
+										className="bg-default-btn hover:bg-purple-700 text-white px-4 py-1 text-xs mt-1"
 									>
 										<ShoppingBag className="w-3 h-3 mr-1" />
 										Купить

@@ -138,7 +138,6 @@ function ProductDetails({ product }: ProductDetailsProps) {
 					)}
 				</div>
 			</div>
-			{/* TODO: this cart footer for Bundle products */}
 			<CartFooter
 				product={product}
 				cartElement={cartElement}

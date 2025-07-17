@@ -1,7 +1,8 @@
 import { Heart, Home, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { useCart } from "@/context/CartProvider";
+import { usePrice } from "@/context/PriceContext";
 
 interface BottomNavigationProps {
 	className?: string;
@@ -15,23 +16,23 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 		{
 			to: "/",
 			icon: Home,
-			label: "Home",
+			label: "Главная",
 		},
 		{
 			to: "/favorites",
 			icon: Heart,
-			label: "Favorites",
+			label: "Избранное",
 		},
 		{
 			to: "/cart",
 			icon: ShoppingCart,
-			label: "Cart",
+			label: "Корзина",
 			badgeCount: cartLength,
 		},
 		{
 			to: "/profile",
 			icon: User,
-			label: "Profile",
+			label: "Профиль",
 		},
 	];
 

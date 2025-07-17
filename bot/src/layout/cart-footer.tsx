@@ -19,7 +19,7 @@ const CartFooter: React.FC<cartFooterProps> = ({ cartElement }) => {
 			<div className="grid grid-cols-2 gap-2 w-full m-auto">
 				{/* Buy Now Button */}
 				<Button
-					className=" h-12 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
+					className=" h-12 bg-default-btn hover:bg-purple-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
 					size="lg"
 				>
 					Заказать сейчас

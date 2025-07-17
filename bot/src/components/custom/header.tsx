@@ -1,26 +1,23 @@
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { usePrice } from "@/context/PriceContext";
+import { formatPrice } from "@/lib/utils";
 
-interface HeaderProps {
-	onMenuClick?: () => void;
-}
-
-export function Header({ onMenuClick }: HeaderProps) {
+export function Header() {
+	const { AuPrice } = usePrice();
 	return (
-		<header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b bg-background px-4">
-			{onMenuClick && (
-				<Button
-					variant="ghost"
-					size="icon"
-					onClick={onMenuClick}
-					className="mr-2"
-				>
-					<Menu className="h-5 w-5" />
-					<span className="sr-only">Open menu</span>
-				</Button>
-			)}
-			<h1 className="text-xl font-bold">Parizoda Gold</h1>
-			<div className="w-9"></div> {/* Spacer for alignment */}
+		<header className="sticky top-0 z-10 flex h-10 items-center justify-between border-b bg-background px-2">
+			<div className="flex items-center text-start text-md font-medium text-muted-foreground mb-2 px-2 ">
+				<span>Цена за грамм золота: </span>
+				<span className="ml-1">
+					{formatPrice(Number(AuPrice?.pricePerGram))}
+				</span>
+				{/* Online indicator */}
+				<span className="ml-3 flex items-center">
+					<span
+						className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"
+						title="Online"
+					></span>
+				</span>
+			</div>
 		</header>
 	);
 }
