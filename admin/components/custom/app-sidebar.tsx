@@ -72,7 +72,7 @@ const navigationItems = [
 	},
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ handleLogOut }: any) {
 	const pathname = usePathname();
 	const { AuPrice } = usePrice();
 
@@ -185,11 +185,11 @@ export function AppSidebar() {
 								side="top"
 								className="w-[--radix-popper-anchor-width]"
 							>
-								<DropdownMenuItem>
+								{/* <DropdownMenuItem>
 									<Settings className="h-4 w-4 mr-2" />
 									Account Settings
-								</DropdownMenuItem>
-								<DropdownMenuItem>
+								</DropdownMenuItem> */}
+								<DropdownMenuItem onClick={handleLogOut}>
 									<LogOut className="h-4 w-4 mr-2" />
 									Sign Out
 								</DropdownMenuItem>

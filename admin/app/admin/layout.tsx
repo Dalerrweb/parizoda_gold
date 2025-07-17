@@ -1,12 +1,11 @@
 import type React from "react";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/custom/app-sidebar";
 import prisma from "@/lib/prisma";
 import { PriceProvider } from "@/context/PriceContext";
-
-const inter = Inter({ subsets: ["latin"] });
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "Admin Dashboard",
@@ -20,14 +19,21 @@ export default async function RootLayout({
 }) {
 	const auPrice = await prisma.auPrice.findFirst();
 
+	async function deleteAllCookies() {
+		"use server";
+		const cookieStore = await cookies();
+
+		cookieStore.delete("admin-token");
+		cookieStore.delete("otp_token");
+		redirect("/login");
+	}
+
 	return (
-		<>
-			<PriceProvider value={auPrice}>
-				<SidebarProvider>
-					<AppSidebar />
-					<main className="flex-1 overflow-auto">{children}</main>
-				</SidebarProvider>
-			</PriceProvider>
-		</>
+		<PriceProvider value={auPrice}>
+			<SidebarProvider>
+				<AppSidebar handleLogOut={deleteAllCookies} />
+				<main className="flex-1 overflow-auto">{children}</main>
+			</SidebarProvider>
+		</PriceProvider>
 	);
 }
