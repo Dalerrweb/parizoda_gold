@@ -131,6 +131,13 @@ export default function ProductBundle({
 		fetchProducts(1, searchTerm);
 	}, []);
 
+	useEffect(() => {
+		setFormData((prev) => ({
+			...prev,
+			childBundles: selectedProducts,
+		}));
+	}, [selectedProducts, setFormData]);
+
 	// Load initial products data
 	useEffect(() => {
 		const loadInitialProducts = async () => {
@@ -292,7 +299,7 @@ export default function ProductBundle({
 					<div className="text-2xl font-bold text-green-600">
 						{formatPrice(totalBundlePrice)}
 					</div> */}
-					<Button
+					{/* <Button
 						type="button"
 						onClick={() =>
 							setFormData((prev) => ({
@@ -305,7 +312,7 @@ export default function ProductBundle({
 					>
 						<Plus className="h-4 w-4" />
 						Сохранить изделия в комплект ({selectedProducts.length})
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 
