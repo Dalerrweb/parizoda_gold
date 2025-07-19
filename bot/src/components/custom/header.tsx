@@ -16,7 +16,7 @@ export function Header() {
 	}
 
 	return (
-		<header className="sticky top-0 z-10 flex h-10 items-center justify-between border-b bg-background px-2">
+		<header className="sticky top-0 z-200 flex h-10 items-center justify-between border-b bg-background px-2">
 			<div className="flex items-center text-start text-md font-medium text-muted-foreground mb-2 px-2 ">
 				<span>Цена за грамм золота: </span>
 				<PriceView />

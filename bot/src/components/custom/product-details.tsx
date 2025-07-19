@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Check, ChevronLeft, Flame } from "lucide-react";
+import { Check, ChevronLeft, Flame, HeartIcon } from "lucide-react";
 import Slider from "./product-page/slider";
 import { Product, ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
@@ -13,6 +13,7 @@ import { formatPrice } from "@/lib/utils";
 import SizeSelector from "./SizeSelector";
 import CartFooter from "@/layout/cart-footer";
 import { CartItem, generateConfigKey } from "@/context/CartProvider";
+import { useLikes } from "@/context/FavProvider";
 
 interface ProductDetailsProps {
 	product: Product;
@@ -42,6 +43,9 @@ function ProductDetails({ product }: ProductDetailsProps) {
 		items: Object.values(bundleItems),
 	};
 
+	const { likeOrDislike, favs } = useLikes();
+	let isLiked = favs.some((liked) => liked.id === product.id);
+
 	return (
 		<div className="container mx-auto px-4 pb-8">
 			<div className="flex items-center py-4 border-b">
@@ -61,6 +65,31 @@ function ProductDetails({ product }: ProductDetailsProps) {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 				{/* Product Images */}
 				<Slider product={product} />
+				<div className="absolute top-30 right-8 z-20">
+					<Button
+						className="bg-white text-black hover:bg-gray-200 p-1 rounded-full shadow-md"
+						onClick={() => {
+							likeOrDislike({
+								id: product.id,
+								name: product.name,
+								description: product.description,
+								images: product.images,
+								sizes: product.sizes,
+								markup: product.markup,
+								type: product.type,
+							});
+						}}
+					>
+						{isLiked ? (
+							<HeartIcon
+								className="fill-red-500 w-4 h-4"
+								stroke="red"
+							/>
+						) : (
+							<HeartIcon className="w-4 h-4" />
+						)}
+					</Button>
+				</div>
 
 				{/* Product Details */}
 				<div className="space-y-6">

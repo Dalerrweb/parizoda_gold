@@ -5,10 +5,10 @@ import {
 	Minus,
 	Plus,
 	MoreVertical,
-	Heart,
 	Trash2,
 	Package,
 	ShoppingBag,
+	HeartIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +17,7 @@ import { useCart } from "@/context/CartProvider";
 import { ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
+import { useLikes } from "@/context/FavProvider";
 
 export default function CartPage() {
 	const [total, setTotal] = useState(0);
@@ -103,6 +104,8 @@ function CartItem({ item }: any) {
 	const [showBundleDetails, setShowBundleDetails] = useState(false);
 	const { increment, decrement, removeFromCart } = useCart();
 	const { calculate } = usePrice();
+	const { likeOrDislike, favs } = useLikes();
+	let isLiked = favs.some((liked) => liked.id === item.id);
 
 	const price =
 		item.type === ProductType.BUNDLE
@@ -122,8 +125,18 @@ function CartItem({ item }: any) {
 		<div className="bg-white rounded-xl shadow-sm border border-gray-100 relative overflow-hidden">
 			{/* Swipe Actions */}
 			<div className="absolute right-0 top-0 bottom-0 flex">
-				<button className="bg-orange-500 hover:bg-orange-600 text-white px-4 flex items-center justify-center min-w-[80px] transition-colors duration-200">
-					<Heart className="w-4 h-4" />
+				<button
+					onClick={() => likeOrDislike(item)}
+					className="bg-orange-500 hover:bg-orange-600 text-white px-4 flex items-center justify-center min-w-[80px] transition-colors duration-200"
+				>
+					{isLiked ? (
+						<HeartIcon
+							className="fill-red-500 w-4 h-4"
+							stroke="red"
+						/>
+					) : (
+						<HeartIcon className="w-4 h-4" />
+					)}
 				</button>
 				<button
 					onClick={() => removeFromCart(item.configKey)}
