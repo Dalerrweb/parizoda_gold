@@ -74,7 +74,7 @@ export default function HomePage() {
 				{error ? (
 					"Ошибка при получении категорий"
 				) : (
-					<div className="sticky top-0 z-10 bg-background pt-4 pb-2 px-4 border-b">
+					<div className="sticky top-0 z-200 bg-background pt-4 pb-2 px-4 border-b">
 						<Tabs
 							value={activeCategory}
 							onValueChange={handleTabClick}
