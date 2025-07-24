@@ -221,9 +221,25 @@ exports.Prisma.BannerScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  invoiceId: 'invoiceId',
+  externalId: 'externalId',
+  userId: 'userId',
+  amount: 'amount',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  extraData: 'extraData'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -234,6 +250,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.ProductType = exports.$Enums.ProductType = {
   SINGLE: 'SINGLE',
@@ -253,6 +275,13 @@ exports.Role = exports.$Enums.Role = {
   SUPERADMIN: 'SUPERADMIN'
 };
 
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
+  success: 'success',
+  pending: 'pending',
+  failed: 'failed',
+  refund: 'refund'
+};
+
 exports.Prisma.ModelName = {
   AuPrice: 'AuPrice',
   User: 'User',
@@ -265,7 +294,8 @@ exports.Prisma.ModelName = {
   AdminUser: 'AdminUser',
   AdminSession: 'AdminSession',
   OtpCode: 'OtpCode',
-  Banner: 'Banner'
+  Banner: 'Banner',
+  Transaction: 'Transaction'
 };
 
 /**

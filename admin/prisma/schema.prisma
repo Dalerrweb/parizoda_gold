@@ -25,6 +25,8 @@ model User {
   language_code String?
   orders        Order[]
   createdAt     DateTime @default(now())
+
+  Transaction Transaction[]
 }
 
 model Category {
@@ -143,4 +145,27 @@ model Banner {
   position  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+
+model Transaction {
+  id          String   @id @default(uuid())
+  invoiceId   String   @db.Uuid
+  externalId  String   @db.Uuid
+  userId      Int
+  amount      BigInt   @db.BigInt
+  status      TransactionStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  extraData  Json     @default("{}") // ✅ новое поле JSON по умолчанию {}
+
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+enum TransactionStatus {
+  success
+  pending
+  failed
+  refund
 }
