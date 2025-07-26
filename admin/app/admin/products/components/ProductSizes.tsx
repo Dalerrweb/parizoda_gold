@@ -130,16 +130,14 @@ export default function ProductSizes({
 									<Input
 										id={`weight-${index}`}
 										type="number"
-										min="0"
+										step="0.01"
 										placeholder="0"
 										value={size.weight}
 										onChange={(e) =>
 											updateSize(
 												index,
 												"weight",
-												Number.parseInt(
-													e.target.value
-												) || 0
+												e.target.value.toString() || "0"
 											)
 										}
 									/>

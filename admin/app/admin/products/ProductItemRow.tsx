@@ -64,7 +64,7 @@ const ProductItemRow: React.FC<ProductItemProps> = ({ product }) => {
 					</span>
 				</div>
 			</TableCell>
-			<TableCell>
+			{/* <TableCell>
 				<div className="flex items-center space-x-2">
 					<span className="font-medium">{product.orders.length}</span>
 					{product.orders.length > 0 && (
@@ -73,7 +73,7 @@ const ProductItemRow: React.FC<ProductItemProps> = ({ product }) => {
 						</Badge>
 					)}
 				</div>
-			</TableCell>
+			</TableCell> */}
 			<TableCell>
 				<div className="text-sm">{formatDate(product.updatedAt)}</div>
 			</TableCell>

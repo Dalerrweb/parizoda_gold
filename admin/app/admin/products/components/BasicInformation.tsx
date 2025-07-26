@@ -115,11 +115,12 @@ export default function BasicInformation({
 								<Input
 									id="markup"
 									type="number"
+									step="0.01"
 									value={formData.markup}
 									onChange={(e) =>
 										handleInputChange(
 											"markup",
-											+e.target.value
+											e.target.value.toString() || 0
 										)
 									}
 									placeholder="0"
@@ -146,7 +147,7 @@ export default function BasicInformation({
 					<div className="space-y-2">
 						<Label htmlFor="category">Категория *</Label>
 						<Select
-							value={formData.categoryId}
+							value={formData.categoryId.toString()}
 							onValueChange={(value) =>
 								handleInputChange("categoryId", +value)
 							}

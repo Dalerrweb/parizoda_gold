@@ -151,7 +151,7 @@ export default function EditProductPage() {
 			const payload = {
 				...formData,
 				categoryId: Number(formData.categoryId),
-				markup: Number(formData.markup),
+				markup: formData.markup,
 				images: allImages,
 				sizes: sizes,
 			};

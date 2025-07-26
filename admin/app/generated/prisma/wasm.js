@@ -151,7 +151,6 @@ exports.Prisma.ProductScalarFieldEnum = {
   name: 'name',
   description: 'description',
   markup: 'markup',
-  defaultWeight: 'defaultWeight',
   type: 'type',
   categoryId: 'categoryId',
   createdAt: 'createdAt',
@@ -177,14 +176,6 @@ exports.Prisma.ProductImageScalarFieldEnum = {
   id: 'id',
   url: 'url',
   productId: 'productId'
-};
-
-exports.Prisma.OrderScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  productId: 'productId',
-  status: 'status',
-  createdAt: 'createdAt'
 };
 
 exports.Prisma.AdminUserScalarFieldEnum = {
@@ -221,6 +212,41 @@ exports.Prisma.BannerScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.OrderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  status: 'status',
+  paymentType: 'paymentType',
+  goldPrice: 'goldPrice',
+  totalAmount: 'totalAmount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  price: 'price',
+  weight: 'weight',
+  markup: 'markup',
+  variantId: 'variantId',
+  type: 'type'
+};
+
+exports.Prisma.BundleItemScalarFieldEnum = {
+  id: 'id',
+  orderItemId: 'orderItemId',
+  productId: 'productId',
+  variantId: 'variantId',
+  title: 'title',
+  image: 'image',
+  weight: 'weight',
+  markup: 'markup',
+  price: 'price'
+};
+
 exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
   invoiceId: 'invoiceId',
@@ -230,7 +256,8 @@ exports.Prisma.TransactionScalarFieldEnum = {
   status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  extraData: 'extraData'
+  extraData: 'extraData',
+  orderId: 'orderId'
 };
 
 exports.Prisma.SortOrder = {
@@ -262,17 +289,22 @@ exports.ProductType = exports.$Enums.ProductType = {
   BUNDLE: 'BUNDLE'
 };
 
-exports.OrderStatus = exports.$Enums.OrderStatus = {
-  PENDING: 'PENDING',
-  PAID: 'PAID',
-  SHIPPED: 'SHIPPED',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED'
-};
-
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   SUPERADMIN: 'SUPERADMIN'
+};
+
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentType = exports.$Enums.PaymentType = {
+  PREPAYMENTBYCARD: 'PREPAYMENTBYCARD',
+  CASH: 'CASH',
+  REFUND: 'REFUND'
 };
 
 exports.TransactionStatus = exports.$Enums.TransactionStatus = {
@@ -290,11 +322,13 @@ exports.Prisma.ModelName = {
   ProductSize: 'ProductSize',
   ProductBundle: 'ProductBundle',
   ProductImage: 'ProductImage',
-  Order: 'Order',
   AdminUser: 'AdminUser',
   AdminSession: 'AdminSession',
   OtpCode: 'OtpCode',
   Banner: 'Banner',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  BundleItem: 'BundleItem',
   Transaction: 'Transaction'
 };
 

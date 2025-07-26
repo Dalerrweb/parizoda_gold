@@ -29,6 +29,7 @@ import prisma from "@/lib/prisma";
 import ProductItemRow from "./ProductItemRow";
 import { CategoryFilter } from "./components/category-filter";
 import { PaginationControls } from "@/components/custom/pagination-controls";
+import SuperJSON from "superjson";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -72,7 +73,6 @@ export default async function ProductsPage({ searchParams }: any) {
 		include: {
 			category: true,
 			images: true,
-			orders: true,
 			sizes: true,
 			parentBundle: {
 				include: {
@@ -95,16 +95,10 @@ export default async function ProductsPage({ searchParams }: any) {
 	const hasNextPage = currentPage < totalPages;
 	const hasPrevPage = currentPage > 1;
 
-	const allProducts = await prisma.product.findMany({
-		include: {
-			orders: true,
-		},
-	});
+	const allProducts = await prisma.product.findMany();
 
 	const totalProductsCount = allProducts.length;
-	const productsWithOrders = allProducts.filter(
-		(product) => product.orders.length > 0
-	).length;
+	const productsWithOrders = 0;
 
 	const recentProducts = allProducts.filter((product) => {
 		const daysDiff =
@@ -342,11 +336,10 @@ export default async function ProductsPage({ searchParams }: any) {
 										<TableHead>Товар</TableHead>
 										<TableHead>Категория</TableHead>
 										<TableHead>Картинки</TableHead>
-										<TableHead>Заказы</TableHead>
+										{/* <TableHead>Заказы</TableHead> */}
 										<TableHead>Обновлено</TableHead>
-										<TableHead className="text-right">
-											Действия
-										</TableHead>
+										<TableHead>Цена</TableHead>
+										<TableHead>Действия</TableHead>
 									</TableRow>
 								</TableHeader>
 								<TableBody>
