@@ -17,7 +17,7 @@ export type Product = {
 	sku: string;
 	name: string;
 	description?: string;
-	markup: number;
+	markup: string;
 	type: ProductType; // enum: SINGLE | BUNDLE и т.п.
 	categoryId: number;
 	category?: Category;
@@ -54,7 +54,7 @@ export type ProductSize = {
 	id?: number;
 	size: string;
 	quantity: number;
-	weight: number;
+	weight: string;
 	product?: Product;
 	productId?: number;
 };
@@ -87,4 +87,9 @@ export type AdminUser = {
 export enum Role {
 	ADMIN = "ADMIN",
 	SUPERADMIN = "SUPERADMIN",
+}
+
+export enum PaymentType {
+	CASH = "CASH",
+	CARD = "CARD",
 }

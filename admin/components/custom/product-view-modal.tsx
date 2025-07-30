@@ -41,13 +41,13 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
 		let price = 0;
 		if (product.type !== ProductType.BUNDLE) {
 			return calculate({
-				weight: product.sizes?.[0]?.weight || 0,
+				weight: product.sizes?.[0]?.weight || "0",
 				markup: product.markup,
 			});
 		}
 		for (let item of product.parentBundle) {
 			price += calculate({
-				weight: item.child.sizes?.[0]?.weight || 0,
+				weight: item.child.sizes?.[0]?.weight || "0",
 				markup: item.child.markup,
 			});
 		}

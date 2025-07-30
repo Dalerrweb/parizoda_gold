@@ -34,13 +34,13 @@ export function usePrice() {
 	}, [AuPrice]);
 
 	const calculate = useCallback(
-		({ weight, markup }: { weight: number; markup: number }) => {
+		({ weight, markup }: { weight: string; markup: string }) => {
 			if (!AuPrice) return 0;
 
 			const pricePerGram = Number(AuPrice.pricePerGram);
-			const priceWithoutMarkup = pricePerGram * weight;
+			const priceWithoutMarkup = pricePerGram * parseFloat(weight);
 
-			return priceWithoutMarkup * (1 + markup / 100);
+			return priceWithoutMarkup * (1 + parseFloat(markup) / 100);
 		},
 		[AuPrice]
 	);

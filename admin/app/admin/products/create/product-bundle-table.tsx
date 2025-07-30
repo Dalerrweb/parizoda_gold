@@ -1,12 +1,6 @@
 "use client";
 
-import {
-	useState,
-	useEffect,
-	useCallback,
-	Dispatch,
-	SetStateAction,
-} from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
 	Search,
 	X,
@@ -53,7 +47,8 @@ interface ApiResponse {
 }
 
 interface ProductBundleTableProps {
-	useFormData: [any[], Dispatch<SetStateAction<MainProductType>>];
+	value: ProductBundle[];
+	onChange: (newBundles: ProductBundle[]) => void;
 	editingElemntId?: string;
 }
 
@@ -61,13 +56,12 @@ const ITEMS_PER_PAGE = 10;
 const PARENT_ID = 1;
 
 export default function ProductBundle({
-	useFormData: [childBundles, setFormData],
+	value: selectedProducts,
+	onChange,
 	editingElemntId,
 }: ProductBundleTableProps) {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [currentPage, setCurrentPage] = useState(1);
-	const [selectedProducts, setSelectedProducts] =
-		useState<ProductBundle[]>(childBundles);
 
 	const [products, setProducts] = useState<Product[]>([]);
 	const [pagination, setPagination] = useState({
@@ -131,20 +125,13 @@ export default function ProductBundle({
 		fetchProducts(1, searchTerm);
 	}, []);
 
-	useEffect(() => {
-		setFormData((prev) => ({
-			...prev,
-			childBundles: selectedProducts,
-		}));
-	}, [selectedProducts, setFormData]);
-
 	// Load initial products data
 	useEffect(() => {
 		const loadInitialProducts = async () => {
-			if (childBundles.length > 0) {
+			if (selectedProducts.length > 0) {
 				try {
 					// Загружаем данные о продуктах из начального списка
-					const productIds = childBundles.map(
+					const productIds = selectedProducts.map(
 						(bundle) => bundle.childId
 					);
 					const promises = productIds.map((id) =>
@@ -163,9 +150,6 @@ export default function ProductBundle({
 						});
 						return newCache;
 					});
-
-					// Устанавливаем выбранные продукты
-					setSelectedProducts(childBundles);
 				} catch (error) {
 					console.error("Error loading initial products:", error);
 				}
@@ -173,7 +157,7 @@ export default function ProductBundle({
 		};
 
 		loadInitialProducts();
-	}, [childBundles]);
+	}, [selectedProducts]);
 
 	// Handle search with debounce
 	const handleSearchChange = (value: string) => {
@@ -208,12 +192,14 @@ export default function ProductBundle({
 	// Toggle product selection
 	const toggleProduct = (productId: number) => {
 		if (isProductSelected(productId)) {
-			setSelectedProducts((prev) =>
-				prev.filter((bundle) => bundle.childId !== productId)
+			onChange(
+				selectedProducts.filter(
+					(bundle) => bundle.childId !== productId
+				)
 			);
 		} else {
-			setSelectedProducts((prev) => [
-				...prev,
+			onChange([
+				...selectedProducts,
 				{
 					parentId: PARENT_ID,
 					childId: productId,
@@ -225,8 +211,8 @@ export default function ProductBundle({
 
 	// Remove product from bundle
 	const removeProduct = (productId: number) => {
-		setSelectedProducts((prev) =>
-			prev.filter((bundle) => bundle.childId !== productId)
+		onChange(
+			selectedProducts.filter((bundle) => bundle.childId !== productId)
 		);
 	};
 
@@ -256,13 +242,15 @@ export default function ProductBundle({
 				quantity: 1,
 			}));
 
-		setSelectedProducts((prev) => [...prev, ...newSelections]);
+		onChange([...selectedProducts, ...newSelections]);
 	};
 
 	const deselectAllVisible = () => {
 		const visibleProductIds = products.map((p) => p.id);
-		setSelectedProducts((prev) =>
-			prev.filter((bundle) => !visibleProductIds.includes(bundle.childId))
+		onChange(
+			selectedProducts.filter(
+				(bundle) => !visibleProductIds.includes(bundle.childId)
+			)
 		);
 	};
 
@@ -290,29 +278,6 @@ export default function ProductBundle({
 						Выберите товары для создания комплекта. Используйте
 						флажки, чтобы добавлять или удалять позиции.
 					</p>
-				</div>
-
-				<div className="flex flex-col items-end gap-2">
-					{/* <div className="text-sm text-muted-foreground">
-						Total Weight: {totalBundleWeight}g
-					</div>
-					<div className="text-2xl font-bold text-green-600">
-						{formatPrice(totalBundlePrice)}
-					</div> */}
-					{/* <Button
-						type="button"
-						onClick={() =>
-							setFormData((prev) => ({
-								...prev,
-								childBundles: selectedProducts,
-							}))
-						}
-						className="flex items-center gap-2"
-						disabled={selectedProducts.length === 0}
-					>
-						<Plus className="h-4 w-4" />
-						Сохранить изделия в комплект ({selectedProducts.length})
-					</Button> */}
 				</div>
 			</div>
 
@@ -518,14 +483,6 @@ export default function ProductBundle({
 												{product.sku}
 											</Badge>
 										</TableCell>
-										{/* <TableCell className="text-sm">
-										{product.weight}g
-									</TableCell>
-									<TableCell className="text-right">
-										<span className="font-semibold text-green-600">
-											{formatPrice(product.price)}
-										</span>
-									</TableCell> */}
 									</TableRow>
 								);
 							})

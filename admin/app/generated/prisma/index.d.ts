@@ -2356,6 +2356,46 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ProductSizeCountOutputType
+   */
+
+  export type ProductSizeCountOutputType = {
+    OrderItem: number
+    BundleItem: number
+  }
+
+  export type ProductSizeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    OrderItem?: boolean | ProductSizeCountOutputTypeCountOrderItemArgs
+    BundleItem?: boolean | ProductSizeCountOutputTypeCountBundleItemArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProductSizeCountOutputType without action
+   */
+  export type ProductSizeCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSizeCountOutputType
+     */
+    select?: ProductSizeCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProductSizeCountOutputType without action
+   */
+  export type ProductSizeCountOutputTypeCountOrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: OrderItemWhereInput
+  }
+
+  /**
+   * ProductSizeCountOutputType without action
+   */
+  export type ProductSizeCountOutputTypeCountBundleItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BundleItemWhereInput
+  }
+
+
+  /**
    * Count Type AdminUserCountOutputType
    */
 
@@ -7272,6 +7312,9 @@ export namespace Prisma {
     weight?: boolean
     productId?: boolean
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    OrderItem?: boolean | ProductSize$OrderItemArgs<ExtArgs>
+    BundleItem?: boolean | ProductSize$BundleItemArgs<ExtArgs>
+    _count?: boolean | ProductSizeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["productSize"]>
 
   export type ProductSizeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7303,6 +7346,9 @@ export namespace Prisma {
   export type ProductSizeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "size" | "quantity" | "weight" | "productId", ExtArgs["result"]["productSize"]>
   export type ProductSizeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    OrderItem?: boolean | ProductSize$OrderItemArgs<ExtArgs>
+    BundleItem?: boolean | ProductSize$BundleItemArgs<ExtArgs>
+    _count?: boolean | ProductSizeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProductSizeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -7315,6 +7361,8 @@ export namespace Prisma {
     name: "ProductSize"
     objects: {
       product: Prisma.$ProductPayload<ExtArgs>
+      OrderItem: Prisma.$OrderItemPayload<ExtArgs>[]
+      BundleItem: Prisma.$BundleItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -7717,6 +7765,8 @@ export namespace Prisma {
   export interface Prisma__ProductSizeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    OrderItem<T extends ProductSize$OrderItemArgs<ExtArgs> = {}>(args?: Subset<T, ProductSize$OrderItemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    BundleItem<T extends ProductSize$BundleItemArgs<ExtArgs> = {}>(args?: Subset<T, ProductSize$BundleItemArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BundleItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8144,6 +8194,54 @@ export namespace Prisma {
      * Limit how many ProductSizes to delete.
      */
     limit?: number
+  }
+
+  /**
+   * ProductSize.OrderItem
+   */
+  export type ProductSize$OrderItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the OrderItem
+     */
+    select?: OrderItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the OrderItem
+     */
+    omit?: OrderItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: OrderItemInclude<ExtArgs> | null
+    where?: OrderItemWhereInput
+    orderBy?: OrderItemOrderByWithRelationInput | OrderItemOrderByWithRelationInput[]
+    cursor?: OrderItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: OrderItemScalarFieldEnum | OrderItemScalarFieldEnum[]
+  }
+
+  /**
+   * ProductSize.BundleItem
+   */
+  export type ProductSize$BundleItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BundleItem
+     */
+    select?: BundleItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BundleItem
+     */
+    omit?: BundleItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BundleItemInclude<ExtArgs> | null
+    where?: BundleItemWhereInput
+    orderBy?: BundleItemOrderByWithRelationInput | BundleItemOrderByWithRelationInput[]
+    cursor?: BundleItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BundleItemScalarFieldEnum | BundleItemScalarFieldEnum[]
   }
 
   /**
@@ -16041,6 +16139,7 @@ export namespace Prisma {
     type?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     bundleItems?: boolean | OrderItem$bundleItemsArgs<ExtArgs>
     _count?: boolean | OrderItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
@@ -16057,6 +16156,7 @@ export namespace Prisma {
     type?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
 
   export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -16071,6 +16171,7 @@ export namespace Prisma {
     type?: boolean
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["orderItem"]>
 
   export type OrderItemSelectScalar = {
@@ -16089,16 +16190,19 @@ export namespace Prisma {
   export type OrderItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
     bundleItems?: boolean | OrderItem$bundleItemsArgs<ExtArgs>
     _count?: boolean | OrderItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type OrderItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
   }
   export type OrderItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     order?: boolean | OrderDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | OrderItem$variantArgs<ExtArgs>
   }
 
   export type $OrderItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -16106,6 +16210,7 @@ export namespace Prisma {
     objects: {
       order: Prisma.$OrderPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      variant: Prisma.$ProductSizePayload<ExtArgs> | null
       bundleItems: Prisma.$BundleItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -16514,6 +16619,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     order<T extends OrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderDefaultArgs<ExtArgs>>): Prisma__OrderClient<$Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    variant<T extends OrderItem$variantArgs<ExtArgs> = {}>(args?: Subset<T, OrderItem$variantArgs<ExtArgs>>): Prisma__ProductSizeClient<$Result.GetResult<Prisma.$ProductSizePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bundleItems<T extends OrderItem$bundleItemsArgs<ExtArgs> = {}>(args?: Subset<T, OrderItem$bundleItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BundleItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -16949,6 +17055,25 @@ export namespace Prisma {
   }
 
   /**
+   * OrderItem.variant
+   */
+  export type OrderItem$variantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSize
+     */
+    select?: ProductSizeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSize
+     */
+    omit?: ProductSizeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSizeInclude<ExtArgs> | null
+    where?: ProductSizeWhereInput
+  }
+
+  /**
    * OrderItem.bundleItems
    */
   export type OrderItem$bundleItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17200,7 +17325,7 @@ export namespace Prisma {
     id: number
     orderItemId: number
     productId: number
-    variantId: number
+    variantId: number | null
     title: string
     image: string
     weight: string
@@ -17239,6 +17364,7 @@ export namespace Prisma {
     price?: boolean
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["bundleItem"]>
 
   export type BundleItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17253,6 +17379,7 @@ export namespace Prisma {
     price?: boolean
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["bundleItem"]>
 
   export type BundleItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17267,6 +17394,7 @@ export namespace Prisma {
     price?: boolean
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }, ExtArgs["result"]["bundleItem"]>
 
   export type BundleItemSelectScalar = {
@@ -17285,14 +17413,17 @@ export namespace Prisma {
   export type BundleItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }
   export type BundleItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }
   export type BundleItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItem?: boolean | OrderItemDefaultArgs<ExtArgs>
     product?: boolean | ProductDefaultArgs<ExtArgs>
+    variant?: boolean | BundleItem$variantArgs<ExtArgs>
   }
 
   export type $BundleItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17300,12 +17431,13 @@ export namespace Prisma {
     objects: {
       orderItem: Prisma.$OrderItemPayload<ExtArgs>
       product: Prisma.$ProductPayload<ExtArgs>
+      variant: Prisma.$ProductSizePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
       orderItemId: number
       productId: number
-      variantId: number
+      variantId: number | null
       title: string
       image: string
       weight: string
@@ -17707,6 +17839,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     orderItem<T extends OrderItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, OrderItemDefaultArgs<ExtArgs>>): Prisma__OrderItemClient<$Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     product<T extends ProductDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProductDefaultArgs<ExtArgs>>): Prisma__ProductClient<$Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    variant<T extends BundleItem$variantArgs<ExtArgs> = {}>(args?: Subset<T, BundleItem$variantArgs<ExtArgs>>): Prisma__ProductSizeClient<$Result.GetResult<Prisma.$ProductSizePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18138,6 +18271,25 @@ export namespace Prisma {
      * Limit how many BundleItems to delete.
      */
     limit?: number
+  }
+
+  /**
+   * BundleItem.variant
+   */
+  export type BundleItem$variantArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProductSize
+     */
+    select?: ProductSizeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProductSize
+     */
+    omit?: ProductSizeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProductSizeInclude<ExtArgs> | null
+    where?: ProductSizeWhereInput
   }
 
   /**
@@ -20036,6 +20188,8 @@ export namespace Prisma {
     weight?: StringNullableFilter<"ProductSize"> | string | null
     productId?: IntFilter<"ProductSize"> | number
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    OrderItem?: OrderItemListRelationFilter
+    BundleItem?: BundleItemListRelationFilter
   }
 
   export type ProductSizeOrderByWithRelationInput = {
@@ -20045,6 +20199,8 @@ export namespace Prisma {
     weight?: SortOrderInput | SortOrder
     productId?: SortOrder
     product?: ProductOrderByWithRelationInput
+    OrderItem?: OrderItemOrderByRelationAggregateInput
+    BundleItem?: BundleItemOrderByRelationAggregateInput
   }
 
   export type ProductSizeWhereUniqueInput = Prisma.AtLeast<{
@@ -20057,6 +20213,8 @@ export namespace Prisma {
     weight?: StringNullableFilter<"ProductSize"> | string | null
     productId?: IntFilter<"ProductSize"> | number
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    OrderItem?: OrderItemListRelationFilter
+    BundleItem?: BundleItemListRelationFilter
   }, "id">
 
   export type ProductSizeOrderByWithAggregationInput = {
@@ -20508,6 +20666,7 @@ export namespace Prisma {
     type?: EnumProductTypeFilter<"OrderItem"> | $Enums.ProductType
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
     bundleItems?: BundleItemListRelationFilter
   }
 
@@ -20523,6 +20682,7 @@ export namespace Prisma {
     type?: SortOrder
     order?: OrderOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    variant?: ProductSizeOrderByWithRelationInput
     bundleItems?: BundleItemOrderByRelationAggregateInput
   }
 
@@ -20541,6 +20701,7 @@ export namespace Prisma {
     type?: EnumProductTypeFilter<"OrderItem"> | $Enums.ProductType
     order?: XOR<OrderScalarRelationFilter, OrderWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
     bundleItems?: BundleItemListRelationFilter
   }, "id">
 
@@ -20583,7 +20744,7 @@ export namespace Prisma {
     id?: IntFilter<"BundleItem"> | number
     orderItemId?: IntFilter<"BundleItem"> | number
     productId?: IntFilter<"BundleItem"> | number
-    variantId?: IntFilter<"BundleItem"> | number
+    variantId?: IntNullableFilter<"BundleItem"> | number | null
     title?: StringFilter<"BundleItem"> | string
     image?: StringFilter<"BundleItem"> | string
     weight?: StringFilter<"BundleItem"> | string
@@ -20591,13 +20752,14 @@ export namespace Prisma {
     price?: BigIntFilter<"BundleItem"> | bigint | number
     orderItem?: XOR<OrderItemScalarRelationFilter, OrderItemWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
   }
 
   export type BundleItemOrderByWithRelationInput = {
     id?: SortOrder
     orderItemId?: SortOrder
     productId?: SortOrder
-    variantId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     title?: SortOrder
     image?: SortOrder
     weight?: SortOrder
@@ -20605,6 +20767,7 @@ export namespace Prisma {
     price?: SortOrder
     orderItem?: OrderItemOrderByWithRelationInput
     product?: ProductOrderByWithRelationInput
+    variant?: ProductSizeOrderByWithRelationInput
   }
 
   export type BundleItemWhereUniqueInput = Prisma.AtLeast<{
@@ -20614,7 +20777,7 @@ export namespace Prisma {
     NOT?: BundleItemWhereInput | BundleItemWhereInput[]
     orderItemId?: IntFilter<"BundleItem"> | number
     productId?: IntFilter<"BundleItem"> | number
-    variantId?: IntFilter<"BundleItem"> | number
+    variantId?: IntNullableFilter<"BundleItem"> | number | null
     title?: StringFilter<"BundleItem"> | string
     image?: StringFilter<"BundleItem"> | string
     weight?: StringFilter<"BundleItem"> | string
@@ -20622,13 +20785,14 @@ export namespace Prisma {
     price?: BigIntFilter<"BundleItem"> | bigint | number
     orderItem?: XOR<OrderItemScalarRelationFilter, OrderItemWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
+    variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
   }, "id">
 
   export type BundleItemOrderByWithAggregationInput = {
     id?: SortOrder
     orderItemId?: SortOrder
     productId?: SortOrder
-    variantId?: SortOrder
+    variantId?: SortOrderInput | SortOrder
     title?: SortOrder
     image?: SortOrder
     weight?: SortOrder
@@ -20648,7 +20812,7 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"BundleItem"> | number
     orderItemId?: IntWithAggregatesFilter<"BundleItem"> | number
     productId?: IntWithAggregatesFilter<"BundleItem"> | number
-    variantId?: IntWithAggregatesFilter<"BundleItem"> | number
+    variantId?: IntNullableWithAggregatesFilter<"BundleItem"> | number | null
     title?: StringWithAggregatesFilter<"BundleItem"> | string
     image?: StringWithAggregatesFilter<"BundleItem"> | string
     weight?: StringWithAggregatesFilter<"BundleItem"> | string
@@ -21028,6 +21192,8 @@ export namespace Prisma {
     quantity?: number
     weight?: string | null
     product: ProductCreateNestedOneWithoutSizesInput
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
+    BundleItem?: BundleItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductSizeUncheckedCreateInput = {
@@ -21036,6 +21202,8 @@ export namespace Prisma {
     quantity?: number
     weight?: string | null
     productId: number
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    BundleItem?: BundleItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductSizeUpdateInput = {
@@ -21043,6 +21211,8 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     weight?: NullableStringFieldUpdateOperationsInput | string | null
     product?: ProductUpdateOneRequiredWithoutSizesNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
+    BundleItem?: BundleItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductSizeUncheckedUpdateInput = {
@@ -21051,6 +21221,8 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     weight?: NullableStringFieldUpdateOperationsInput | string | null
     productId?: IntFieldUpdateOperationsInput | number
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    BundleItem?: BundleItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductSizeCreateManyInput = {
@@ -21475,10 +21647,10 @@ export namespace Prisma {
     price: bigint | number
     weight: string
     markup: string
-    variantId?: number | null
     type: $Enums.ProductType
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemInput
+    variant?: ProductSizeCreateNestedOneWithoutOrderItemInput
     bundleItems?: BundleItemCreateNestedManyWithoutOrderItemInput
   }
 
@@ -21500,10 +21672,10 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    variant?: ProductSizeUpdateOneWithoutOrderItemNestedInput
     bundleItems?: BundleItemUpdateManyWithoutOrderItemNestedInput
   }
 
@@ -21537,7 +21709,6 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
   }
 
@@ -21554,7 +21725,6 @@ export namespace Prisma {
   }
 
   export type BundleItemCreateInput = {
-    variantId: number
     title: string
     image: string
     weight: string
@@ -21562,13 +21732,14 @@ export namespace Prisma {
     price: bigint | number
     orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
     product: ProductCreateNestedOneWithoutBundleItemInput
+    variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
   }
 
   export type BundleItemUncheckedCreateInput = {
     id?: number
     orderItemId: number
     productId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -21577,7 +21748,6 @@ export namespace Prisma {
   }
 
   export type BundleItemUpdateInput = {
-    variantId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -21585,13 +21755,14 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
+    variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
   }
 
   export type BundleItemUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
     orderItemId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -21603,7 +21774,7 @@ export namespace Prisma {
     id?: number
     orderItemId: number
     productId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -21612,7 +21783,6 @@ export namespace Prisma {
   }
 
   export type BundleItemUpdateManyMutationInput = {
-    variantId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -21624,7 +21794,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderItemId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -22503,6 +22673,11 @@ export namespace Prisma {
     isNot?: OrderWhereInput
   }
 
+  export type ProductSizeNullableScalarRelationFilter = {
+    is?: ProductSizeWhereInput | null
+    isNot?: ProductSizeWhereInput | null
+  }
+
   export type OrderItemCountOrderByAggregateInput = {
     id?: SortOrder
     orderId?: SortOrder
@@ -23207,12 +23382,96 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type OrderItemCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type BundleItemCreateNestedManyWithoutVariantInput = {
+    create?: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput> | BundleItemCreateWithoutVariantInput[] | BundleItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: BundleItemCreateOrConnectWithoutVariantInput | BundleItemCreateOrConnectWithoutVariantInput[]
+    createMany?: BundleItemCreateManyVariantInputEnvelope
+    connect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+  }
+
+  export type OrderItemUncheckedCreateNestedManyWithoutVariantInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+  }
+
+  export type BundleItemUncheckedCreateNestedManyWithoutVariantInput = {
+    create?: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput> | BundleItemCreateWithoutVariantInput[] | BundleItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: BundleItemCreateOrConnectWithoutVariantInput | BundleItemCreateOrConnectWithoutVariantInput[]
+    createMany?: BundleItemCreateManyVariantInputEnvelope
+    connect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+  }
+
   export type ProductUpdateOneRequiredWithoutSizesNestedInput = {
     create?: XOR<ProductCreateWithoutSizesInput, ProductUncheckedCreateWithoutSizesInput>
     connectOrCreate?: ProductCreateOrConnectWithoutSizesInput
     upsert?: ProductUpsertWithoutSizesInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutSizesInput, ProductUpdateWithoutSizesInput>, ProductUncheckedUpdateWithoutSizesInput>
+  }
+
+  export type OrderItemUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type BundleItemUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput> | BundleItemCreateWithoutVariantInput[] | BundleItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: BundleItemCreateOrConnectWithoutVariantInput | BundleItemCreateOrConnectWithoutVariantInput[]
+    upsert?: BundleItemUpsertWithWhereUniqueWithoutVariantInput | BundleItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: BundleItemCreateManyVariantInputEnvelope
+    set?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    disconnect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    delete?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    connect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    update?: BundleItemUpdateWithWhereUniqueWithoutVariantInput | BundleItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: BundleItemUpdateManyWithWhereWithoutVariantInput | BundleItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: BundleItemScalarWhereInput | BundleItemScalarWhereInput[]
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput> | OrderItemCreateWithoutVariantInput[] | OrderItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: OrderItemCreateOrConnectWithoutVariantInput | OrderItemCreateOrConnectWithoutVariantInput[]
+    upsert?: OrderItemUpsertWithWhereUniqueWithoutVariantInput | OrderItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: OrderItemCreateManyVariantInputEnvelope
+    set?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    disconnect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    delete?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    connect?: OrderItemWhereUniqueInput | OrderItemWhereUniqueInput[]
+    update?: OrderItemUpdateWithWhereUniqueWithoutVariantInput | OrderItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: OrderItemUpdateManyWithWhereWithoutVariantInput | OrderItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
+  }
+
+  export type BundleItemUncheckedUpdateManyWithoutVariantNestedInput = {
+    create?: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput> | BundleItemCreateWithoutVariantInput[] | BundleItemUncheckedCreateWithoutVariantInput[]
+    connectOrCreate?: BundleItemCreateOrConnectWithoutVariantInput | BundleItemCreateOrConnectWithoutVariantInput[]
+    upsert?: BundleItemUpsertWithWhereUniqueWithoutVariantInput | BundleItemUpsertWithWhereUniqueWithoutVariantInput[]
+    createMany?: BundleItemCreateManyVariantInputEnvelope
+    set?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    disconnect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    delete?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    connect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
+    update?: BundleItemUpdateWithWhereUniqueWithoutVariantInput | BundleItemUpdateWithWhereUniqueWithoutVariantInput[]
+    updateMany?: BundleItemUpdateManyWithWhereWithoutVariantInput | BundleItemUpdateManyWithWhereWithoutVariantInput[]
+    deleteMany?: BundleItemScalarWhereInput | BundleItemScalarWhereInput[]
   }
 
   export type ProductCreateNestedOneWithoutParentBundleInput = {
@@ -23439,6 +23698,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type ProductSizeCreateNestedOneWithoutOrderItemInput = {
+    create?: XOR<ProductSizeCreateWithoutOrderItemInput, ProductSizeUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductSizeCreateOrConnectWithoutOrderItemInput
+    connect?: ProductSizeWhereUniqueInput
+  }
+
   export type BundleItemCreateNestedManyWithoutOrderItemInput = {
     create?: XOR<BundleItemCreateWithoutOrderItemInput, BundleItemUncheckedCreateWithoutOrderItemInput> | BundleItemCreateWithoutOrderItemInput[] | BundleItemUncheckedCreateWithoutOrderItemInput[]
     connectOrCreate?: BundleItemCreateOrConnectWithoutOrderItemInput | BundleItemCreateOrConnectWithoutOrderItemInput[]
@@ -23451,14 +23716,6 @@ export namespace Prisma {
     connectOrCreate?: BundleItemCreateOrConnectWithoutOrderItemInput | BundleItemCreateOrConnectWithoutOrderItemInput[]
     createMany?: BundleItemCreateManyOrderItemInputEnvelope
     connect?: BundleItemWhereUniqueInput | BundleItemWhereUniqueInput[]
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type OrderUpdateOneRequiredWithoutItemsNestedInput = {
@@ -23477,6 +23734,16 @@ export namespace Prisma {
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutOrderItemInput, ProductUpdateWithoutOrderItemInput>, ProductUncheckedUpdateWithoutOrderItemInput>
   }
 
+  export type ProductSizeUpdateOneWithoutOrderItemNestedInput = {
+    create?: XOR<ProductSizeCreateWithoutOrderItemInput, ProductSizeUncheckedCreateWithoutOrderItemInput>
+    connectOrCreate?: ProductSizeCreateOrConnectWithoutOrderItemInput
+    upsert?: ProductSizeUpsertWithoutOrderItemInput
+    disconnect?: ProductSizeWhereInput | boolean
+    delete?: ProductSizeWhereInput | boolean
+    connect?: ProductSizeWhereUniqueInput
+    update?: XOR<XOR<ProductSizeUpdateToOneWithWhereWithoutOrderItemInput, ProductSizeUpdateWithoutOrderItemInput>, ProductSizeUncheckedUpdateWithoutOrderItemInput>
+  }
+
   export type BundleItemUpdateManyWithoutOrderItemNestedInput = {
     create?: XOR<BundleItemCreateWithoutOrderItemInput, BundleItemUncheckedCreateWithoutOrderItemInput> | BundleItemCreateWithoutOrderItemInput[] | BundleItemUncheckedCreateWithoutOrderItemInput[]
     connectOrCreate?: BundleItemCreateOrConnectWithoutOrderItemInput | BundleItemCreateOrConnectWithoutOrderItemInput[]
@@ -23489,6 +23756,14 @@ export namespace Prisma {
     update?: BundleItemUpdateWithWhereUniqueWithoutOrderItemInput | BundleItemUpdateWithWhereUniqueWithoutOrderItemInput[]
     updateMany?: BundleItemUpdateManyWithWhereWithoutOrderItemInput | BundleItemUpdateManyWithWhereWithoutOrderItemInput[]
     deleteMany?: BundleItemScalarWhereInput | BundleItemScalarWhereInput[]
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type BundleItemUncheckedUpdateManyWithoutOrderItemNestedInput = {
@@ -23517,6 +23792,12 @@ export namespace Prisma {
     connect?: ProductWhereUniqueInput
   }
 
+  export type ProductSizeCreateNestedOneWithoutBundleItemInput = {
+    create?: XOR<ProductSizeCreateWithoutBundleItemInput, ProductSizeUncheckedCreateWithoutBundleItemInput>
+    connectOrCreate?: ProductSizeCreateOrConnectWithoutBundleItemInput
+    connect?: ProductSizeWhereUniqueInput
+  }
+
   export type OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput = {
     create?: XOR<OrderItemCreateWithoutBundleItemsInput, OrderItemUncheckedCreateWithoutBundleItemsInput>
     connectOrCreate?: OrderItemCreateOrConnectWithoutBundleItemsInput
@@ -23531,6 +23812,16 @@ export namespace Prisma {
     upsert?: ProductUpsertWithoutBundleItemInput
     connect?: ProductWhereUniqueInput
     update?: XOR<XOR<ProductUpdateToOneWithWhereWithoutBundleItemInput, ProductUpdateWithoutBundleItemInput>, ProductUncheckedUpdateWithoutBundleItemInput>
+  }
+
+  export type ProductSizeUpdateOneWithoutBundleItemNestedInput = {
+    create?: XOR<ProductSizeCreateWithoutBundleItemInput, ProductSizeUncheckedCreateWithoutBundleItemInput>
+    connectOrCreate?: ProductSizeCreateOrConnectWithoutBundleItemInput
+    upsert?: ProductSizeUpsertWithoutBundleItemInput
+    disconnect?: ProductSizeWhereInput | boolean
+    delete?: ProductSizeWhereInput | boolean
+    connect?: ProductSizeWhereUniqueInput
+    update?: XOR<XOR<ProductSizeUpdateToOneWithWhereWithoutBundleItemInput, ProductSizeUpdateWithoutBundleItemInput>, ProductSizeUncheckedUpdateWithoutBundleItemInput>
   }
 
   export type UserCreateNestedOneWithoutTransactionInput = {
@@ -24147,6 +24438,8 @@ export namespace Prisma {
     size?: string | null
     quantity?: number
     weight?: string | null
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
+    BundleItem?: BundleItemCreateNestedManyWithoutVariantInput
   }
 
   export type ProductSizeUncheckedCreateWithoutProductInput = {
@@ -24154,6 +24447,8 @@ export namespace Prisma {
     size?: string | null
     quantity?: number
     weight?: string | null
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+    BundleItem?: BundleItemUncheckedCreateNestedManyWithoutVariantInput
   }
 
   export type ProductSizeCreateOrConnectWithoutProductInput = {
@@ -24213,9 +24508,9 @@ export namespace Prisma {
     price: bigint | number
     weight: string
     markup: string
-    variantId?: number | null
     type: $Enums.ProductType
     order: OrderCreateNestedOneWithoutItemsInput
+    variant?: ProductSizeCreateNestedOneWithoutOrderItemInput
     bundleItems?: BundleItemCreateNestedManyWithoutOrderItemInput
   }
 
@@ -24242,19 +24537,19 @@ export namespace Prisma {
   }
 
   export type BundleItemCreateWithoutProductInput = {
-    variantId: number
     title: string
     image: string
     weight: string
     markup: string
     price: bigint | number
     orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
+    variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
   }
 
   export type BundleItemUncheckedCreateWithoutProductInput = {
     id?: number
     orderItemId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -24444,7 +24739,7 @@ export namespace Prisma {
     id?: IntFilter<"BundleItem"> | number
     orderItemId?: IntFilter<"BundleItem"> | number
     productId?: IntFilter<"BundleItem"> | number
-    variantId?: IntFilter<"BundleItem"> | number
+    variantId?: IntNullableFilter<"BundleItem"> | number | null
     title?: StringFilter<"BundleItem"> | string
     image?: StringFilter<"BundleItem"> | string
     weight?: StringFilter<"BundleItem"> | string
@@ -24490,6 +24785,70 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutSizesInput, ProductUncheckedCreateWithoutSizesInput>
   }
 
+  export type OrderItemCreateWithoutVariantInput = {
+    quantity?: number
+    price: bigint | number
+    weight: string
+    markup: string
+    type: $Enums.ProductType
+    order: OrderCreateNestedOneWithoutItemsInput
+    product: ProductCreateNestedOneWithoutOrderItemInput
+    bundleItems?: BundleItemCreateNestedManyWithoutOrderItemInput
+  }
+
+  export type OrderItemUncheckedCreateWithoutVariantInput = {
+    id?: number
+    orderId: number
+    productId: number
+    quantity?: number
+    price: bigint | number
+    weight: string
+    markup: string
+    type: $Enums.ProductType
+    bundleItems?: BundleItemUncheckedCreateNestedManyWithoutOrderItemInput
+  }
+
+  export type OrderItemCreateOrConnectWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemCreateManyVariantInputEnvelope = {
+    data: OrderItemCreateManyVariantInput | OrderItemCreateManyVariantInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BundleItemCreateWithoutVariantInput = {
+    title: string
+    image: string
+    weight: string
+    markup: string
+    price: bigint | number
+    orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
+    product: ProductCreateNestedOneWithoutBundleItemInput
+  }
+
+  export type BundleItemUncheckedCreateWithoutVariantInput = {
+    id?: number
+    orderItemId: number
+    productId: number
+    title: string
+    image: string
+    weight: string
+    markup: string
+    price: bigint | number
+  }
+
+  export type BundleItemCreateOrConnectWithoutVariantInput = {
+    where: BundleItemWhereUniqueInput
+    create: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type BundleItemCreateManyVariantInputEnvelope = {
+    data: BundleItemCreateManyVariantInput | BundleItemCreateManyVariantInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProductUpsertWithoutSizesInput = {
     update: XOR<ProductUpdateWithoutSizesInput, ProductUncheckedUpdateWithoutSizesInput>
     create: XOR<ProductCreateWithoutSizesInput, ProductUncheckedCreateWithoutSizesInput>
@@ -24532,6 +24891,38 @@ export namespace Prisma {
     childBundles?: ProductBundleUncheckedUpdateManyWithoutChildNestedInput
     OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
     BundleItem?: BundleItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type OrderItemUpsertWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    update: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+    create: XOR<OrderItemCreateWithoutVariantInput, OrderItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateWithWhereUniqueWithoutVariantInput = {
+    where: OrderItemWhereUniqueInput
+    data: XOR<OrderItemUpdateWithoutVariantInput, OrderItemUncheckedUpdateWithoutVariantInput>
+  }
+
+  export type OrderItemUpdateManyWithWhereWithoutVariantInput = {
+    where: OrderItemScalarWhereInput
+    data: XOR<OrderItemUpdateManyMutationInput, OrderItemUncheckedUpdateManyWithoutVariantInput>
+  }
+
+  export type BundleItemUpsertWithWhereUniqueWithoutVariantInput = {
+    where: BundleItemWhereUniqueInput
+    update: XOR<BundleItemUpdateWithoutVariantInput, BundleItemUncheckedUpdateWithoutVariantInput>
+    create: XOR<BundleItemCreateWithoutVariantInput, BundleItemUncheckedCreateWithoutVariantInput>
+  }
+
+  export type BundleItemUpdateWithWhereUniqueWithoutVariantInput = {
+    where: BundleItemWhereUniqueInput
+    data: XOR<BundleItemUpdateWithoutVariantInput, BundleItemUncheckedUpdateWithoutVariantInput>
+  }
+
+  export type BundleItemUpdateManyWithWhereWithoutVariantInput = {
+    where: BundleItemScalarWhereInput
+    data: XOR<BundleItemUpdateManyMutationInput, BundleItemUncheckedUpdateManyWithoutVariantInput>
   }
 
   export type ProductCreateWithoutParentBundleInput = {
@@ -24911,9 +25302,9 @@ export namespace Prisma {
     price: bigint | number
     weight: string
     markup: string
-    variantId?: number | null
     type: $Enums.ProductType
     product: ProductCreateNestedOneWithoutOrderItemInput
+    variant?: ProductSizeCreateNestedOneWithoutOrderItemInput
     bundleItems?: BundleItemCreateNestedManyWithoutOrderItemInput
   }
 
@@ -25107,20 +25498,42 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutOrderItemInput, ProductUncheckedCreateWithoutOrderItemInput>
   }
 
+  export type ProductSizeCreateWithoutOrderItemInput = {
+    size?: string | null
+    quantity?: number
+    weight?: string | null
+    product: ProductCreateNestedOneWithoutSizesInput
+    BundleItem?: BundleItemCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductSizeUncheckedCreateWithoutOrderItemInput = {
+    id?: number
+    size?: string | null
+    quantity?: number
+    weight?: string | null
+    productId: number
+    BundleItem?: BundleItemUncheckedCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductSizeCreateOrConnectWithoutOrderItemInput = {
+    where: ProductSizeWhereUniqueInput
+    create: XOR<ProductSizeCreateWithoutOrderItemInput, ProductSizeUncheckedCreateWithoutOrderItemInput>
+  }
+
   export type BundleItemCreateWithoutOrderItemInput = {
-    variantId: number
     title: string
     image: string
     weight: string
     markup: string
     price: bigint | number
     product: ProductCreateNestedOneWithoutBundleItemInput
+    variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
   }
 
   export type BundleItemUncheckedCreateWithoutOrderItemInput = {
     id?: number
     productId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -25216,6 +25629,34 @@ export namespace Prisma {
     BundleItem?: BundleItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
+  export type ProductSizeUpsertWithoutOrderItemInput = {
+    update: XOR<ProductSizeUpdateWithoutOrderItemInput, ProductSizeUncheckedUpdateWithoutOrderItemInput>
+    create: XOR<ProductSizeCreateWithoutOrderItemInput, ProductSizeUncheckedCreateWithoutOrderItemInput>
+    where?: ProductSizeWhereInput
+  }
+
+  export type ProductSizeUpdateToOneWithWhereWithoutOrderItemInput = {
+    where?: ProductSizeWhereInput
+    data: XOR<ProductSizeUpdateWithoutOrderItemInput, ProductSizeUncheckedUpdateWithoutOrderItemInput>
+  }
+
+  export type ProductSizeUpdateWithoutOrderItemInput = {
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    quantity?: IntFieldUpdateOperationsInput | number
+    weight?: NullableStringFieldUpdateOperationsInput | string | null
+    product?: ProductUpdateOneRequiredWithoutSizesNestedInput
+    BundleItem?: BundleItemUpdateManyWithoutVariantNestedInput
+  }
+
+  export type ProductSizeUncheckedUpdateWithoutOrderItemInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    quantity?: IntFieldUpdateOperationsInput | number
+    weight?: NullableStringFieldUpdateOperationsInput | string | null
+    productId?: IntFieldUpdateOperationsInput | number
+    BundleItem?: BundleItemUncheckedUpdateManyWithoutVariantNestedInput
+  }
+
   export type BundleItemUpsertWithWhereUniqueWithoutOrderItemInput = {
     where: BundleItemWhereUniqueInput
     update: XOR<BundleItemUpdateWithoutOrderItemInput, BundleItemUncheckedUpdateWithoutOrderItemInput>
@@ -25237,10 +25678,10 @@ export namespace Prisma {
     price: bigint | number
     weight: string
     markup: string
-    variantId?: number | null
     type: $Enums.ProductType
     order: OrderCreateNestedOneWithoutItemsInput
     product: ProductCreateNestedOneWithoutOrderItemInput
+    variant?: ProductSizeCreateNestedOneWithoutOrderItemInput
   }
 
   export type OrderItemUncheckedCreateWithoutBundleItemsInput = {
@@ -25298,6 +25739,28 @@ export namespace Prisma {
     create: XOR<ProductCreateWithoutBundleItemInput, ProductUncheckedCreateWithoutBundleItemInput>
   }
 
+  export type ProductSizeCreateWithoutBundleItemInput = {
+    size?: string | null
+    quantity?: number
+    weight?: string | null
+    product: ProductCreateNestedOneWithoutSizesInput
+    OrderItem?: OrderItemCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductSizeUncheckedCreateWithoutBundleItemInput = {
+    id?: number
+    size?: string | null
+    quantity?: number
+    weight?: string | null
+    productId: number
+    OrderItem?: OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  }
+
+  export type ProductSizeCreateOrConnectWithoutBundleItemInput = {
+    where: ProductSizeWhereUniqueInput
+    create: XOR<ProductSizeCreateWithoutBundleItemInput, ProductSizeUncheckedCreateWithoutBundleItemInput>
+  }
+
   export type OrderItemUpsertWithoutBundleItemsInput = {
     update: XOR<OrderItemUpdateWithoutBundleItemsInput, OrderItemUncheckedUpdateWithoutBundleItemsInput>
     create: XOR<OrderItemCreateWithoutBundleItemsInput, OrderItemUncheckedCreateWithoutBundleItemsInput>
@@ -25314,10 +25777,10 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    variant?: ProductSizeUpdateOneWithoutOrderItemNestedInput
   }
 
   export type OrderItemUncheckedUpdateWithoutBundleItemsInput = {
@@ -25374,6 +25837,34 @@ export namespace Prisma {
     parentBundle?: ProductBundleUncheckedUpdateManyWithoutParentNestedInput
     childBundles?: ProductBundleUncheckedUpdateManyWithoutChildNestedInput
     OrderItem?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
+  }
+
+  export type ProductSizeUpsertWithoutBundleItemInput = {
+    update: XOR<ProductSizeUpdateWithoutBundleItemInput, ProductSizeUncheckedUpdateWithoutBundleItemInput>
+    create: XOR<ProductSizeCreateWithoutBundleItemInput, ProductSizeUncheckedCreateWithoutBundleItemInput>
+    where?: ProductSizeWhereInput
+  }
+
+  export type ProductSizeUpdateToOneWithWhereWithoutBundleItemInput = {
+    where?: ProductSizeWhereInput
+    data: XOR<ProductSizeUpdateWithoutBundleItemInput, ProductSizeUncheckedUpdateWithoutBundleItemInput>
+  }
+
+  export type ProductSizeUpdateWithoutBundleItemInput = {
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    quantity?: IntFieldUpdateOperationsInput | number
+    weight?: NullableStringFieldUpdateOperationsInput | string | null
+    product?: ProductUpdateOneRequiredWithoutSizesNestedInput
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
+  }
+
+  export type ProductSizeUncheckedUpdateWithoutBundleItemInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    size?: NullableStringFieldUpdateOperationsInput | string | null
+    quantity?: IntFieldUpdateOperationsInput | number
+    weight?: NullableStringFieldUpdateOperationsInput | string | null
+    productId?: IntFieldUpdateOperationsInput | number
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type UserCreateWithoutTransactionInput = {
@@ -25688,7 +26179,7 @@ export namespace Prisma {
   export type BundleItemCreateManyProductInput = {
     id?: number
     orderItemId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -25714,6 +26205,8 @@ export namespace Prisma {
     size?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     weight?: NullableStringFieldUpdateOperationsInput | string | null
+    OrderItem?: OrderItemUpdateManyWithoutVariantNestedInput
+    BundleItem?: BundleItemUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductSizeUncheckedUpdateWithoutProductInput = {
@@ -25721,6 +26214,8 @@ export namespace Prisma {
     size?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: IntFieldUpdateOperationsInput | number
     weight?: NullableStringFieldUpdateOperationsInput | string | null
+    OrderItem?: OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+    BundleItem?: BundleItemUncheckedUpdateManyWithoutVariantNestedInput
   }
 
   export type ProductSizeUncheckedUpdateManyWithoutProductInput = {
@@ -25769,9 +26264,9 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    variant?: ProductSizeUpdateOneWithoutOrderItemNestedInput
     bundleItems?: BundleItemUpdateManyWithoutOrderItemNestedInput
   }
 
@@ -25799,19 +26294,19 @@ export namespace Prisma {
   }
 
   export type BundleItemUpdateWithoutProductInput = {
-    variantId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
+    variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
   }
 
   export type BundleItemUncheckedUpdateWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     orderItemId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -25822,7 +26317,95 @@ export namespace Prisma {
   export type BundleItemUncheckedUpdateManyWithoutProductInput = {
     id?: IntFieldUpdateOperationsInput | number
     orderItemId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
+    title?: StringFieldUpdateOperationsInput | string
+    image?: StringFieldUpdateOperationsInput | string
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+  }
+
+  export type OrderItemCreateManyVariantInput = {
+    id?: number
+    orderId: number
+    productId: number
+    quantity?: number
+    price: bigint | number
+    weight: string
+    markup: string
+    type: $Enums.ProductType
+  }
+
+  export type BundleItemCreateManyVariantInput = {
+    id?: number
+    orderItemId: number
+    productId: number
+    title: string
+    image: string
+    weight: string
+    markup: string
+    price: bigint | number
+  }
+
+  export type OrderItemUpdateWithoutVariantInput = {
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    order?: OrderUpdateOneRequiredWithoutItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    bundleItems?: BundleItemUpdateManyWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+    bundleItems?: BundleItemUncheckedUpdateManyWithoutOrderItemNestedInput
+  }
+
+  export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    orderId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    quantity?: IntFieldUpdateOperationsInput | number
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
+  }
+
+  export type BundleItemUpdateWithoutVariantInput = {
+    title?: StringFieldUpdateOperationsInput | string
+    image?: StringFieldUpdateOperationsInput | string
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
+    product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
+  }
+
+  export type BundleItemUncheckedUpdateWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    orderItemId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
+    title?: StringFieldUpdateOperationsInput | string
+    image?: StringFieldUpdateOperationsInput | string
+    weight?: StringFieldUpdateOperationsInput | string
+    markup?: StringFieldUpdateOperationsInput | string
+    price?: BigIntFieldUpdateOperationsInput | bigint | number
+  }
+
+  export type BundleItemUncheckedUpdateManyWithoutVariantInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    orderItemId?: IntFieldUpdateOperationsInput | number
+    productId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -25885,9 +26468,9 @@ export namespace Prisma {
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
     product?: ProductUpdateOneRequiredWithoutOrderItemNestedInput
+    variant?: ProductSizeUpdateOneWithoutOrderItemNestedInput
     bundleItems?: BundleItemUpdateManyWithoutOrderItemNestedInput
   }
 
@@ -25953,7 +26536,7 @@ export namespace Prisma {
   export type BundleItemCreateManyOrderItemInput = {
     id?: number
     productId: number
-    variantId: number
+    variantId?: number | null
     title: string
     image: string
     weight: string
@@ -25962,19 +26545,19 @@ export namespace Prisma {
   }
 
   export type BundleItemUpdateWithoutOrderItemInput = {
-    variantId?: IntFieldUpdateOperationsInput | number
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     price?: BigIntFieldUpdateOperationsInput | bigint | number
     product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
+    variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
   }
 
   export type BundleItemUncheckedUpdateWithoutOrderItemInput = {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string
@@ -25985,7 +26568,7 @@ export namespace Prisma {
   export type BundleItemUncheckedUpdateManyWithoutOrderItemInput = {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
-    variantId?: IntFieldUpdateOperationsInput | number
+    variantId?: NullableIntFieldUpdateOperationsInput | number | null
     title?: StringFieldUpdateOperationsInput | string
     image?: StringFieldUpdateOperationsInput | string
     weight?: StringFieldUpdateOperationsInput | string

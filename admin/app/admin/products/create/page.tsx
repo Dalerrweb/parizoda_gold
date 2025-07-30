@@ -36,7 +36,7 @@ export default function CreateProductPage() {
 		sku: "",
 		name: "",
 		description: "",
-		markup: 0,
+		markup: "0",
 		type: ProductType.SINGLE,
 		childBundles: [],
 		categoryId: 0,
@@ -205,10 +205,13 @@ export default function CreateProductPage() {
 					{formData.type === "BUNDLE" && (
 						<Card>
 							<ProductBundleTable
-								useFormData={[
-									formData.childBundles as any[],
-									setFormData,
-								]}
+								value={formData.childBundles as any}
+								onChange={(newBundles) =>
+									setFormData((prev) => ({
+										...prev,
+										childBundles: newBundles,
+									}))
+								}
 							/>
 						</Card>
 					)}

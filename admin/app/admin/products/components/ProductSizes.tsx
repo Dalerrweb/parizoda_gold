@@ -46,7 +46,7 @@ export default function ProductSizes({
 	};
 
 	const addSize = () => {
-		setSizes((prev) => [...prev, { size: "", quantity: 0, weight: 0 }]);
+		setSizes((prev) => [...prev, { size: "", quantity: 0, weight: "0" }]);
 	};
 
 	return (
