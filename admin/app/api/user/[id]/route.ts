@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 
 export async function PATCH(req: Request) {
 	try {
-		const authHeader = req.headers.get("authorization");
-		const body = await req.json();
+		// 1. Получаем куки из запроса
+		const cookieStore = await cookies();
+		const token = cookieStore.get("token")?.value;
 
-		if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		if (!token) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
+				{ error: "Unauthorized - No token" },
 				{ status: 401 }
 			);
 		}
 
-		const token = authHeader.split(" ")[1];
+		// 2. Проверяем токен
 		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
 			userId: number;
 		};
@@ -26,18 +28,18 @@ export async function PATCH(req: Request) {
 			);
 		}
 
-		// Список разрешенных для обновления полей
-		const allowedFields = ["phone", "first_name", "last_name"];
+		// 3. Получаем и проверяем тело запроса
+		const body = await req.json();
 
-		// Фильтрация полей из запроса
+		const allowedFields = ["phone", "first_name", "last_name"];
 		const updateData: Record<string, any> = {};
+
 		for (const field of allowedFields) {
 			if (body[field] !== undefined && body[field] !== null) {
 				updateData[field] = body[field];
 			}
 		}
 
-		// Проверка наличия полей для обновления
 		if (Object.keys(updateData).length === 0) {
 			return NextResponse.json(
 				{ error: "No valid fields to update" },
@@ -45,20 +47,26 @@ export async function PATCH(req: Request) {
 			);
 		}
 
-		// Обновление пользователя в базе данных
+		// 4. Обновляем пользователя
 		const updatedUser = await prisma.user.update({
 			where: { id: decoded.userId },
 			data: updateData,
 		});
 
-		// Удаление чувствительных данных перед отправкой
+		// 5. Возвращаем безопасные данные
 		const { id, telegramId, createdAt, ...safeUser } = updatedUser;
-
 		return NextResponse.json(safeUser);
 	} catch (err: any) {
 		console.error(err);
 
-		// Обработка ошибки "пользователь не найден"
+		// Специфичные ошибки
+		if (err.name === "JsonWebTokenError") {
+			return NextResponse.json(
+				{ error: "Invalid token" },
+				{ status: 401 }
+			);
+		}
+
 		if (err.code === "P2025") {
 			return NextResponse.json(
 				{ error: "User not found" },

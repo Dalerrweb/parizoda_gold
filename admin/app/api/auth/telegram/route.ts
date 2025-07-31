@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { cookies } from "next/headers";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -52,7 +53,16 @@ function validateInitData(initData: string): boolean {
 // 		expiresIn: "7d",
 // 	});
 
-// 	return NextResponse.json({ token, user });
+// 	const cookieStore = await cookies();
+// 	cookieStore.set("token", token, {
+// 		httpOnly: true,
+// 		secure: process.env.NODE_ENV === "production", // HTTPS only
+// 		maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
+// 		sameSite: "strict", // Защита от CSRF
+// 		path: "/",
+// 	});
+
+// 	return NextResponse.json({ user });
 // }
 
 export async function POST(req: NextRequest) {
@@ -96,5 +106,14 @@ export async function POST(req: NextRequest) {
 		expiresIn: "7d",
 	});
 
-	return NextResponse.json({ token, user });
+	const cookieStore = await cookies();
+	cookieStore.set("token", token, {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === "production", // HTTPS only
+		maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
+		sameSite: "strict", // Защита от CSRF
+		path: "/",
+	});
+
+	return NextResponse.json({ user });
 }
