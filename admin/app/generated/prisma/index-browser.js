@@ -240,8 +240,6 @@ exports.Prisma.BundleItemScalarFieldEnum = {
   orderItemId: 'orderItemId',
   productId: 'productId',
   variantId: 'variantId',
-  title: 'title',
-  image: 'image',
   weight: 'weight',
   markup: 'markup',
   price: 'price'

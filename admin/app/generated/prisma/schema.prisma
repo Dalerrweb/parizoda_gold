@@ -178,8 +178,6 @@ model BundleItem {
   productId   Int
   variant     ProductSize? @relation(fields: [variantId], references: [id])
   variantId   Int?
-  title       String
-  image       String
   weight      String
   markup      String
   price       BigInt
