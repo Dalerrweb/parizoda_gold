@@ -29,7 +29,6 @@ import prisma from "@/lib/prisma";
 import ProductItemRow from "./ProductItemRow";
 import { CategoryFilter } from "./components/category-filter";
 import { PaginationControls } from "@/components/custom/pagination-controls";
-import SuperJSON from "superjson";
 
 const ITEMS_PER_PAGE = 10;
 
