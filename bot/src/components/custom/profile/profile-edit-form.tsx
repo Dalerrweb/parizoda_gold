@@ -49,6 +49,7 @@ export function ProfileEditForm({
 						last_name: data.last_name,
 						phone: data.phone,
 					}),
+					credentials: "include",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${localStorage.getItem(
