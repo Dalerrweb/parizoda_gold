@@ -9,6 +9,8 @@ export async function PATCH(req: Request) {
 		const cookieStore = await cookies();
 		const token = cookieStore.get("token")?.value;
 
+		console.log({ cookieStore, token, getToken: cookieStore.get("token") });
+
 		if (!token) {
 			return NextResponse.json(
 				{ error: "Unauthorized - No token" },
