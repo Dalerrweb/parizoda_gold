@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
 		maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
 		sameSite: "none", // Защита от CSRF
 		path: "/",
+		domain: "https://parizoda-gold.vercel.app",
 	});
 
 	return NextResponse.json({ user });
