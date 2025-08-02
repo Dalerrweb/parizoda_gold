@@ -29,7 +29,7 @@ axios.interceptors.request.use(
 		}
 
 		if (token) {
-			config.headers.set("Authorization", `Bearer ${token}`);
+			// config.headers.set("Authorization", `Bearer ${token}`);
 			config.headers.set("Content-Type", "application/json");
 		}
 

@@ -5,7 +5,10 @@ import { Role } from "./app/types";
 // Конфигурация безопасности
 const securityConfig = {
 	// CORS
-	allowedOrigin: "*",
+	allowedOrigins: [
+		"https://parizoda-gold.vercel.app",
+		"https://famous-lolly-8c17ac.netlify.app",
+	],
 	allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 	allowedHeaders: [
 		"Content-Type",
@@ -135,10 +138,13 @@ export async function middleware(request: NextRequest) {
 	});
 
 	// Обработка CORS
-	response.headers.set(
-		"Access-Control-Allow-Origin",
-		securityConfig.allowedOrigin
-	);
+	const requestOrigin = request.headers.get("origin");
+	if (
+		requestOrigin &&
+		securityConfig.allowedOrigins.includes(requestOrigin)
+	) {
+		response.headers.set("Access-Control-Allow-Origin", requestOrigin);
+	}
 	response.headers.set(
 		"Access-Control-Allow-Methods",
 		securityConfig.allowedMethods.join(", ")

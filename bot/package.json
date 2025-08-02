@@ -32,6 +32,7 @@
     "react-hook-form": "^7.59.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.0",
+    "superjson": "^2.2.2",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.7",
     "zod": "^3.25.67"

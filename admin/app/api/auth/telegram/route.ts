@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production", // HTTPS only
 		maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
-		sameSite: "strict", // Защита от CSRF
+		sameSite: "none", // Защита от CSRF
 		path: "/",
 	});
 
