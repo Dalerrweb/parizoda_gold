@@ -107,13 +107,14 @@ export async function POST(req: NextRequest) {
 	});
 
 	const cookieStore = await cookies();
+
 	cookieStore.set("token", token, {
 		httpOnly: true,
-		secure: process.env.NODE_ENV === "production", // HTTPS only
-		maxAge: 60 * 60 * 24 * 7, // 7 дней (в секундах)
-		sameSite: "none", // Защита от CSRF
+		secure: process.env.NODE_ENV === "production",
+		maxAge: 60 * 60 * 24 * 7,
+		sameSite: "none", // Для кросс-доменных запросов
 		path: "/",
-		domain: "https://parizoda-gold.vercel.app",
+		domain: ".parizoda-gold.vercel.app", // Только домен, с точкой в начале!
 	});
 
 	return NextResponse.json({ user });

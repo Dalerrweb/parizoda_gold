@@ -13,7 +13,9 @@ const securityConfig = {
 	allowedHeaders: [
 		"Content-Type",
 		"Authorization",
-		"Content-Disposition", // Добавить это
+		"Content-Disposition",
+		"Cookie", // Добавьте для работы с куками
+		"Set-Cookie", // Добавьте для установки кук
 	],
 
 	// Аутентификация
