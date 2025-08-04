@@ -122,42 +122,41 @@ function isAuthRoute(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
-	const response = NextResponse.next();
 	const pathname = request.nextUrl.pathname;
 	const isApiRoute = pathname.startsWith("/api");
+	const requestOrigin = request.headers.get("origin");
 
-	// // В блоке проверки защищенных маршрутов
-	// console.log("Request to:", pathname);
-	// console.log(
-	// 	"Token from cookies:",
-	// 	request.cookies.get(securityConfig.authCookieName)?.value
-	// );
-	// console.log("Auth header:", request.headers.get("Authorization"));
+	// Создаем базовый ответ
+	const response = NextResponse.next();
 
-	// Установка security headers
+	// 1. Установка security headers
 	Object.entries(securityConfig.securityHeaders).forEach(([key, value]) => {
 		response.headers.set(key, value);
 	});
 
-	// Обработка CORS
-	const requestOrigin = request.headers.get("origin");
-	if (
-		requestOrigin &&
-		securityConfig.allowedOrigins.includes(requestOrigin)
-	) {
-		response.headers.set("Access-Control-Allow-Origin", requestOrigin);
+	// 2. Обработка CORS
+	const isAllowedOrigin = securityConfig.allowedOrigins.includes(
+		requestOrigin || ""
+	);
+
+	if (isAllowedOrigin) {
+		// Ключевые CORS заголовки
+		response.headers.set("Access-Control-Allow-Origin", requestOrigin!);
+		response.headers.set("Access-Control-Allow-Credentials", "true");
+		response.headers.set("Access-Control-Expose-Headers", "Set-Cookie");
 	}
+
 	response.headers.set(
 		"Access-Control-Allow-Methods",
 		securityConfig.allowedMethods.join(", ")
 	);
+
 	response.headers.set(
 		"Access-Control-Allow-Headers",
 		securityConfig.allowedHeaders.join(", ")
 	);
-	response.headers.set("Access-Control-Allow-Credentials", "true");
 
-	// Preflight запрос
+	// 3. Preflight запрос
 	if (request.method === "OPTIONS") {
 		return new NextResponse(null, {
 			status: 204,
@@ -165,7 +164,7 @@ export async function middleware(request: NextRequest) {
 		});
 	}
 
-	// Проверка защищенных маршрутов
+	// 4. Проверка защищенных маршрутов (без изменений, но добавлена обработка кук)
 	if (isProtectedRoute(pathname)) {
 		const token =
 			request.cookies.get(securityConfig.authCookieName)?.value ||
@@ -185,7 +184,6 @@ export async function middleware(request: NextRequest) {
 			const decoded = await verifyJWT(token);
 			if (decoded.role !== Role.ADMIN) throw new Error("Invalid role");
 
-			// Передача данных пользователя через headers
 			const headers = new Headers(request.headers);
 			headers.set("x-admin-user-id", decoded.userId);
 			headers.set("x-admin-role", decoded.role);
@@ -203,7 +201,7 @@ export async function middleware(request: NextRequest) {
 		}
 	}
 
-	// Редирект с auth-маршрутов для авторизованных
+	// 5. Редирект с auth-маршрутов (без изменений)
 	if (isAuthRoute(pathname)) {
 		const token = request.cookies.get(securityConfig.authCookieName)?.value;
 		if (token) {
@@ -215,7 +213,6 @@ export async function middleware(request: NextRequest) {
 					);
 				}
 			} catch {
-				// Невалидный токен - очищаем куку
 				response.cookies.delete(securityConfig.authCookieName);
 			}
 		}
@@ -225,12 +222,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: [
-		"/login",
-		"/api/:path*",
-		"/admin/:path*",
-		// "/api/admin/:path*",
-		// "/api/admin/upload", // Явное указание
-		// "/api/auth/:path*",
-	],
+	matcher: ["/login", "/api/:path*", "/admin/:path*"],
 };
