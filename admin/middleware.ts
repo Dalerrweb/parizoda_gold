@@ -4,7 +4,7 @@ import { Role } from "./app/types";
 
 // Конфигурация безопасности !!!
 const securityConfig = {
-	// CORS
+	// Обновленные CORS настройки
 	allowedOrigins: [
 		"https://parizoda-gold.vercel.app",
 		"https://famous-lolly-8c17ac.netlify.app",
@@ -14,8 +14,8 @@ const securityConfig = {
 		"Content-Type",
 		"Authorization",
 		"Content-Disposition",
-		"Cookie", // Добавьте для работы с куками
-		"Set-Cookie", // Добавьте для установки кук
+		"Cookie", // Добавляем для работы с куками
+		"Set-Cookie", // Добавляем для установки кук
 	],
 
 	// Аутентификация
