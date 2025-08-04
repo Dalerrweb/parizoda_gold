@@ -2,20 +2,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./app/types";
 
-// Конфигурация безопасности !!!
+// Конфигурация безопасности
 const securityConfig = {
-	// Обновленные CORS настройки
-	allowedOrigins: [
-		"https://parizoda-gold.vercel.app",
-		"https://famous-lolly-8c17ac.netlify.app",
-	],
+	// CORS
+	allowedOrigin: "*",
 	allowedMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 	allowedHeaders: [
 		"Content-Type",
 		"Authorization",
-		"Content-Disposition",
-		"Cookie", // Добавляем для работы с куками
-		"Set-Cookie", // Добавляем для установки кук
+		"Content-Disposition", // Добавить это
 	],
 
 	// Аутентификация
@@ -122,41 +117,39 @@ function isAuthRoute(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+	const response = NextResponse.next();
 	const pathname = request.nextUrl.pathname;
 	const isApiRoute = pathname.startsWith("/api");
-	const requestOrigin = request.headers.get("origin");
 
-	// Создаем базовый ответ
-	const response = NextResponse.next();
+	// // В блоке проверки защищенных маршрутов
+	// console.log("Request to:", pathname);
+	// console.log(
+	// 	"Token from cookies:",
+	// 	request.cookies.get(securityConfig.authCookieName)?.value
+	// );
+	// console.log("Auth header:", request.headers.get("Authorization"));
 
-	// 1. Установка security headers
+	// Установка security headers
 	Object.entries(securityConfig.securityHeaders).forEach(([key, value]) => {
 		response.headers.set(key, value);
 	});
 
-	// 2. Обработка CORS
-	const isAllowedOrigin = securityConfig.allowedOrigins.includes(
-		requestOrigin || ""
+	// Обработка CORS
+	response.headers.set(
+		"Access-Control-Allow-Origin",
+		securityConfig.allowedOrigin
 	);
-
-	if (isAllowedOrigin) {
-		// Ключевые CORS заголовки
-		response.headers.set("Access-Control-Allow-Origin", requestOrigin!);
-		response.headers.set("Access-Control-Allow-Credentials", "true");
-		response.headers.set("Access-Control-Expose-Headers", "Set-Cookie");
-	}
-
 	response.headers.set(
 		"Access-Control-Allow-Methods",
 		securityConfig.allowedMethods.join(", ")
 	);
-
 	response.headers.set(
 		"Access-Control-Allow-Headers",
 		securityConfig.allowedHeaders.join(", ")
 	);
+	response.headers.set("Access-Control-Allow-Credentials", "true");
 
-	// 3. Preflight запрос
+	// Preflight запрос
 	if (request.method === "OPTIONS") {
 		return new NextResponse(null, {
 			status: 204,
@@ -164,7 +157,7 @@ export async function middleware(request: NextRequest) {
 		});
 	}
 
-	// 4. Проверка защищенных маршрутов (без изменений, но добавлена обработка кук)
+	// Проверка защищенных маршрутов
 	if (isProtectedRoute(pathname)) {
 		const token =
 			request.cookies.get(securityConfig.authCookieName)?.value ||
@@ -184,6 +177,7 @@ export async function middleware(request: NextRequest) {
 			const decoded = await verifyJWT(token);
 			if (decoded.role !== Role.ADMIN) throw new Error("Invalid role");
 
+			// Передача данных пользователя через headers
 			const headers = new Headers(request.headers);
 			headers.set("x-admin-user-id", decoded.userId);
 			headers.set("x-admin-role", decoded.role);
@@ -201,7 +195,7 @@ export async function middleware(request: NextRequest) {
 		}
 	}
 
-	// 5. Редирект с auth-маршрутов (без изменений)
+	// Редирект с auth-маршрутов для авторизованных
 	if (isAuthRoute(pathname)) {
 		const token = request.cookies.get(securityConfig.authCookieName)?.value;
 		if (token) {
@@ -213,6 +207,7 @@ export async function middleware(request: NextRequest) {
 					);
 				}
 			} catch {
+				// Невалидный токен - очищаем куку
 				response.cookies.delete(securityConfig.authCookieName);
 			}
 		}
@@ -222,5 +217,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ["/login", "/api/:path*", "/admin/:path*"],
+	matcher: [
+		"/login",
+		"/api/:path*",
+		"/admin/:path*",
+		// "/api/admin/:path*",
+		// "/api/admin/upload", // Явное указание
+		// "/api/auth/:path*",
+	],
 };

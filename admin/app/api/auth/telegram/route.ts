@@ -106,16 +106,5 @@ export async function POST(req: NextRequest) {
 		expiresIn: "7d",
 	});
 
-	const cookieStore = await cookies();
-
-	cookieStore.set("token", token, {
-		httpOnly: true,
-		secure: process.env.NODE_ENV === "production",
-		maxAge: 60 * 60 * 24 * 7,
-		sameSite: "none", // Для кросс-доменных запросов
-		path: "/",
-		domain: ".parizoda-gold.vercel.app", // Только домен, с точкой в начале!
-	});
-
-	return NextResponse.json({ user });
+	return NextResponse.json({ token, user });
 }
