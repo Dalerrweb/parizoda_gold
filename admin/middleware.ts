@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./app/types";
 
-// Конфигурация безопасности
+// Конфигурация безопасности !!!
 const securityConfig = {
 	// CORS
 	allowedOrigins: [
