@@ -1,30 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
 
-export async function PATCH(req: Request) {
+export async function PATCH(req: NextRequest) {
 	try {
-		const authHeader = req.headers.get("authorization");
+		const auth = await requireAuth(req);
+		if (!auth.success) return auth.response;
+
+		const userId = auth.payload.userId;
+
 		const body = await req.json();
-
-		if (!authHeader || !authHeader.startsWith("Bearer ")) {
-			return NextResponse.json(
-				{ error: "Unauthorized" },
-				{ status: 401 }
-			);
-		}
-
-		const token = authHeader.split(" ")[1];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-			userId: number;
-		};
-
-		if (!decoded?.userId) {
-			return NextResponse.json(
-				{ error: "Invalid token" },
-				{ status: 401 }
-			);
-		}
 
 		// Список разрешенных для обновления полей
 		const allowedFields = ["phone", "first_name", "last_name"];
@@ -47,7 +32,7 @@ export async function PATCH(req: Request) {
 
 		// Обновление пользователя в базе данных
 		const updatedUser = await prisma.user.update({
-			where: { id: decoded.userId },
+			where: { id: userId },
 			data: updateData,
 		});
 

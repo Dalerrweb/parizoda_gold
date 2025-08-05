@@ -44,7 +44,7 @@ export function ProfileEditForm({
 		try {
 			setLoading(true);
 			const res = await fetch(
-				import.meta.env.VITE_API_URL + `/user/${user.id}`,
+				import.meta.env.VITE_API_URL + `/user/edit`,
 				{
 					method: "PATCH",
 					body: JSON.stringify({
