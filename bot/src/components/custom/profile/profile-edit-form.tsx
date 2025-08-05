@@ -14,6 +14,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { useState } from "react";
 
 interface ProfileEditFormProps {
 	user: User;
@@ -26,6 +27,7 @@ export function ProfileEditForm({
 	onCancel,
 	onSuccess,
 }: ProfileEditFormProps) {
+	const [loading, setLoading] = useState(false);
 	const form = useForm({
 		defaultValues: {
 			first_name: user.first_name || "",
@@ -40,6 +42,7 @@ export function ProfileEditForm({
 		console.log("Submitting profile data:", data);
 
 		try {
+			setLoading(true);
 			const res = await fetch(
 				import.meta.env.VITE_API_URL + `/user/${user.id}`,
 				{
@@ -49,7 +52,6 @@ export function ProfileEditForm({
 						last_name: data.last_name,
 						phone: data.phone,
 					}),
-					credentials: "include",
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${localStorage.getItem(
@@ -71,10 +73,14 @@ export function ProfileEditForm({
 		} catch (err) {
 			// Error is handled by the hook
 			console.error("Failed to update profile:", err);
+			setLoading(false);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handleCancel = () => {
+		setLoading(false);
 		reset();
 		onCancel();
 	};
@@ -86,9 +92,7 @@ export function ProfileEditForm({
 					// disabled={isLoading}
 					className="space-y-4"
 				>
-					<legend className="sr-only">
-						Edit Profile Information
-					</legend>
+					<legend className="sr-only">Изменить данные профиля</legend>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div className="space-y-2">
@@ -101,7 +105,7 @@ export function ProfileEditForm({
 								aria-describedby="telegram-username"
 							/>
 							<p id="telegram-username" className="sr-only">
-								Username cannot be changed
+								Username нельзя менять
 							</p>
 						</div>
 						<div className="space-y-2">
@@ -114,7 +118,7 @@ export function ProfileEditForm({
 								aria-describedby="telegram-id-description"
 							/>
 							<p id="telegram-id-description" className="sr-only">
-								Telegram ID cannot be changed
+								Telegram ID нельзя менять
 							</p>
 						</div>
 					</div>
@@ -126,7 +130,7 @@ export function ProfileEditForm({
 							rules={{ required: "First name is required" }}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>First Name</FormLabel>
+									<FormLabel>Имя</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="First Name"
@@ -143,7 +147,7 @@ export function ProfileEditForm({
 							rules={{ required: "Last name is required" }}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>First Name</FormLabel>
+									<FormLabel>Фамилия</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="Last Name"
@@ -167,7 +171,7 @@ export function ProfileEditForm({
 							}}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Phone number</FormLabel>
+									<FormLabel>Номер телефона</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="Phone Number"
@@ -184,19 +188,15 @@ export function ProfileEditForm({
 						<Button
 							type="button"
 							variant="outline"
+							disabled={loading}
 							onClick={handleCancel}
-							// disabled={isLoading}
 						>
 							<X className="mr-2 h-4 w-4" />
-							Cancel
+							Отменить
 						</Button>
-						<Button
-							type="submit"
-							// disabled={isLoading || !isDirty}
-						>
+						<Button type="submit" disabled={loading}>
 							<Save className="mr-2 h-4 w-4" />
-							Save Changes
-							{/* {isLoading ? "Saving..." : "Save Changes"} */}
+							{loading ? "Загрузка..." : "Сохранить"}
 						</Button>
 					</div>
 				</fieldset>

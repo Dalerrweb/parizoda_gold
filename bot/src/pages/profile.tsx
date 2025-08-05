@@ -77,7 +77,7 @@ export default function ProfileView() {
 							<CardFooter className="flex justify-end">
 								<Button onClick={() => setIsEditing(true)}>
 									<Edit className="mr-2 h-4 w-4" />
-									Edit Profile
+									Изменить профиль
 								</Button>
 							</CardFooter>
 						)}
