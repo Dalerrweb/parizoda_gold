@@ -1,5 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { requireAuth } from "@/lib/auth";
+import { parseInitData, validateInitData } from "@/lib/utils";
+
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN!;
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function GET(request: NextRequest) {
 	try {
@@ -20,25 +25,29 @@ export async function GET(request: NextRequest) {
 
 export async function POST(req: NextRequest) {
 	try {
-		const authHeader = req.headers.get("authorization");
+		const auth = await requireAuth(req);
+		if (!auth.success) return auth.response;
+		const userId = auth.payload.userId;
+
 		const body = await req.json();
 
-		if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		if (
+			!body.initData ||
+			!validateInitData(body.initData, TELEGRAM_BOT_TOKEN)
+		) {
 			return NextResponse.json(
-				{ error: "Unauthorized" },
-				{ status: 401 }
+				{ error: "Invalid initial data" },
+				{ status: 400 }
 			);
 		}
 
-		const token = authHeader.split(" ")[1];
-		const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-			userId: number;
-		};
+		const data = parseInitData(body.initData);
+		const tgUser = JSON.parse(data.user);
 
-		if (!decoded?.userId) {
+		if (userId !== tgUser.id) {
 			return NextResponse.json(
-				{ error: "Invalid token" },
-				{ status: 401 }
+				{ error: "User ID mismatch" },
+				{ status: 400 }
 			);
 		}
 

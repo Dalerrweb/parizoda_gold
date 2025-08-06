@@ -1,8 +1,44 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import crypto from "crypto";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
+}
+
+export function parseInitData(initData: string): Record<string, string> {
+	const params = new URLSearchParams(initData);
+	const data: Record<string, string> = {};
+	for (const [key, value] of params.entries()) {
+		data[key] = value;
+	}
+	return data;
+}
+
+export function validateInitData(
+	initData: string,
+	TELEGRAM_BOT_TOKEN: string
+): boolean {
+	const parsed = parseInitData(initData);
+	const hash = parsed.hash;
+	delete parsed.hash;
+
+	const sorted = Object.keys(parsed)
+		.sort()
+		.map((key) => `${key}=${parsed[key]}`)
+		.join("\n");
+
+	const secret = crypto
+		.createHmac("sha256", "WebAppData")
+		.update(TELEGRAM_BOT_TOKEN)
+		.digest();
+
+	const checkHash = crypto
+		.createHmac("sha256", secret)
+		.update(sorted)
+		.digest("hex");
+
+	return checkHash === hash;
 }
 
 export const uploadFiles = async (files: any) => {
