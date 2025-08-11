@@ -36,7 +36,7 @@ const calculate = ({
 }) => {
 	const priceWithoutMarkup = Number(pricePerGram) * Number(weight);
 
-	return priceWithoutMarkup * (1 + Number(markup) / 100);
+	return BigInt(priceWithoutMarkup * (1 + Number(markup) / 100));
 };
 
 export async function POST(req: NextRequest) {
@@ -47,25 +47,25 @@ export async function POST(req: NextRequest) {
 
 		const body = await req.json();
 
-		// if (
-		// 	!body.initData ||
-		// 	!validateInitData(body.initData, TELEGRAM_BOT_TOKEN)
-		// ) {
-		// 	return NextResponse.json(
-		// 		{ error: "Invalid initial data" },
-		// 		{ status: 400 }
-		// 	);
-		// }
+		if (
+			!body.initData ||
+			!validateInitData(body.initData, TELEGRAM_BOT_TOKEN)
+		) {
+			return NextResponse.json(
+				{ error: "Invalid initial data" },
+				{ status: 400 }
+			);
+		}
 
-		// const data = parseInitData(body.initData);
-		// const tgUser = JSON.parse(data.user);
+		const data = parseInitData(body.initData);
+		const tgUser = JSON.parse(data.user);
 
-		// if (userId !== tgUser.id) {
-		// 	return NextResponse.json(
-		// 		{ error: "User ID mismatch" },
-		// 		{ status: 400 }
-		// 	);
-		// }
+		if (Number(userId) !== Number(tgUser.id)) {
+			return NextResponse.json(
+				{ error: "User ID mismatch" },
+				{ status: 400 }
+			);
+		}
 
 		const auPrice = await prisma.auPrice.findFirst();
 
@@ -79,7 +79,8 @@ export async function POST(req: NextRequest) {
 		// all checks passed, proceed with order creation
 		const items = body.order.items;
 		let totalWeight = 0;
-		let totalAmount = 0;
+		let totalAmount = BigInt(0);
+		const orderItemsData: any = [];
 
 		for (const item of items) {
 			const dbProduct = await prisma.product.findUnique({
@@ -102,78 +103,135 @@ export async function POST(req: NextRequest) {
 						{ status: 404 }
 					);
 				}
-				const price =
-					calculate({
-						weight: dbSize.weight,
-						markup: dbProduct.markup,
-						pricePerGram: auPrice.pricePerGram,
-					}) * item.quantity;
+				const price = calculate({
+					weight: dbSize.weight,
+					markup: dbProduct.markup,
+					pricePerGram: auPrice.pricePerGram,
+				});
 
 				totalWeight += Number(dbSize.weight);
-				totalAmount += price;
+				totalAmount += price * BigInt(item.quantity);
 
-				// console.log({
-				// 	type: dbProduct.type,
-				// 	weight: dbSize.weight,
-				// 	markup: dbProduct.markup,
-				// 	pricePerGram: auPrice.pricePerGram,
-				// 	priceOfProduct: price,
-				// });
+				orderItemsData.push({
+					productId: item.productId,
+					quantity: item.quantity,
+					price,
+					weight: dbSize.weight,
+					markup: dbProduct.markup,
+					variantId: dbSize.id,
+					type: ProductType.SINGLE,
+					bundleItems: [],
+				});
 			}
 			if (dbProduct.type === ProductType.BUNDLE) {
+				const bundleItems = [];
+				let bundleTotalPrice = BigInt(0);
 				// bundles
-				for (const bundle of item.bundleItems) {
+				for (const bundleItem of item.bundleItems) {
 					const bundleDbProduct = await prisma.product.findUnique({
-						where: { id: bundle.productId },
+						where: { id: bundleItem.productId },
 					});
 					if (!bundleDbProduct) {
 						return NextResponse.json(
 							{
-								error: `Bundle product with ID ${bundle.productId} not found`,
+								error: `Bundle product with ID ${bundleItem.productId} not found`,
 							},
 							{ status: 404 }
 						);
 					}
 					const dbSize = await prisma.productSize.findUnique({
-						where: { id: bundle.variantId },
+						where: { id: bundleItem.variantId },
 					});
 					if (!dbSize) {
 						return NextResponse.json(
 							{
-								error: `Size with ID ${item.variantId} not found`,
+								error: `Size with ID ${bundleItem.variantId} not found`,
 							},
 							{ status: 404 }
 						);
 					}
-					const price =
-						calculate({
-							weight: dbSize.weight,
-							markup: bundleDbProduct.markup,
-							pricePerGram: auPrice.pricePerGram,
-						}) * item.quantity;
+					const price = calculate({
+						weight: dbSize.weight,
+						markup: bundleDbProduct.markup,
+						pricePerGram: auPrice.pricePerGram,
+					});
 
 					totalWeight += Number(dbSize.weight);
-					totalAmount += price;
+					bundleTotalPrice += price;
+					bundleItems.push({
+						productId: bundleItem.productId,
+						variantId: bundleItem.variantId,
+						weight: dbSize.weight,
+						markup: bundleDbProduct.markup,
+						price,
+					});
 				}
+				totalAmount += bundleTotalPrice * BigInt(item.quantity);
+
+				orderItemsData.push({
+					productId: item.productId,
+					quantity: item.quantity,
+					price: bundleTotalPrice,
+					weight: bundleItems
+						.reduce((sum, item) => sum + Number(item.weight), 0)
+						.toString(),
+					markup: dbProduct.markup,
+					type: ProductType.BUNDLE,
+					bundleItems,
+				});
 			}
 		}
 
-		console.log("Total weight of order:", totalWeight);
-		console.log("Total amount of order:", totalAmount);
+		// Транзакция для создания заказа
+		const order = await prisma.$transaction(async (tx) => {
+			// Создаем основной заказ
+			const newOrder = await tx.order.create({
+				data: {
+					userId,
+					paymentType: body.order.paymentType,
+					goldPrice: auPrice.pricePerGram,
+					totalAmount,
+				},
+			});
 
-		// const tx = await prisma.$transaction(async (tx) => {
-		// 	const order = await tx.order.create({
-		// 		data: {
-		// 			userId,
-		// 		},
-		// 	});
-		// 	return order;
-		// });
+			// Создаем позиции заказа
+			for (const itemData of orderItemsData) {
+				const orderItem = await tx.orderItem.create({
+					data: {
+						orderId: newOrder.id,
+						productId: itemData.productId,
+						quantity: itemData.quantity,
+						price: itemData.price,
+						weight: itemData.weight,
+						markup: itemData.markup,
+						variantId: itemData.variantId,
+						type: itemData.type,
+					},
+				});
 
-		return NextResponse.json("completeOrder", { status: 201 });
+				// Создаем элементы бандла при необходимости
+				if (
+					itemData.type === ProductType.BUNDLE &&
+					itemData.bundleItems.length > 0
+				) {
+					await tx.bundleItem.createMany({
+						data: itemData.bundleItems.map((bItem: any) => ({
+							orderItemId: orderItem.id,
+							productId: bItem.productId,
+							variantId: bItem.variantId,
+							weight: bItem.weight,
+							markup: bItem.markup,
+							price: bItem.price,
+						})),
+					});
+				}
+			}
+
+			return newOrder;
+		});
+
+		return NextResponse.json({ data: order }, { status: 201 });
 	} catch (e) {
-		console.log(e);
-
 		return NextResponse.json("Failed to create order", { status: 500 });
 	}
 }
