@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const payload = {
       store_id: process.env.MULTICARD_STORE_ID,
-      amount: 1000 * 100, // need to get from .env
+      amount: Number(process.env.ORDER_FIX_PRICE) * 100,
       invoice_id: randomUUID(),
       callback_url: process.env.MULTICARD_CALBACK_URL
     };
