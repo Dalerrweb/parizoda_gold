@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ExternalLink, ShoppingBag } from "lucide-react";
-import { formatPrice, getStatusColor } from "@/lib/utils";
+import { formatDate, formatPrice, getStatusColor } from "@/lib/utils";
 import { Order, User } from "@/types";
 
 interface OrderHistoryProps {
@@ -76,15 +76,15 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 											<p className="font-medium">
 												Заказ №{order.id}
 											</p>
-											{/* <p className="text-sm text-muted-foreground">
+											<p className="text-sm text-muted-foreground">
 												{formatDate(order.createdAt)}
-											</p> */}
+											</p>
 										</div>
 									</div>
 									<div className="flex items-center gap-4">
-										<p className="font-medium">
+										{/* <p className="font-medium">
 											{formatPrice(order.totalAmount)}
-										</p>
+										</p> */}
 										<ChevronDown className="h-5 w-5 text-muted-foreground" />
 									</div>
 								</div>
