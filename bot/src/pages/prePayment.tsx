@@ -123,8 +123,7 @@ export default function BuyNowPage() {
 				}
 			);
 			const data = await res.json();
-			// window.open(data.checkout_url, "_blank");
-			console.log(data);
+			window.open(data.checkout_url, "_blank");
 		}
 	};
 

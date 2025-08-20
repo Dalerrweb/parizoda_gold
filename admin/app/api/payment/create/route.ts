@@ -7,8 +7,6 @@ import { $Enums } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 
 function validateBody(body: Record<string, any>) {
-  console.log(body);
-  console.log(body.userId);
   if (!body.userId) {
     return null;
   }
@@ -21,7 +19,7 @@ function validateBody(body: Record<string, any>) {
 export async function POST(req: NextRequest) {
   try {
     const body = validateBody(await req.json());
-    if (!body?.userId) {
+    if (!body) {
       return NextResponse.json(
         {
           error: "Invalid amount"
