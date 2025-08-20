@@ -18,16 +18,13 @@ import { ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import { useLikes } from "@/context/FavProvider";
-import { useUser } from "@/context/UserProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function CartPage() {
   const [total, setTotal] = useState(0);
   const { cart } = useCart();
   const { calculate } = usePrice();
-  const { user } = useUser();
 
-  const navigate = useNavigate();
   useEffect(() => {
     const totalSum = cart.reduce((acc, item) => {
       if (item.type === ProductType.BUNDLE) {

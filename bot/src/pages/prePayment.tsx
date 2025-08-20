@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { useUser } from "@/context/UserProvider";
 import { formatPrice } from "@/lib/utils";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const isValidPhone = (v: string) => /^\+?998\d{9}$/.test(v.replace(/\D/g, ""));
 
@@ -51,7 +51,6 @@ export default function BuyNowPage() {
 		handleSubmit,
 		formState: { errors, isValid },
 		getValues,
-		setValue,
 		reset,
 		watch,
 	} = useForm<ProfileForm>({
