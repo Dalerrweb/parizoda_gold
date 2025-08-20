@@ -112,6 +112,8 @@ export default function BuyNowPage() {
 		if (paymentMethod === "cash") {
 			alert("Заказ оформлен! Оплата при получении.");
 		} else {
+			console.log(user);
+
 			const res = await fetch(
 				import.meta.env.VITE_API_URL + "/payment/create",
 				{
@@ -121,7 +123,8 @@ export default function BuyNowPage() {
 				}
 			);
 			const data = await res.json();
-			window.open(data.checkout_url, "_blank");
+			// window.open(data.checkout_url, "_blank");
+			console.log(data);
 		}
 	};
 
