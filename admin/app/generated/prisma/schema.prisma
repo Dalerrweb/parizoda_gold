@@ -158,7 +158,7 @@ model OrderItem {
   product     Product      @relation(fields: [productId], references: [id])
   productId   Int
   quantity    Int          @default(1)
-  price       BigInt // Фиксированная итоговая цена (уже рассчитанная)
+  price       Int // Фиксированная итоговая цена (уже рассчитанная)
   weight      String // Вес в граммах
   markup      String // Наценка (фиксируем на момент покупки)
   variant     ProductSize? @relation(fields: [variantId], references: [id])
@@ -180,7 +180,7 @@ model BundleItem {
   variantId   Int?
   weight      String
   markup      String
-  price       BigInt
+  price       Int
 
   @@index([orderItemId])
   @@index([productId])

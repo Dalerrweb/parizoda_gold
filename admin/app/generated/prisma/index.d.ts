@@ -15913,7 +15913,7 @@ export namespace Prisma {
     orderId: number | null
     productId: number | null
     quantity: number | null
-    price: bigint | null
+    price: number | null
     variantId: number | null
   }
 
@@ -15922,7 +15922,7 @@ export namespace Prisma {
     orderId: number | null
     productId: number | null
     quantity: number | null
-    price: bigint | null
+    price: number | null
     weight: string | null
     markup: string | null
     variantId: number | null
@@ -15934,7 +15934,7 @@ export namespace Prisma {
     orderId: number | null
     productId: number | null
     quantity: number | null
-    price: bigint | null
+    price: number | null
     weight: string | null
     markup: string | null
     variantId: number | null
@@ -16101,7 +16101,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity: number
-    price: bigint
+    price: number
     weight: string
     markup: string
     variantId: number | null
@@ -16218,7 +16218,7 @@ export namespace Prisma {
       orderId: number
       productId: number
       quantity: number
-      price: bigint
+      price: number
       weight: string
       markup: string
       variantId: number | null
@@ -16654,7 +16654,7 @@ export namespace Prisma {
     readonly orderId: FieldRef<"OrderItem", 'Int'>
     readonly productId: FieldRef<"OrderItem", 'Int'>
     readonly quantity: FieldRef<"OrderItem", 'Int'>
-    readonly price: FieldRef<"OrderItem", 'BigInt'>
+    readonly price: FieldRef<"OrderItem", 'Int'>
     readonly weight: FieldRef<"OrderItem", 'String'>
     readonly markup: FieldRef<"OrderItem", 'String'>
     readonly variantId: FieldRef<"OrderItem", 'Int'>
@@ -17141,7 +17141,7 @@ export namespace Prisma {
     orderItemId: number | null
     productId: number | null
     variantId: number | null
-    price: bigint | null
+    price: number | null
   }
 
   export type BundleItemMinAggregateOutputType = {
@@ -17151,7 +17151,7 @@ export namespace Prisma {
     variantId: number | null
     weight: string | null
     markup: string | null
-    price: bigint | null
+    price: number | null
   }
 
   export type BundleItemMaxAggregateOutputType = {
@@ -17161,7 +17161,7 @@ export namespace Prisma {
     variantId: number | null
     weight: string | null
     markup: string | null
-    price: bigint | null
+    price: number | null
   }
 
   export type BundleItemCountAggregateOutputType = {
@@ -17316,7 +17316,7 @@ export namespace Prisma {
     variantId: number | null
     weight: string
     markup: string
-    price: bigint
+    price: number
     _count: BundleItemCountAggregateOutputType | null
     _avg: BundleItemAvgAggregateOutputType | null
     _sum: BundleItemSumAggregateOutputType | null
@@ -17418,7 +17418,7 @@ export namespace Prisma {
       variantId: number | null
       weight: string
       markup: string
-      price: bigint
+      price: number
     }, ExtArgs["result"]["bundleItem"]>
     composites: {}
   }
@@ -17851,7 +17851,7 @@ export namespace Prisma {
     readonly variantId: FieldRef<"BundleItem", 'Int'>
     readonly weight: FieldRef<"BundleItem", 'String'>
     readonly markup: FieldRef<"BundleItem", 'String'>
-    readonly price: FieldRef<"BundleItem", 'BigInt'>
+    readonly price: FieldRef<"BundleItem", 'Int'>
   }
     
 
@@ -20631,7 +20631,7 @@ export namespace Prisma {
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
     quantity?: IntFilter<"OrderItem"> | number
-    price?: BigIntFilter<"OrderItem"> | bigint | number
+    price?: IntFilter<"OrderItem"> | number
     weight?: StringFilter<"OrderItem"> | string
     markup?: StringFilter<"OrderItem"> | string
     variantId?: IntNullableFilter<"OrderItem"> | number | null
@@ -20666,7 +20666,7 @@ export namespace Prisma {
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
     quantity?: IntFilter<"OrderItem"> | number
-    price?: BigIntFilter<"OrderItem"> | bigint | number
+    price?: IntFilter<"OrderItem"> | number
     weight?: StringFilter<"OrderItem"> | string
     markup?: StringFilter<"OrderItem"> | string
     variantId?: IntNullableFilter<"OrderItem"> | number | null
@@ -20702,7 +20702,7 @@ export namespace Prisma {
     orderId?: IntWithAggregatesFilter<"OrderItem"> | number
     productId?: IntWithAggregatesFilter<"OrderItem"> | number
     quantity?: IntWithAggregatesFilter<"OrderItem"> | number
-    price?: BigIntWithAggregatesFilter<"OrderItem"> | bigint | number
+    price?: IntWithAggregatesFilter<"OrderItem"> | number
     weight?: StringWithAggregatesFilter<"OrderItem"> | string
     markup?: StringWithAggregatesFilter<"OrderItem"> | string
     variantId?: IntNullableWithAggregatesFilter<"OrderItem"> | number | null
@@ -20719,7 +20719,7 @@ export namespace Prisma {
     variantId?: IntNullableFilter<"BundleItem"> | number | null
     weight?: StringFilter<"BundleItem"> | string
     markup?: StringFilter<"BundleItem"> | string
-    price?: BigIntFilter<"BundleItem"> | bigint | number
+    price?: IntFilter<"BundleItem"> | number
     orderItem?: XOR<OrderItemScalarRelationFilter, OrderItemWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
@@ -20748,7 +20748,7 @@ export namespace Prisma {
     variantId?: IntNullableFilter<"BundleItem"> | number | null
     weight?: StringFilter<"BundleItem"> | string
     markup?: StringFilter<"BundleItem"> | string
-    price?: BigIntFilter<"BundleItem"> | bigint | number
+    price?: IntFilter<"BundleItem"> | number
     orderItem?: XOR<OrderItemScalarRelationFilter, OrderItemWhereInput>
     product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     variant?: XOR<ProductSizeNullableScalarRelationFilter, ProductSizeWhereInput> | null
@@ -20779,7 +20779,7 @@ export namespace Prisma {
     variantId?: IntNullableWithAggregatesFilter<"BundleItem"> | number | null
     weight?: StringWithAggregatesFilter<"BundleItem"> | string
     markup?: StringWithAggregatesFilter<"BundleItem"> | string
-    price?: BigIntWithAggregatesFilter<"BundleItem"> | bigint | number
+    price?: IntWithAggregatesFilter<"BundleItem"> | number
   }
 
   export type TransactionWhereInput = {
@@ -21606,7 +21606,7 @@ export namespace Prisma {
 
   export type OrderItemCreateInput = {
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -21621,7 +21621,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -21631,7 +21631,7 @@ export namespace Prisma {
 
   export type OrderItemUpdateInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -21646,7 +21646,7 @@ export namespace Prisma {
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21659,7 +21659,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -21668,7 +21668,7 @@ export namespace Prisma {
 
   export type OrderItemUpdateManyMutationInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -21679,7 +21679,7 @@ export namespace Prisma {
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -21689,7 +21689,7 @@ export namespace Prisma {
   export type BundleItemCreateInput = {
     weight: string
     markup: string
-    price: bigint | number
+    price: number
     orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
     product: ProductCreateNestedOneWithoutBundleItemInput
     variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
@@ -21702,13 +21702,13 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemUpdateInput = {
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
     variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
@@ -21721,7 +21721,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type BundleItemCreateManyInput = {
@@ -21731,13 +21731,13 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemUpdateManyMutationInput = {
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type BundleItemUncheckedUpdateManyInput = {
@@ -21747,7 +21747,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type TransactionCreateInput = {
@@ -24447,7 +24447,7 @@ export namespace Prisma {
 
   export type OrderItemCreateWithoutProductInput = {
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -24460,7 +24460,7 @@ export namespace Prisma {
     id?: number
     orderId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -24481,7 +24481,7 @@ export namespace Prisma {
   export type BundleItemCreateWithoutProductInput = {
     weight: string
     markup: string
-    price: bigint | number
+    price: number
     orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
     variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
   }
@@ -24492,7 +24492,7 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemCreateOrConnectWithoutProductInput = {
@@ -24647,7 +24647,7 @@ export namespace Prisma {
     orderId?: IntFilter<"OrderItem"> | number
     productId?: IntFilter<"OrderItem"> | number
     quantity?: IntFilter<"OrderItem"> | number
-    price?: BigIntFilter<"OrderItem"> | bigint | number
+    price?: IntFilter<"OrderItem"> | number
     weight?: StringFilter<"OrderItem"> | string
     markup?: StringFilter<"OrderItem"> | string
     variantId?: IntNullableFilter<"OrderItem"> | number | null
@@ -24680,7 +24680,7 @@ export namespace Prisma {
     variantId?: IntNullableFilter<"BundleItem"> | number | null
     weight?: StringFilter<"BundleItem"> | string
     markup?: StringFilter<"BundleItem"> | string
-    price?: BigIntFilter<"BundleItem"> | bigint | number
+    price?: IntFilter<"BundleItem"> | number
   }
 
   export type ProductCreateWithoutSizesInput = {
@@ -24723,7 +24723,7 @@ export namespace Prisma {
 
   export type OrderItemCreateWithoutVariantInput = {
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -24737,7 +24737,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -24757,7 +24757,7 @@ export namespace Prisma {
   export type BundleItemCreateWithoutVariantInput = {
     weight: string
     markup: string
-    price: bigint | number
+    price: number
     orderItem: OrderItemCreateNestedOneWithoutBundleItemsInput
     product: ProductCreateNestedOneWithoutBundleItemInput
   }
@@ -24768,7 +24768,7 @@ export namespace Prisma {
     productId: number
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemCreateOrConnectWithoutVariantInput = {
@@ -25231,7 +25231,7 @@ export namespace Prisma {
 
   export type OrderItemCreateWithoutOrderInput = {
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -25244,7 +25244,7 @@ export namespace Prisma {
     id?: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -25455,7 +25455,7 @@ export namespace Prisma {
   export type BundleItemCreateWithoutOrderItemInput = {
     weight: string
     markup: string
-    price: bigint | number
+    price: number
     product: ProductCreateNestedOneWithoutBundleItemInput
     variant?: ProductSizeCreateNestedOneWithoutBundleItemInput
   }
@@ -25466,7 +25466,7 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemCreateOrConnectWithoutOrderItemInput = {
@@ -25603,7 +25603,7 @@ export namespace Prisma {
 
   export type OrderItemCreateWithoutBundleItemsInput = {
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -25617,7 +25617,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -25702,7 +25702,7 @@ export namespace Prisma {
 
   export type OrderItemUpdateWithoutBundleItemsInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -25716,7 +25716,7 @@ export namespace Prisma {
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -26097,7 +26097,7 @@ export namespace Prisma {
     id?: number
     orderId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -26110,7 +26110,7 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type ProductImageUpdateWithoutProductInput = {
@@ -26187,7 +26187,7 @@ export namespace Prisma {
 
   export type OrderItemUpdateWithoutProductInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -26200,7 +26200,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -26212,7 +26212,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     orderId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -26222,7 +26222,7 @@ export namespace Prisma {
   export type BundleItemUpdateWithoutProductInput = {
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
     variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
   }
@@ -26233,7 +26233,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type BundleItemUncheckedUpdateManyWithoutProductInput = {
@@ -26242,7 +26242,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type OrderItemCreateManyVariantInput = {
@@ -26250,7 +26250,7 @@ export namespace Prisma {
     orderId: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     type: $Enums.ProductType
@@ -26262,12 +26262,12 @@ export namespace Prisma {
     productId: number
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type OrderItemUpdateWithoutVariantInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -26281,7 +26281,7 @@ export namespace Prisma {
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -26293,7 +26293,7 @@ export namespace Prisma {
     orderId?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -26302,7 +26302,7 @@ export namespace Prisma {
   export type BundleItemUpdateWithoutVariantInput = {
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     orderItem?: OrderItemUpdateOneRequiredWithoutBundleItemsNestedInput
     product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
   }
@@ -26313,7 +26313,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type BundleItemUncheckedUpdateManyWithoutVariantInput = {
@@ -26322,7 +26322,7 @@ export namespace Prisma {
     productId?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type AdminSessionCreateManyUserInput = {
@@ -26356,7 +26356,7 @@ export namespace Prisma {
     id?: number
     productId: number
     quantity?: number
-    price: bigint | number
+    price: number
     weight: string
     markup: string
     variantId?: number | null
@@ -26377,7 +26377,7 @@ export namespace Prisma {
 
   export type OrderItemUpdateWithoutOrderInput = {
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
@@ -26390,7 +26390,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -26402,7 +26402,7 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     productId?: IntFieldUpdateOperationsInput | number
     quantity?: IntFieldUpdateOperationsInput | number
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
@@ -26451,13 +26451,13 @@ export namespace Prisma {
     variantId?: number | null
     weight: string
     markup: string
-    price: bigint | number
+    price: number
   }
 
   export type BundleItemUpdateWithoutOrderItemInput = {
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
     product?: ProductUpdateOneRequiredWithoutBundleItemNestedInput
     variant?: ProductSizeUpdateOneWithoutBundleItemNestedInput
   }
@@ -26468,7 +26468,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
   export type BundleItemUncheckedUpdateManyWithoutOrderItemInput = {
@@ -26477,7 +26477,7 @@ export namespace Prisma {
     variantId?: NullableIntFieldUpdateOperationsInput | number | null
     weight?: StringFieldUpdateOperationsInput | string
     markup?: StringFieldUpdateOperationsInput | string
-    price?: BigIntFieldUpdateOperationsInput | bigint | number
+    price?: IntFieldUpdateOperationsInput | number
   }
 
 
