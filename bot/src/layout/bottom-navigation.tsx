@@ -29,6 +29,12 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 			badgeCount: cartLength,
 		},
 		{
+			to: "/payment",
+			icon: ShoppingCart,
+			label: "Payment",
+			badgeCount: cartLength,
+		},
+		{
 			to: "/profile",
 			icon: User,
 			label: "Профиль",

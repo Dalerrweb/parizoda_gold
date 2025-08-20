@@ -7,6 +7,7 @@ import ProductPage from "./pages/product";
 import ProfilePage from "./pages/profile";
 import Layout from "./layout/layout";
 import Favs from "./pages/favourites";
+import BuyNowPage from "./pages/prePayment";
 
 declare global {
 	interface Window {
@@ -90,6 +91,7 @@ function App() {
 					<Route path="/favorites" element={<Favs />} />
 					<Route path="/profile" element={<ProfilePage />} />
 				</Route>
+				<Route path="/payment" element={<BuyNowPage />} />
 			</Routes>
 		</div>
 	);

@@ -10,13 +10,20 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 // 	const existingUser = await prisma.user.findUnique({
 // 		where: { telegramId: 202783522 },
 // 		include: {
-// 			orders: true,
+// 			orders: {
+// 				select: {
+// 					id: true,
+// 					status: true,
+// 					createdAt: true,
+// 					updatedAt: true,
+// 				},
+// 			},
 // 		},
 // 	});
 
 // 	const user = existingUser;
 
-// 	const token = jwt.sign({ userId: 1 }, JWT_SECRET, {
+// 	const token = jwt.sign({ userId: 202783522 }, JWT_SECRET, {
 // 		expiresIn: "7d",
 // 	});
 
