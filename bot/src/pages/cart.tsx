@@ -18,15 +18,25 @@ import { ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import { useLikes } from "@/context/FavProvider";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const [total, setTotal] = useState(0);
-  const { cart } = useCart();
+  const { cart, selected, selectAll, clearSelected } = useCart();
   const { calculate } = usePrice();
 
+  const navigate = useNavigate();
+
+  function selectOrRemoveAll() {
+    if (selected.length === cart.length) {
+      clearSelected();
+    } else {
+      selectAll();
+    }
+  }
+
   useEffect(() => {
-    const totalSum = cart.reduce((acc, item) => {
+    const totalSum = selected.reduce((acc: any, item: any) => {
       if (item.type === ProductType.BUNDLE) {
         const bundleTotal =
           item.items?.reduce(
@@ -48,7 +58,7 @@ export default function CartPage() {
       }
     }, 0);
     setTotal(totalSum);
-  }, [cart, calculate]);
+  }, [selected, calculate]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -56,7 +66,7 @@ export default function CartPage() {
       <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Checkbox className="rounded-md" />
+            <Checkbox className="rounded-md" onClick={selectOrRemoveAll} checked={selected.length === cart.length} />
             <span className="text-sm font-medium">Выбрать все</span>
             <Badge variant="secondary" className="text-xs">
               {cart.length} товаров
@@ -87,12 +97,13 @@ export default function CartPage() {
               {formatPrice(total)}
             </p>
           </div>
-          <Link
+          <Button
+            disabled={!selected.length}
             className="bg-default-btn hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium"
-            to={'/payment'}
+            onClick={() => navigate('/payment')}
           >
             Оформить заказ
-          </Link>
+          </Button>
         </div>
       </div>
     </div>
@@ -102,9 +113,11 @@ export default function CartPage() {
 function CartItem({ item }: any) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [showBundleDetails, setShowBundleDetails] = useState(false);
-  const { increment, decrement, removeFromCart } = useCart();
+  const { increment, decrement, removeFromCart, removeFromSelected, addToSelected, isItemSelected, clearSelected } = useCart();
   const { calculate } = usePrice();
   const { likeOrDislike, favs } = useLikes();
+  const navigate = useNavigate();
+
   let isLiked = favs.some((liked) => liked.id === item.id);
 
   const price =
@@ -119,6 +132,20 @@ function CartItem({ item }: any) {
         0
       ) * item.quantity
       : calculate({ weight: item.weight, markup: item.markup }) * item.quantity;
+
+  function selectOrRemove(item: any) {
+    if (isItemSelected(item.configKey)) {
+      removeFromSelected(item.configKey);
+    } else {
+      addToSelected(item);
+    }
+  }
+
+  function buyOne(item: any) {
+    clearSelected();
+    addToSelected(item);
+    navigate('/payment');
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 relative overflow-hidden">
@@ -149,7 +176,7 @@ function CartItem({ item }: any) {
       >
         <div className="p-4">
           <div className="flex items-start space-x-3">
-            <Checkbox className="mt-1 rounded-md" />
+            <Checkbox className="mt-1 rounded-md" checked={Boolean(isItemSelected(item.configKey))} onClick={() => selectOrRemove(item)} />
 
             {/* Product Image */}
             <div className="flex-shrink-0">
@@ -269,6 +296,7 @@ function CartItem({ item }: any) {
                   <Button
                     size="sm"
                     className="bg-default-btn hover:bg-purple-700 text-white px-4 py-1 text-xs mt-1"
+                    onClick={() => buyOne(item)}
                   >
                     <ShoppingBag className="w-3 h-3 mr-1" />
                     Купить

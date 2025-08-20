@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
 	Card,
 	CardContent,
@@ -13,7 +12,7 @@ import {
 	CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Separator } from "@/components/ui/separator";
-import { ChevronDown, ExternalLink, ShoppingBag } from "lucide-react";
+import { ChevronDown, ShoppingBag } from "lucide-react";
 import { formatDate, formatPrice, getStatusColor } from "@/lib/utils";
 import { Order, User } from "@/types";
 
@@ -73,7 +72,7 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 											{order.status}
 										</Badge>
 										<div>
-											<p className="font-medium">
+											<p className="font-bold">
 												Заказ №{order.id}
 											</p>
 											<p className="text-sm text-muted-foreground">
@@ -93,14 +92,14 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 								<Separator />
 								<div className="p-4 space-y-4">
 									<div>
-										<p className="text-sm font-medium mb-2">
+										<p className="text-sm font-bold mb-2">
 											Товары
 										</p>
 										<div className="space-y-2">
 											{order.items.map((item, index) => (
 												<div
 													key={index}
-													className="flex justify-between"
+													className="flex justify-between border-b gap-1 flex-col pb-2"
 												>
 													<p>
 														{item.product?.name}{" "}
@@ -108,7 +107,7 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 															x{item.quantity}
 														</span>
 													</p>
-													<p>
+													<p className="whitespace-nowrap font-semibold">
 														{formatPrice(
 															item.price
 														)}
@@ -120,14 +119,14 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 									<Separator />
 									<div className="flex justify-between font-medium">
 										<p>Итого</p>
-										<p>{formatPrice(order.totalAmount)}</p>
+										<p className="font-semibold">{formatPrice(order.totalAmount)}</p>
 									</div>
-									<div className="flex justify-end">
+									{/* <div className="flex justify-end">
 										<Button variant="outline" size="sm">
 											<ExternalLink className="mr-2 h-4 w-4" />
 											Посмотреть детали
 										</Button>
-									</div>
+									</div> */}
 								</div>
 							</CollapsibleContent>
 						</Collapsible>

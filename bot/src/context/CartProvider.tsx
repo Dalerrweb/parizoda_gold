@@ -31,12 +31,18 @@ type CartBundleItem = {
 interface CartContextType {
 	cart: CartItem[];
 	cartLength: number;
+	selected: CartItem[];
 	addToCart: (item: CartItem) => void;
 	removeFromCart: (configKey: string) => void;
 	increment: (configKey: string) => void;
 	decrement: (configKey: string) => void;
 	emptyCart: () => void;
 	Item: (configKey: string) => CartItem | undefined;
+	isItemSelected: (configKey: string) => CartItem | undefined;
+	selectAll: () => void;
+	clearSelected: () => void;
+	addToSelected: (item: CartItem) => void;
+	removeFromSelected: (configKey: string) => void;
 }
 
 export function generateConfigKey(
@@ -61,6 +67,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 	const [cart, setCart] = useState<CartItem[]>(() => {
 		try {
 			const raw = localStorage.getItem("cart");
+			console.log(raw ? JSON.parse(raw) : []);
+
 			return raw ? JSON.parse(raw) : [];
 		} catch (err) {
 			localStorage.removeItem("cart");
@@ -68,9 +76,23 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		}
 	});
 
+	const [selected, setSelected] = useState<CartItem[]>(() => {
+		try {
+			const raw = localStorage.getItem("selected");
+			return raw ? JSON.parse(raw) : [];
+		} catch (err) {
+			localStorage.removeItem("selected");
+			return [];
+		}
+	});
+
 	useEffect(() => {
 		localStorage.setItem("cart", JSON.stringify(cart));
 	}, [cart]);
+
+	useEffect(() => {
+		localStorage.setItem("selected", JSON.stringify(selected));
+	}, [selected]);
 
 	const addToCart = useCallback((item: CartItem) => {
 		setCart((prev) => {
@@ -89,6 +111,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 	const removeFromCart = useCallback((configKey: string) => {
 		setCart((prev) => prev.filter((item) => item.configKey !== configKey));
+		removeFromSelected(configKey);
 	}, []);
 
 	const increment = useCallback((configKey: string) => {
@@ -96,22 +119,54 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 			prev.map((item) =>
 				item.configKey === configKey
 					? {
-							...item,
-							quantity: item.quantity + 1,
-					  }
+						...item,
+						quantity: item.quantity + 1,
+					}
 					: item
 			)
 		);
 	}, []);
+
+	const addToSelected = useCallback((item: CartItem) => {
+		setSelected((prev) => {
+			const existing = prev.find((i) => i.configKey === item.configKey);
+			if (existing) {
+				return prev.map((i) =>
+					i.configKey === item.configKey
+						? { ...i, quantity: i.quantity + item.quantity }
+						: i
+				);
+			} else {
+				return [...prev, item];
+			}
+		});
+	}, []);
+
+	const removeFromSelected = useCallback((configKey: string) => {
+		setSelected((prev) => prev.filter((item) => item.configKey !== configKey));
+	}, []);
+
+	const selectAll = useCallback(() => {
+		setSelected(cart);
+	}, [cart]);
+
+	const clearSelected = useCallback(() => {
+		setSelected([]);
+	}, []);
+
+	const isItemSelected = (configKey: string) => {
+		return selected.find((elem) => elem.configKey === configKey);
+	};
+
 	const decrement = useCallback((configKey: string) => {
 		setCart((prev) =>
 			prev
 				.map((item) =>
 					item.configKey === configKey
 						? {
-								...item,
-								quantity: item.quantity - 1,
-						  }
+							...item,
+							quantity: item.quantity - 1,
+						}
 						: item
 				)
 				.filter((item) => item.quantity > 0)
@@ -135,6 +190,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		increment,
 		decrement,
 		emptyCart,
+		addToSelected,
+		removeFromSelected,
+		isItemSelected,
+		selectAll,
+		clearSelected,
+		selected
 	};
 
 	return (

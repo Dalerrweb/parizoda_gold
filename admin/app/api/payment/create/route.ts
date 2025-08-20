@@ -28,6 +28,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const user = await prisma.user.findUnique({ where: { id: body.userId } });
+
+    if (!user?.first_name || !user?.createdAt || !user?.phone) {
+      return NextResponse.json(
+        {
+          checkout_url: null
+        },
+        { status: 200 }
+      );
+    }
+
     const payload = {
       store_id: process.env.MULTICARD_STORE_ID,
       amount: Number(process.env.ORDER_FIX_PRICE) * 100,

@@ -106,8 +106,6 @@ export default function BuyNowPage() {
 		}
 
 		setIsProcessing(true);
-		await new Promise((r) => setTimeout(r, 1200));
-		setIsProcessing(false);
 
 		if (paymentMethod === "cash") {
 			alert("Заказ оформлен! Оплата при получении.");
@@ -123,7 +121,14 @@ export default function BuyNowPage() {
 			}
 		);
 		const data = await res.json();
+
+		if (!data.checkout_url) {
+			alert('Что-то пошло не так проверьте свои данные !');
+		}
+
 		window.open(data.checkout_url, "_blank");
+	
+		setIsProcessing(false);
 	};
 
 	/**
@@ -179,38 +184,9 @@ export default function BuyNowPage() {
 
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-white via-white to-sky-50">
-			{/* Header with a subtle colorful underline for delight */}
-			<div className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-				<div className="mx-auto max-w-md px-4 py-3">
-					<h1 className="text-xl font-semibold">Оформить заказ</h1>
-					<p className="text-xs text-muted-foreground">
-						Telegram Mini App • Мобильный интерфейс
-					</p>
-					<div className="mt-2 h-1 w-20 rounded-full bg-gradient-to-r from-sky-400 via-violet-400 to-fuchsia-400" />
-				</div>
-			</div>
-
-			{/* Main content area */}
 			<div className="mx-auto max-w-md px-4 pb-36 pt-4">
-				{/* Order summary card */}
-				<Card className="rounded-2xl shadow-sm">
+				<Card className="rounded-2xl shadow-sm p-0">
 					<CardContent className="space-y-5 p-4">
-						<div className="flex items-start justify-between gap-3">
-							<div>
-								<div className="text-base font-semibold leading-tight">
-									Premium Plan
-								</div>
-								<div className="text-xs text-muted-foreground">
-									Подписка на 1 месяц
-								</div>
-							</div>
-							<div className="text-lg font-bold text-violet-700">
-								{formatPrice(productPrice)}
-							</div>
-						</div>
-
-						<Separator />
-
 						{/* Payment selection */}
 						<section>
 							<h3 className="mb-3 text-sm font-semibold">
@@ -413,7 +389,7 @@ export default function BuyNowPage() {
 								</div>
 							) : (
 								// Compact preview of saved profile for confirmation
-								<div className="grid grid-cols-2 gap-3 text-sm">
+								<div className="flex flex-col gap-3 text-sm">
 									<div className="rounded-xl border p-3">
 										<div className="text-xs text-muted-foreground">
 											Имя

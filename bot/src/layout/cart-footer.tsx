@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/context/CartProvider";
+import { CartItem, useCart } from "@/context/CartProvider";
 import { Product } from "@/types";
 import { Minus, Plus, ShoppingCart } from "lucide-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface cartFooterProps {
 	cartElement: any;
@@ -11,8 +12,15 @@ interface cartFooterProps {
 }
 
 const CartFooter: React.FC<cartFooterProps> = ({ cartElement }) => {
-	const { Item, addToCart, increment, decrement } = useCart();
+	const { Item, addToCart, increment, decrement, clearSelected, addToSelected } = useCart();
+	const navigate = useNavigate();
 	const cartItem = Item(cartElement.configKey);
+
+	function buyOne(item: CartItem) {
+		clearSelected();
+		addToSelected(item);
+		navigate('/payment');
+	}
 
 	return (
 		<div className="fixed bottom-[100px] left-0 right-0 z-100 w-full px-2 ">
@@ -21,6 +29,7 @@ const CartFooter: React.FC<cartFooterProps> = ({ cartElement }) => {
 				<Button
 					className=" h-12 bg-default-btn hover:bg-purple-800 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200"
 					size="lg"
+					onClick={() => buyOne(cartElement)}
 				>
 					Заказать сейчас
 				</Button>
