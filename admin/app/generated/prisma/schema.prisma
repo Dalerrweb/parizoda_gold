@@ -141,9 +141,9 @@ model Order {
   items        OrderItem[]
   transactions Transaction[]
   paymentType  PaymentType
-  goldPrice    BigInt
+  goldPrice    Int
 
-  totalAmount BigInt
+  totalAmount Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

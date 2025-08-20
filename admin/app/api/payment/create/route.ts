@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       data: {
         invoiceId: payload.invoice_id,
         externalId: data.data.uuid,
-        userId: body.userId, //// need specify,
+        userId: body.userId,
         amount: payload.amount,
         status: $Enums.TransactionStatus.pending
       }

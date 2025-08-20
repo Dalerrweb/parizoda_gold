@@ -14708,8 +14708,8 @@ export namespace Prisma {
   export type OrderSumAggregateOutputType = {
     id: number | null
     userId: number | null
-    goldPrice: bigint | null
-    totalAmount: bigint | null
+    goldPrice: number | null
+    totalAmount: number | null
   }
 
   export type OrderMinAggregateOutputType = {
@@ -14717,8 +14717,8 @@ export namespace Prisma {
     userId: number | null
     status: $Enums.OrderStatus | null
     paymentType: $Enums.PaymentType | null
-    goldPrice: bigint | null
-    totalAmount: bigint | null
+    goldPrice: number | null
+    totalAmount: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14728,8 +14728,8 @@ export namespace Prisma {
     userId: number | null
     status: $Enums.OrderStatus | null
     paymentType: $Enums.PaymentType | null
-    goldPrice: bigint | null
-    totalAmount: bigint | null
+    goldPrice: number | null
+    totalAmount: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -14886,8 +14886,8 @@ export namespace Prisma {
     userId: number
     status: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint
-    totalAmount: bigint
+    goldPrice: number
+    totalAmount: number
     createdAt: Date
     updatedAt: Date
     _count: OrderCountAggregateOutputType | null
@@ -14987,8 +14987,8 @@ export namespace Prisma {
       userId: number
       status: $Enums.OrderStatus
       paymentType: $Enums.PaymentType
-      goldPrice: bigint
-      totalAmount: bigint
+      goldPrice: number
+      totalAmount: number
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["order"]>
@@ -15421,8 +15421,8 @@ export namespace Prisma {
     readonly userId: FieldRef<"Order", 'Int'>
     readonly status: FieldRef<"Order", 'OrderStatus'>
     readonly paymentType: FieldRef<"Order", 'PaymentType'>
-    readonly goldPrice: FieldRef<"Order", 'BigInt'>
-    readonly totalAmount: FieldRef<"Order", 'BigInt'>
+    readonly goldPrice: FieldRef<"Order", 'Int'>
+    readonly totalAmount: FieldRef<"Order", 'Int'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
   }
@@ -20553,8 +20553,8 @@ export namespace Prisma {
     userId?: IntFilter<"Order"> | number
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
-    goldPrice?: BigIntFilter<"Order"> | bigint | number
-    totalAmount?: BigIntFilter<"Order"> | bigint | number
+    goldPrice?: IntFilter<"Order"> | number
+    totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -20584,8 +20584,8 @@ export namespace Prisma {
     userId?: IntFilter<"Order"> | number
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
-    goldPrice?: BigIntFilter<"Order"> | bigint | number
-    totalAmount?: BigIntFilter<"Order"> | bigint | number
+    goldPrice?: IntFilter<"Order"> | number
+    totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -20617,8 +20617,8 @@ export namespace Prisma {
     userId?: IntWithAggregatesFilter<"Order"> | number
     status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeWithAggregatesFilter<"Order"> | $Enums.PaymentType
-    goldPrice?: BigIntWithAggregatesFilter<"Order"> | bigint | number
-    totalAmount?: BigIntWithAggregatesFilter<"Order"> | bigint | number
+    goldPrice?: IntWithAggregatesFilter<"Order"> | number
+    totalAmount?: IntWithAggregatesFilter<"Order"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
   }
@@ -21526,8 +21526,8 @@ export namespace Prisma {
   export type OrderCreateInput = {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -21540,8 +21540,8 @@ export namespace Prisma {
     userId: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -21551,8 +21551,8 @@ export namespace Prisma {
   export type OrderUpdateInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -21565,8 +21565,8 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -21578,8 +21578,8 @@ export namespace Prisma {
     userId: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21587,8 +21587,8 @@ export namespace Prisma {
   export type OrderUpdateManyMutationInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21598,8 +21598,8 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24139,8 +24139,8 @@ export namespace Prisma {
   export type OrderCreateWithoutUserInput = {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemCreateNestedManyWithoutOrderInput
@@ -24151,8 +24151,8 @@ export namespace Prisma {
     id?: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -24227,8 +24227,8 @@ export namespace Prisma {
     userId?: IntFilter<"Order"> | number
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
-    goldPrice?: BigIntFilter<"Order"> | bigint | number
-    totalAmount?: BigIntFilter<"Order"> | bigint | number
+    goldPrice?: IntFilter<"Order"> | number
+    totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }
@@ -25367,8 +25367,8 @@ export namespace Prisma {
   export type OrderCreateWithoutItemsInput = {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -25380,8 +25380,8 @@ export namespace Prisma {
     userId: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutOrderInput
@@ -25493,8 +25493,8 @@ export namespace Prisma {
   export type OrderUpdateWithoutItemsInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -25506,8 +25506,8 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutOrderNestedInput
@@ -25828,8 +25828,8 @@ export namespace Prisma {
   export type OrderCreateWithoutTransactionsInput = {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -25841,8 +25841,8 @@ export namespace Prisma {
     userId: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
     items?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -25903,8 +25903,8 @@ export namespace Prisma {
   export type OrderUpdateWithoutTransactionsInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -25916,8 +25916,8 @@ export namespace Prisma {
     userId?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -25927,8 +25927,8 @@ export namespace Prisma {
     id?: number
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
-    goldPrice: bigint | number
-    totalAmount: bigint | number
+    goldPrice: number
+    totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25948,8 +25948,8 @@ export namespace Prisma {
   export type OrderUpdateWithoutUserInput = {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUpdateManyWithoutOrderNestedInput
@@ -25960,8 +25960,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     items?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -25972,8 +25972,8 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
-    goldPrice?: BigIntFieldUpdateOperationsInput | bigint | number
-    totalAmount?: BigIntFieldUpdateOperationsInput | bigint | number
+    goldPrice?: IntFieldUpdateOperationsInput | number
+    totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
