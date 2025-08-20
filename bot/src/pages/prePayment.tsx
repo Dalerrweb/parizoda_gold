@@ -111,20 +111,19 @@ export default function BuyNowPage() {
 
 		if (paymentMethod === "cash") {
 			alert("Заказ оформлен! Оплата при получении.");
-		} else {
-			console.log(user);
-
-			const res = await fetch(
-				import.meta.env.VITE_API_URL + "/payment/create",
-				{
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ userId: user?.id })
-				}
-			);
-			const data = await res.json();
-			window.open(data.checkout_url, "_blank");
+			return;
 		}
+
+		const res = await fetch(
+			import.meta.env.VITE_API_URL + "/payment/create",
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ userId: user?.id })
+			}
+		);
+		const data = await res.json();
+		window.open(data.checkout_url, "_blank");
 	};
 
 	/**

@@ -18,8 +18,6 @@ export default function ProfileView() {
 
 	const { user } = useUser();
 
-	console.log(user);
-
 	const handleEditSuccess = () => {
 		setIsEditing(false);
 		navigate(0);

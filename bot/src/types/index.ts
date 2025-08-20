@@ -76,8 +76,26 @@ export type Order = {
 	product: Product;
 	productId: number;
 	status: OrderStatus;
+	totalAmount: number;
 	createdAt: Date;
+	items: OrderItem[];
 };
+
+export type OrderItem = {
+	id: number;
+	orderId: number;
+	productId: number;
+	quantity: number;
+	price: number;
+	weight: string;
+	markup: string;
+	variantId?: number | null;
+	type: ProductType;
+
+	order?: Order;
+	product?: Product;
+	variant?: ProductSize | null;
+}
 
 enum OrderStatus {
 	PENDING = "PENDING",

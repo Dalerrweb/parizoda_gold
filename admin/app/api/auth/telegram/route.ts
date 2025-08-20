@@ -11,12 +11,13 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 // 		where: { telegramId: 202783522 },
 // 		include: {
 // 			orders: {
-// 				select: {
-// 					id: true,
-// 					status: true,
-// 					createdAt: true,
-// 					updatedAt: true,
-// 				},
+// 				include: {
+// 					items: {
+// 						include: {
+// 							product: true
+// 						}
+// 					}
+// 				}
 // 			},
 // 		},
 // 	});
@@ -47,7 +48,15 @@ export async function POST(req: NextRequest) {
 	const existingUser = await prisma.user.findUnique({
 		where: { telegramId: tgUser.id },
 		include: {
-			orders: true,
+			orders: {
+				include: {
+					items: {
+						include: {
+							product: true
+						}
+					}
+				}
+			},
 		},
 	});
 

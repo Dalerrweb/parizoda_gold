@@ -28,12 +28,12 @@ export function BottomNavigation({ className }: BottomNavigationProps) {
 			label: "Корзина",
 			badgeCount: cartLength,
 		},
-		{
-			to: "/payment",
-			icon: ShoppingCart,
-			label: "Payment",
-			badgeCount: cartLength,
-		},
+		// {
+		// 	to: "/payment",
+		// 	icon: ShoppingCart,
+		// 	label: "Payment",
+		// 	badgeCount: cartLength,
+		// },
 		{
 			to: "/profile",
 			icon: User,
