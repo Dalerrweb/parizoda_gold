@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sheet";
 import { useUser } from "@/context/UserProvider";
 import { formatPrice } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 const isValidPhone = (v: string) => /^\+?998\d{9}$/.test(v.replace(/\D/g, ""));
 
@@ -41,7 +41,6 @@ export default function BuyNowPage() {
 	const [profileSheetOpen, setProfileSheetOpen] = useState(false);
 
 	const { user } = useUser();
-
 	/**
 	 * Initialize react-hook-form.
 	 * - mode: "onChange" gives immediate validation feedback and keeps CTA state in sync.
@@ -114,7 +113,16 @@ export default function BuyNowPage() {
 		if (paymentMethod === "cash") {
 			alert("Заказ оформлен! Оплата при получении.");
 		} else {
-			alert("Предоплата получена! Заказ будет доставлен.");
+			const res = await fetch(
+				import.meta.env.VITE_API_URL + "/payment/create",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ userId: user?.id })
+				}
+			);
+			const data = await res.json();
+			window.open(data.checkout_url, "_blank");
 		}
 	};
 
@@ -144,17 +152,15 @@ export default function BuyNowPage() {
 			type="button"
 			onClick={onClick}
 			aria-pressed={active}
-			className={`w-full rounded-2xl border-2 p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-				active
-					? "border-transparent bg-gradient-to-r from-sky-100 via-violet-100 to-fuchsia-100 shadow"
-					: "border-border hover:border-primary/50"
-			}`}
+			className={`w-full rounded-2xl border-2 p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${active
+				? "border-transparent bg-gradient-to-r from-sky-100 via-violet-100 to-fuchsia-100 shadow"
+				: "border-border hover:border-primary/50"
+				}`}
 		>
 			<div className="flex items-start gap-3">
 				<Icon
-					className={`mt-0.5 h-6 w-6 ${
-						active ? "opacity-100" : "opacity-80"
-					}`}
+					className={`mt-0.5 h-6 w-6 ${active ? "opacity-100" : "opacity-80"
+						}`}
 				/>
 				<div className="flex-1">
 					<div className="text-base font-semibold leading-tight">
@@ -349,7 +355,7 @@ export default function BuyNowPage() {
 														{String(
 															errors.phone
 																.message ||
-																"Неверный номер"
+															"Неверный номер"
 														)}
 													</p>
 												)}
@@ -468,10 +474,10 @@ export default function BuyNowPage() {
 						{isProcessing
 							? "Оформляем..."
 							: paymentMethod === "cash"
-							? "Оформить заказ"
-							: `Внести предоплату ${formatPrice(
+								? "Оформить заказ"
+								: `Внести предоплату ${formatPrice(
 									prepaymentAmount
-							  )}`}
+								)}`}
 					</Button>
 				</div>
 			</div>

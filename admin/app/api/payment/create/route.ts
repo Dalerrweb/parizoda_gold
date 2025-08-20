@@ -7,16 +7,12 @@ import { $Enums } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 
 function validateBody(body: Record<string, any>) {
-  if (!body.amount) {
-    return null;
-  }
-
-  if (typeof body.amount !== "number") {
+  if (!body.userId) {
     return null;
   }
 
   return {
-    amount: +body.amount
+    userId: body.userId
   };
 }
 
@@ -34,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const payload = {
       store_id: process.env.MULTICARD_STORE_ID,
-      amount: body.amount * 100,
+      amount: 1000 * 100, // need to get from .env
       invoice_id: randomUUID(),
       callback_url: process.env.MULTICARD_CALBACK_URL
     };
@@ -57,7 +53,7 @@ export async function POST(req: NextRequest) {
       data: {
         invoiceId: payload.invoice_id,
         externalId: data.data.uuid,
-        userId: 1, //// need specify,
+        userId: body.userId, //// need specify,
         amount: payload.amount,
         status: $Enums.TransactionStatus.pending
       }

@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import {
-	Minus,
-	Plus,
-	MoreVertical,
-	Trash2,
-	Package,
-	ShoppingBag,
-	HeartIcon
+  Minus,
+  Plus,
+  MoreVertical,
+  Trash2,
+  Package,
+  ShoppingBag,
+  HeartIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -18,12 +18,16 @@ import { ProductType } from "@/types";
 import { usePrice } from "@/context/PriceContext";
 import { formatPrice } from "@/lib/utils";
 import { useLikes } from "@/context/FavProvider";
+import { useUser } from "@/context/UserProvider";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const [total, setTotal] = useState(0);
   const { cart } = useCart();
   const { calculate } = usePrice();
+  const { user } = useUser();
 
+  const navigate = useNavigate();
   useEffect(() => {
     const totalSum = cart.reduce((acc, item) => {
       if (item.type === ProductType.BUNDLE) {
@@ -42,7 +46,7 @@ export default function CartPage() {
         return (
           acc +
           calculate({ weight: item.weight, markup: item.markup }) *
-            item.quantity
+          item.quantity
         );
       }
     }, 0);
@@ -86,26 +90,12 @@ export default function CartPage() {
               {formatPrice(total)}
             </p>
           </div>
-          <Button
+          <Link
             className="bg-default-btn hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-sm font-medium"
-            onClick={async () => {
-              console.info({ calculate: cart });
-              console.info({ "import.meta.env": import.meta.env });
-
-              const res = await fetch(
-                import.meta.env.VITE_API_URL + "/payment/create",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ amount: 1000 })
-                }
-              );
-              const data = await res.json();
-              window.open(data.checkout_url, "_blank");
-            }}
+            to={'/payment'}
           >
             Оформить заказ
-          </Button>
+          </Link>
         </div>
       </div>
     </div>
@@ -123,14 +113,14 @@ function CartItem({ item }: any) {
   const price =
     item.type === ProductType.BUNDLE
       ? item.items?.reduce(
-          (sum: number, bundleItem: any) =>
-            sum +
-            calculate({
-              weight: bundleItem.weight,
-              markup: bundleItem.markup
-            }),
-          0
-        ) * item.quantity
+        (sum: number, bundleItem: any) =>
+          sum +
+          calculate({
+            weight: bundleItem.weight,
+            markup: bundleItem.markup
+          }),
+        0
+      ) * item.quantity
       : calculate({ weight: item.weight, markup: item.markup }) * item.quantity;
 
   return (
@@ -157,9 +147,8 @@ function CartItem({ item }: any) {
 
       {/* Main Content */}
       <div
-        className={`bg-white transition-transform duration-300 ease-out relative z-10 ${
-          activeMenuId === item.configKey ? "-translate-x-40" : "translate-x-0"
-        }`}
+        className={`bg-white transition-transform duration-300 ease-out relative z-10 ${activeMenuId === item.configKey ? "-translate-x-40" : "translate-x-0"
+          }`}
       >
         <div className="p-4">
           <div className="flex items-start space-x-3">
