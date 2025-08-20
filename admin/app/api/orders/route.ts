@@ -189,8 +189,8 @@ export async function POST(req: NextRequest) {
 				data: {
 					userId,
 					paymentType: body.order.paymentType,
-					goldPrice: auPrice.pricePerGram,
-					totalAmount,
+					goldPrice: Number(auPrice.pricePerGram),
+					totalAmount: Number(auPrice.pricePerGram),
 				},
 			});
 
