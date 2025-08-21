@@ -36,7 +36,9 @@ const calculate = ({
 }) => {
 	const priceWithoutMarkup = Number(pricePerGram) * Number(weight);
 
-	return BigInt(priceWithoutMarkup * (1 + Number(markup) / 100));
+
+
+	return BigInt(priceWithoutMarkup * parseInt((1 + Number(markup) / 100).toFixed(0)));
 };
 
 export async function POST(req: NextRequest) {
@@ -44,6 +46,7 @@ export async function POST(req: NextRequest) {
 		const auth = await requireAuth(req);
 		if (!auth.success) return auth.response;
 		const userId = auth.payload.userId;
+		const user: any = await prisma.user.findUnique({ where: { telegramId: userId }, select: { id: true } });
 
 		const body = await req.json();
 
@@ -106,7 +109,7 @@ export async function POST(req: NextRequest) {
 				const price = calculate({
 					weight: dbSize.weight,
 					markup: dbProduct.markup,
-					pricePerGram: auPrice.pricePerGram,
+					pricePerGram: BigInt(auPrice.pricePerGram),
 				});
 
 				totalWeight += Number(dbSize.weight);
@@ -153,7 +156,7 @@ export async function POST(req: NextRequest) {
 					const price = calculate({
 						weight: dbSize.weight,
 						markup: bundleDbProduct.markup,
-						pricePerGram: auPrice.pricePerGram,
+						pricePerGram: BigInt(auPrice.pricePerGram),
 					});
 
 					totalWeight += Number(dbSize.weight);
@@ -166,12 +169,13 @@ export async function POST(req: NextRequest) {
 						price,
 					});
 				}
+
 				totalAmount += bundleTotalPrice * BigInt(item.quantity);
 
 				orderItemsData.push({
 					productId: item.productId,
 					quantity: item.quantity,
-					price: bundleTotalPrice,
+					price: Number(bundleTotalPrice),
 					weight: bundleItems
 						.reduce((sum, item) => sum + Number(item.weight), 0)
 						.toString(),
@@ -187,10 +191,10 @@ export async function POST(req: NextRequest) {
 			// Создаем основной заказ
 			const newOrder = await tx.order.create({
 				data: {
-					userId,
+					userId: user.id,
 					paymentType: body.order.paymentType,
 					goldPrice: Number(auPrice.pricePerGram),
-					totalAmount: Number(auPrice.pricePerGram),
+					totalAmount: Number(totalAmount),
 				},
 			});
 
@@ -201,7 +205,7 @@ export async function POST(req: NextRequest) {
 						orderId: newOrder.id,
 						productId: itemData.productId,
 						quantity: itemData.quantity,
-						price: itemData.price,
+						price: Number(itemData.price),
 						weight: itemData.weight,
 						markup: itemData.markup,
 						variantId: itemData.variantId,
@@ -221,7 +225,7 @@ export async function POST(req: NextRequest) {
 							variantId: bItem.variantId,
 							weight: bItem.weight,
 							markup: bItem.markup,
-							price: bItem.price,
+							price: Number(bItem.price),
 						})),
 					});
 				}
@@ -232,6 +236,7 @@ export async function POST(req: NextRequest) {
 
 		return NextResponse.json({ data: order }, { status: 201 });
 	} catch (e) {
+		console.error(e);
 		return NextResponse.json("Failed to create order", { status: 500 });
 	}
 }

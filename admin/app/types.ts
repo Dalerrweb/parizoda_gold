@@ -1,7 +1,7 @@
 export type AuPrice = {
 	id: number;
 	name: string;
-	pricePerGram: bigint;
+	pricePerGram: number;
 };
 
 export type Category = {

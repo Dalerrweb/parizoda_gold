@@ -66,7 +66,7 @@ export default function CartPage() {
       <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Checkbox className="rounded-md" onClick={selectOrRemoveAll} checked={selected.length === cart.length} />
+            <Checkbox className="rounded-md" onClick={selectOrRemoveAll} checked={Boolean(selected.length) && selected.length === cart.length} />
             <span className="text-sm font-medium">Выбрать все</span>
             <Badge variant="secondary" className="text-xs">
               {cart.length} товаров

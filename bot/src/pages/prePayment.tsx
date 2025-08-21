@@ -18,9 +18,52 @@ import {
 } from "@/components/ui/sheet";
 import { useUser } from "@/context/UserProvider";
 import { formatPrice } from "@/lib/utils";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ProductType } from "@/types";
+import { usePrice } from "@/context/PriceContext";
+import { CartItem, useCart } from "@/context/CartProvider";
+import axios from "axios";
 
 const isValidPhone = (v: string) => /^\+?998\d{9}$/.test(v.replace(/\D/g, ""));
+
+const createOrder = async (selected: CartItem[]) => {
+	try {
+		const items = selected.map((item: CartItem) => {
+			const res: any = {
+				productId: item.id,
+				quantity: item.quantity
+			};
+
+			if (item.configKey.includes('single')) {
+				res.variantId = item.selectedSizeId;
+			}
+
+			res.bundleItems = item.items?.map((elem) => ({ productId: elem.childId, variantId: elem.selectedSizeId })) || [];
+
+			return res;
+		});
+
+		const token = localStorage.getItem('token');
+
+		await axios.post(
+			import.meta.env.VITE_API_URL + '/orders',
+			{
+				order: {
+					paymentType: "CASH",
+					items: items
+				}
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		return true;
+	} catch (e) {
+		return false;
+	}
+}
 
 type ProfileForm = {
 	first_name: string;
@@ -39,8 +82,37 @@ export default function BuyNowPage() {
 	const [paymentMethod, setPaymentMethod] = useState<"cash" | "card">("cash");
 	const [isProcessing, setIsProcessing] = useState(false);
 	const [profileSheetOpen, setProfileSheetOpen] = useState(false);
+	const [total, setTotal] = useState(0);
 
 	const { user } = useUser();
+	const { selected, clearSelected, removeFromCart } = useCart();
+	const { calculate } = usePrice();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const totalSum = selected.reduce((acc: any, item: any) => {
+			if (item.type === ProductType.BUNDLE) {
+				const bundleTotal =
+					item.items?.reduce(
+						(sum: number, bundleItem: any) =>
+							sum +
+							calculate({
+								weight: bundleItem.weight,
+								markup: bundleItem.markup
+							}),
+						0
+					) || 0;
+				return acc + bundleTotal * item.quantity;
+			} else {
+				return (
+					acc +
+					calculate({ weight: item.weight, markup: item.markup }) *
+					item.quantity
+				);
+			}
+		}, 0);
+		setTotal(totalSum);
+	}, [selected, calculate]);
 	/**
 	 * Initialize react-hook-form.
 	 * - mode: "onChange" gives immediate validation feedback and keeps CTA state in sync.
@@ -92,8 +164,8 @@ export default function BuyNowPage() {
 		);
 	}, [isValid, getValues, watch()]);
 
-	const productPrice = 350_000; // Full price (UZS)
-	const prepaymentAmount = 50_000; // Prepay for card (UZS)
+	const productPrice = total; // Full price (UZS)
+	const prepaymentAmount = Number(import.meta.env.VITE_ORDER_FIX_PRICE); // Prepay for card (UZS)
 
 	/**
 	 * Purchase handler: guard with profile requirements.
@@ -108,7 +180,11 @@ export default function BuyNowPage() {
 		setIsProcessing(true);
 
 		if (paymentMethod === "cash") {
-			alert("Заказ оформлен! Оплата при получении.");
+			await createOrder(selected);
+			setIsProcessing(false);
+			clearSelected();
+			selected.forEach((item) => removeFromCart(item.configKey));
+			navigate('/profile');
 			return;
 		}
 
@@ -127,7 +203,7 @@ export default function BuyNowPage() {
 		}
 
 		window.open(data.checkout_url, "_blank");
-	
+
 		setIsProcessing(false);
 	};
 

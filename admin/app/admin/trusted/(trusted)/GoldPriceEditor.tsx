@@ -19,7 +19,7 @@ import { AlertTriangle } from "lucide-react";
 
 type Props = {
 	initialPrice: number;
-	handleUpdatePrice: (newPrice: bigint) => Promise<void>;
+	handleUpdatePrice: (newPrice: number) => Promise<void>;
 };
 
 export default function GoldPriceEditor({
@@ -54,7 +54,7 @@ export default function GoldPriceEditor({
 		setConfirmationError("");
 
 		try {
-			await handleUpdatePrice(BigInt(numericValue));
+			await handleUpdatePrice(numericValue);
 			setShowConfirmModal(false);
 			alert("Цена обновлена");
 		} catch (error) {

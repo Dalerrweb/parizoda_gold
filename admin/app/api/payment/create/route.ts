@@ -11,8 +11,13 @@ function validateBody(body: Record<string, any>) {
     return null;
   }
 
+  if (!body.amount && typeof body.amount !== 'number') {
+    return null;
+  }
+
   return {
-    userId: body.userId
+    userId: body.userId,
+    amount: body.amount
   };
 }
 
@@ -41,7 +46,7 @@ export async function POST(req: NextRequest) {
 
     const payload = {
       store_id: process.env.MULTICARD_STORE_ID,
-      amount: Number(process.env.ORDER_FIX_PRICE) * 100,
+      amount: body.amount * 100,
       invoice_id: randomUUID(),
       callback_url: process.env.MULTICARD_CALBACK_URL
     };

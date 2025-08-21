@@ -14,6 +14,7 @@ export interface CartItem {
 	image: string;
 	weight: number;
 	markup: number;
+	selectedSizeId: any;
 	title: string;
 	quantity: number;
 	items?: CartBundleItem[];
@@ -26,6 +27,8 @@ type CartBundleItem = {
 	weight: number;
 	markup: number;
 	title: string;
+	childId: number;
+	selectedSizeId: number;
 };
 
 interface CartContextType {
@@ -114,32 +117,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 		removeFromSelected(configKey);
 	}, []);
 
-	const increment = useCallback((configKey: string) => {
-		setCart((prev) =>
-			prev.map((item) =>
-				item.configKey === configKey
-					? {
-						...item,
-						quantity: item.quantity + 1,
-					}
-					: item
-			)
-		);
-	}, []);
-
 	const addToSelected = useCallback((item: CartItem) => {
 		setSelected((prev) => {
 			const existing = prev.find((i) => i.configKey === item.configKey);
 			if (existing) {
-				return prev.map((i) =>
-					i.configKey === item.configKey
-						? { ...i, quantity: i.quantity + item.quantity }
-						: i
-				);
+				return prev.map((i) => i.configKey === item.configKey
+					? { ...i }
+					: i);
 			} else {
 				return [...prev, item];
 			}
 		});
+	}, []);
+
+	const increment = useCallback((configKey: string) => {
+		setCart((prev) =>
+			prev.map((item) => item.configKey === configKey
+				? {
+					...item,
+					quantity: item.quantity + 1,
+				}
+				: item
+			)
+		);
+
+		setSelected((prev) =>
+			prev.map((item) => item.configKey === configKey
+				? {
+					...item,
+					quantity: item.quantity + 1,
+				}
+				: item
+			)
+		);
 	}, []);
 
 	const removeFromSelected = useCallback((configKey: string) => {
@@ -160,6 +170,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
 	const decrement = useCallback((configKey: string) => {
 		setCart((prev) =>
+			prev
+				.map((item) =>
+					item.configKey === configKey
+						? {
+							...item,
+							quantity: item.quantity - 1,
+						}
+						: item
+				)
+				.filter((item) => item.quantity > 0)
+		);
+
+		setSelected((prev) =>
 			prev
 				.map((item) =>
 					item.configKey === configKey

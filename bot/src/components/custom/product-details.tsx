@@ -33,6 +33,7 @@ function ProductDetails({ product }: ProductDetailsProps) {
 
 	const cartElement: CartItem = {
 		configKey,
+		selectedSizeId: selectedSize?.id,
 		id: product.id,
 		type: product.type,
 		image: product.images?.[0]?.url,

@@ -4,7 +4,7 @@ import GoldPriceEditor from "./GoldPriceEditor";
 export default async function Page() {
 	const au = await prisma.auPrice.findFirst();
 
-	async function handleUpdatePrice(newPrice: bigint) {
+	async function handleUpdatePrice(newPrice: number) {
 		"use server";
 		if (!au) return;
 		await prisma.auPrice.update({
