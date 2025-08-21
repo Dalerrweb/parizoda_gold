@@ -28,6 +28,7 @@ const isValidPhone = (v: string) => /^\+?998\d{9}$/.test(v.replace(/\D/g, ""));
 
 const createOrder = async (selected: CartItem[]) => {
 	try {
+		const initData = window.Telegram.WebApp.initData;
 		const items = selected.map((item: CartItem) => {
 			const res: any = {
 				productId: item.id,
@@ -51,7 +52,8 @@ const createOrder = async (selected: CartItem[]) => {
 				order: {
 					paymentType: "CASH",
 					items: items
-				}
+				},
+				initData
 			},
 			{
 				headers: {
