@@ -50,25 +50,25 @@ export async function POST(req: NextRequest) {
 
 		const body = await req.json();
 
-		if (
-			!body.initData ||
-			!validateInitData(body.initData, TELEGRAM_BOT_TOKEN)
-		) {
-			return NextResponse.json(
-				{ error: "Invalid initial data" },
-				{ status: 400 }
-			);
-		}
+		// if (
+		// 	!body.initData ||
+		// 	!validateInitData(body.initData, TELEGRAM_BOT_TOKEN)
+		// ) {
+		// 	return NextResponse.json(
+		// 		{ error: "Invalid initial data" },
+		// 		{ status: 400 }
+		// 	);
+		// }
 
-		const data = parseInitData(body.initData);
-		const tgUser = JSON.parse(data.user);
+		// const data = parseInitData(body.initData);
+		// const tgUser = JSON.parse(data.user);
 
-		if (Number(userId) !== Number(tgUser.id)) {
-			return NextResponse.json(
-				{ error: "User ID mismatch" },
-				{ status: 400 }
-			);
-		}
+		// if (Number(userId) !== Number(tgUser.id)) {
+		// 	return NextResponse.json(
+		// 		{ error: "User ID mismatch" },
+		// 		{ status: 400 }
+		// 	);
+		// }
 
 		const auPrice = await prisma.auPrice.findFirst();
 
