@@ -46,10 +46,14 @@ export async function POST(req: NextRequest) {
 		const auth = await requireAuth(req);
 		if (!auth.success) return auth.response;
 		const userId = auth.payload.userId;
-		console.info(userId);
-		
-		const user: any = await prisma.user.findUnique({ where: { telegramId: userId }, select: { id: true } });
-		console.info(user);
+		const user: any = await prisma.user.findFirst({
+			where: {
+				OR: [
+					{ telegramId: userId },
+					{ id: userId }
+				]
+			}, select: { id: true }
+		});
 
 		const body = await req.json();
 
