@@ -71,11 +71,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(null, { status: 400 });
     }
 
-    const [res, status]: any = await createOrder(req);
-
-    if (status.status !== 201) {
-      NextResponse.json({ checkout_url: null }, { status: 400 });
-    }
+    const order = await createOrder({ userId: body.userId, body });
 
     await prisma.transaction.create({
       data: {
@@ -84,10 +80,9 @@ export async function POST(req: NextRequest) {
         userId: body.userId,
         amount: payload.amount,
         status: $Enums.TransactionStatus.pending,
-        orderId: res.data.id
+        orderId: order.id
       }
     });
-
 
     return NextResponse.json(
       {

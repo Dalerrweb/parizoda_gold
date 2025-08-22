@@ -214,11 +214,13 @@ export default function BuyNowPage() {
 		);
 		if (!res.data.checkout_url) {
 			alert('Что-то пошло не так проверьте свои данные !');
+			return;
 		}
 
 		window.open(res.data.checkout_url, "_blank");
 
 		clearSelected();
+		// selected.forEach((item) => removeFromCart(item.configKey));
 
 		setIsProcessing(false);
 	};
