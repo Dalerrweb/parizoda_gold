@@ -16,7 +16,7 @@ function validateBody(body: Record<string, any>) {
     return null;
   }
 
-  if (!body.ofd.length) {
+  if (!body.order.items.length) {
     return null;
   }
 
