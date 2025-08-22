@@ -221,7 +221,7 @@ export default function BuyNowPage() {
 
 		clearSelected();
 		selected.forEach((item) => removeFromCart(item.configKey));
-
+		navigate('/profile');
 		setIsProcessing(false);
 	};
 

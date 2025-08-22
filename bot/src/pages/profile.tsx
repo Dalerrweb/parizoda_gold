@@ -14,6 +14,7 @@ import { OrderHistory } from "@/components/custom/profile/order-history";
 
 export default function ProfileView() {
 	const [isEditing, setIsEditing] = useState(false);
+	const [_, useRefetch] = useState(false);
 	const navigate = useNavigate();
 
 	const { user } = useUser();
@@ -26,6 +27,10 @@ export default function ProfileView() {
 	const handleEditCancel = () => {
 		setIsEditing(false);
 	};
+
+	const handleUpdateComponent = () => {
+		useRefetch(true);
+	}
 
 	if (!user) {
 		return (
@@ -55,7 +60,7 @@ export default function ProfileView() {
 					</div>
 					<TabsList className="mr-2">
 						<TabsTrigger value="profile">Профиль</TabsTrigger>
-						<TabsTrigger value="orders">Заказы</TabsTrigger>
+						<TabsTrigger onClick={handleUpdateComponent} value="orders">Заказы</TabsTrigger>
 					</TabsList>
 				</header>
 
@@ -88,9 +93,9 @@ export default function ProfileView() {
 					<br />
 				</TabsContent>
 
-				<TabsContent value="orders" className="space-y-6">
+				{/* <TabsContent value="orders" className="space-y-6">
 					<OrderHistory user={user} />
-				</TabsContent>
+				</TabsContent> */}
 			</Tabs>
 		</main>
 	);
