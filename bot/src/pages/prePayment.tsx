@@ -217,7 +217,7 @@ export default function BuyNowPage() {
 			return;
 		}
 
-		window.open(res.data.checkout_url, "_blank");
+		window.Telegram.WebApp.openLink.open(res.data.checkout_url, "_blank");
 
 		clearSelected();
 		selected.forEach((item) => removeFromCart(item.configKey));
