@@ -19,6 +19,8 @@ export default function ProfileView() {
 
 	const { user } = useUser();
 
+	useRefetch(prev => !prev);
+
 	const handleEditSuccess = () => {
 		setIsEditing(false);
 		navigate(0);
@@ -27,10 +29,6 @@ export default function ProfileView() {
 	const handleEditCancel = () => {
 		setIsEditing(false);
 	};
-
-	const handleUpdateComponent = () => {
-		useRefetch(true);
-	}
 
 	if (!user) {
 		return (
@@ -60,7 +58,7 @@ export default function ProfileView() {
 					</div>
 					<TabsList className="mr-2">
 						<TabsTrigger value="profile">Профиль</TabsTrigger>
-						<TabsTrigger onClick={handleUpdateComponent} value="orders">Заказы</TabsTrigger>
+						<TabsTrigger value="orders">Заказы</TabsTrigger>
 					</TabsList>
 				</header>
 
