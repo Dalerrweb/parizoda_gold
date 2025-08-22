@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { ChekoutUrlResponseType } from "./create-checkout-response.type";
 import { $Enums } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { createOrder } from "../../orders/route";
+import { createOrder } from "../../orders/create-order";
 
 function validateBody(body: Record<string, any>) {
   if (!body.userId) {
