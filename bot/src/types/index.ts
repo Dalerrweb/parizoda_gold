@@ -79,6 +79,8 @@ export type Order = {
 	totalAmount: number;
 	createdAt: Date;
 	items: OrderItem[];
+	paymentType: string;
+	isActive: boolean;
 };
 
 export type OrderItem = {

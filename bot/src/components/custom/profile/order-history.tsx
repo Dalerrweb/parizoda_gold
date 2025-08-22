@@ -15,12 +15,44 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronDown, ShoppingBag } from "lucide-react";
 import { formatDate, formatPrice, getStatusColor } from "@/lib/utils";
 import { Order, User } from "@/types";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useState } from "react";
 
 interface OrderHistoryProps {
 	user: User;
 }
 
 export function OrderHistory({ user }: OrderHistoryProps) {
+	const [isProcessing, setIsProcessing] = useState(false);
+
+	const rePayOrder = async (orderId: number) => {
+		setIsProcessing(true);
+		const token = localStorage.getItem('token');
+
+		const res = await axios.post(
+			import.meta.env.VITE_API_URL + "/payment/repay",
+			{
+				userId: user?.id,
+				amount: Number(import.meta.env.VITE_ORDER_FIX_PRICE || 5000),
+				orderId: orderId
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			}
+		);
+		if (!res.data.checkout_url) {
+			alert('Что-то пошло не так проверьте свои данные !');
+			return;
+		}
+
+		window.Telegram.WebApp.openLink(res.data.checkout_url);
+		
+		setIsProcessing(false);
+	}
+
 	if (!user.orders.length) {
 		return (
 			<Card>
@@ -66,10 +98,10 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 									<div className="flex items-center gap-4">
 										<Badge
 											className={`${getStatusColor(
-												order.status
+												order.isActive === false && order.paymentType === "PREPAYMENTBYCARD" ? "notPayed" : order.status
 											)} text-white`}
 										>
-											{order.status}
+											{order.isActive === false && order.paymentType === "PREPAYMENTBYCARD" ? "NOT PREPAYED" : order.status}
 										</Badge>
 										<div>
 											<p className="font-bold">
@@ -88,7 +120,7 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 									</div>
 								</div>
 							</CollapsibleTrigger>
-							<CollapsibleContent>
+							<CollapsibleContent className="flex flex-col">
 								<Separator />
 								<div className="p-4 space-y-4">
 									<div>
@@ -128,6 +160,13 @@ export function OrderHistory({ user }: OrderHistoryProps) {
 										</Button>
 									</div> */}
 								</div>
+								<Button className="mx-4 mb-4" onClick={() => rePayOrder(order?.id)}>
+									{isProcessing
+										? "Оформляем..."
+										: `Внести предоплату ${formatPrice(
+											Number(import.meta.env.VITE_ORDER_FIX_PRICE)
+										)}`}
+								</Button>
 							</CollapsibleContent>
 						</Collapsible>
 					))}

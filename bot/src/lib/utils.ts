@@ -12,6 +12,7 @@ export function getStatusColor(status: string): string {
 		shipped: "bg-purple-500",
 		delivered: "bg-green-500",
 		cancelled: "bg-red-500",
+		notPayed: "bg-red-500"
 	};
 
 	return statusColors[status.toLowerCase()] || "bg-gray-500";
