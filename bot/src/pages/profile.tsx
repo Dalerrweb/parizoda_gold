@@ -19,11 +19,10 @@ export default function ProfileView() {
 
 	const { user } = useUser();
 
-	useRefetch(prev => !prev);
-
 	const handleEditSuccess = () => {
 		setIsEditing(false);
 		navigate(0);
+		useRefetch(prev => !prev);
 	};
 
 	const handleEditCancel = () => {
@@ -91,9 +90,9 @@ export default function ProfileView() {
 					<br />
 				</TabsContent>
 
-				{/* <TabsContent value="orders" className="space-y-6">
+				<TabsContent value="orders" className="space-y-6">
 					<OrderHistory user={user} />
-				</TabsContent> */}
+				</TabsContent>
 			</Tabs>
 		</main>
 	);
