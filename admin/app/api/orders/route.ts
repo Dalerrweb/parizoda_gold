@@ -1,4 +1,4 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { requireAuth } from "@/lib/auth";
 import { parseInitData, validateInitData } from "@/lib/utils";
@@ -41,7 +41,7 @@ const calculate = ({
 	return BigInt(priceWithoutMarkup * parseInt((1 + Number(markup) / 100).toFixed(0)));
 };
 
-export async function POST(req: NextRequest) {
+export async function createOrder(req: NextRequest) {
 	try {
 		const auth = await requireAuth(req);
 		if (!auth.success) return auth.response;
@@ -60,10 +60,10 @@ export async function POST(req: NextRequest) {
 		const auPrice = await prisma.auPrice.findFirst();
 
 		if (!auPrice) {
-			return NextResponse.json(
+			return [
 				{ error: "Server error occurred while fetching AU price" },
 				{ status: 404 }
-			);
+			];
 		}
 
 		// all checks passed, proceed with order creation
@@ -77,10 +77,10 @@ export async function POST(req: NextRequest) {
 				where: { id: item.productId },
 			});
 			if (!dbProduct) {
-				return NextResponse.json(
+				return [
 					{ error: `Product with ID ${item.id} not found` },
 					{ status: 404 }
-				);
+				];
 			}
 
 			if (dbProduct.type === ProductType.SINGLE) {
@@ -88,10 +88,10 @@ export async function POST(req: NextRequest) {
 					where: { id: item.variantId },
 				});
 				if (!dbSize) {
-					return NextResponse.json(
+					return [
 						{ error: `Size with ID ${item.variantId} not found` },
 						{ status: 404 }
-					);
+					];
 				}
 				const price = calculate({
 					weight: dbSize.weight,
@@ -122,23 +122,23 @@ export async function POST(req: NextRequest) {
 						where: { id: bundleItem.productId },
 					});
 					if (!bundleDbProduct) {
-						return NextResponse.json(
+						return [
 							{
 								error: `Bundle product with ID ${bundleItem.productId} not found`,
 							},
 							{ status: 404 }
-						);
+						];
 					}
 					const dbSize = await prisma.productSize.findUnique({
 						where: { id: bundleItem.variantId },
 					});
 					if (!dbSize) {
-						return NextResponse.json(
+						return [
 							{
 								error: `Size with ID ${bundleItem.variantId} not found`,
 							},
 							{ status: 404 }
-						);
+						];
 					}
 					const price = calculate({
 						weight: dbSize.weight,
@@ -182,6 +182,7 @@ export async function POST(req: NextRequest) {
 					paymentType: body.order.paymentType,
 					goldPrice: Number(auPrice.pricePerGram),
 					totalAmount: Number(totalAmount),
+					isActive: body.order.paymentType === 'CASH'
 				},
 			});
 
@@ -221,9 +222,14 @@ export async function POST(req: NextRequest) {
 			return newOrder;
 		});
 
-		return NextResponse.json({ data: order }, { status: 201 });
+		return [{ data: order }, { status: 201 }];
 	} catch (e) {
 		console.error(e);
-		return NextResponse.json("Failed to create order", { status: 500 });
+		return ["Failed to create order", { status: 500 }];
 	}
+}
+
+export async function POST(req: NextRequest) {
+	const [res, status]: any = await createOrder(req);
+	NextResponse.json(res, status);
 }

@@ -142,6 +142,7 @@ model Order {
   transactions Transaction[]
   paymentType  PaymentType
   goldPrice    Int
+  isActive     Boolean       @default(false)
 
   totalAmount Int
   createdAt   DateTime @default(now())

@@ -40,6 +40,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(null, { status: 200 });
   }
 
+  await prisma.order.updateMany({
+    where: {
+      id: transaction.orderId as number
+    },
+    data: {
+      isActive: true
+    }
+  })
+
   await prisma.transaction.updateMany({
     where: {
       invoiceId: data.invoice_id

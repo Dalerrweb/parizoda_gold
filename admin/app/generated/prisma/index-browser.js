@@ -218,6 +218,7 @@ exports.Prisma.OrderScalarFieldEnum = {
   status: 'status',
   paymentType: 'paymentType',
   goldPrice: 'goldPrice',
+  isActive: 'isActive',
   totalAmount: 'totalAmount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

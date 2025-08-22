@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import { ChekoutUrlResponseType } from "./create-checkout-response.type";
 import { $Enums } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
+import { createOrder } from "../../orders/route";
 
 function validateBody(body: Record<string, any>) {
   if (!body.userId) {
@@ -15,9 +16,14 @@ function validateBody(body: Record<string, any>) {
     return null;
   }
 
+  if (!body.ofd.length) {
+    return null;
+  }
+
   return {
     userId: body.userId,
-    amount: body.amount
+    amount: body.amount,
+    order: body.order
   };
 }
 
@@ -48,7 +54,7 @@ export async function POST(req: NextRequest) {
       store_id: process.env.MULTICARD_STORE_ID,
       amount: body.amount * 100,
       invoice_id: randomUUID(),
-      callback_url: process.env.MULTICARD_CALBACK_URL
+      callback_url: process.env.MULTICARD_CALBACK_URL,
     };
 
     const token = await getMulticardToken();
@@ -65,15 +71,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(null, { status: 400 });
     }
 
+    const [res, status]: any = await createOrder(req);
+
+    if (status.status !== 201) {
+      NextResponse.json({ checkout_url: null }, { status: 400 });
+    }
+
     await prisma.transaction.create({
       data: {
         invoiceId: payload.invoice_id,
         externalId: data.data.uuid,
         userId: body.userId,
         amount: payload.amount,
-        status: $Enums.TransactionStatus.pending
+        status: $Enums.TransactionStatus.pending,
+        orderId: res.data.id
       }
     });
+
 
     return NextResponse.json(
       {

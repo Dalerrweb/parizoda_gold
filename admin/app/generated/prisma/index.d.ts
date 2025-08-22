@@ -14718,6 +14718,7 @@ export namespace Prisma {
     status: $Enums.OrderStatus | null
     paymentType: $Enums.PaymentType | null
     goldPrice: number | null
+    isActive: boolean | null
     totalAmount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14729,6 +14730,7 @@ export namespace Prisma {
     status: $Enums.OrderStatus | null
     paymentType: $Enums.PaymentType | null
     goldPrice: number | null
+    isActive: boolean | null
     totalAmount: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -14740,6 +14742,7 @@ export namespace Prisma {
     status: number
     paymentType: number
     goldPrice: number
+    isActive: number
     totalAmount: number
     createdAt: number
     updatedAt: number
@@ -14767,6 +14770,7 @@ export namespace Prisma {
     status?: true
     paymentType?: true
     goldPrice?: true
+    isActive?: true
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
@@ -14778,6 +14782,7 @@ export namespace Prisma {
     status?: true
     paymentType?: true
     goldPrice?: true
+    isActive?: true
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
@@ -14789,6 +14794,7 @@ export namespace Prisma {
     status?: true
     paymentType?: true
     goldPrice?: true
+    isActive?: true
     totalAmount?: true
     createdAt?: true
     updatedAt?: true
@@ -14887,6 +14893,7 @@ export namespace Prisma {
     status: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive: boolean
     totalAmount: number
     createdAt: Date
     updatedAt: Date
@@ -14917,6 +14924,7 @@ export namespace Prisma {
     status?: boolean
     paymentType?: boolean
     goldPrice?: boolean
+    isActive?: boolean
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14932,6 +14940,7 @@ export namespace Prisma {
     status?: boolean
     paymentType?: boolean
     goldPrice?: boolean
+    isActive?: boolean
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14944,6 +14953,7 @@ export namespace Prisma {
     status?: boolean
     paymentType?: boolean
     goldPrice?: boolean
+    isActive?: boolean
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -14956,12 +14966,13 @@ export namespace Prisma {
     status?: boolean
     paymentType?: boolean
     goldPrice?: boolean
+    isActive?: boolean
     totalAmount?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentType" | "goldPrice" | "totalAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentType" | "goldPrice" | "isActive" | "totalAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     items?: boolean | Order$itemsArgs<ExtArgs>
@@ -14988,6 +14999,7 @@ export namespace Prisma {
       status: $Enums.OrderStatus
       paymentType: $Enums.PaymentType
       goldPrice: number
+      isActive: boolean
       totalAmount: number
       createdAt: Date
       updatedAt: Date
@@ -15422,6 +15434,7 @@ export namespace Prisma {
     readonly status: FieldRef<"Order", 'OrderStatus'>
     readonly paymentType: FieldRef<"Order", 'PaymentType'>
     readonly goldPrice: FieldRef<"Order", 'Int'>
+    readonly isActive: FieldRef<"Order", 'Boolean'>
     readonly totalAmount: FieldRef<"Order", 'Int'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
@@ -19618,6 +19631,7 @@ export namespace Prisma {
     status: 'status',
     paymentType: 'paymentType',
     goldPrice: 'goldPrice',
+    isActive: 'isActive',
     totalAmount: 'totalAmount',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -20554,6 +20568,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
     goldPrice?: IntFilter<"Order"> | number
+    isActive?: BoolFilter<"Order"> | boolean
     totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -20568,6 +20583,7 @@ export namespace Prisma {
     status?: SortOrder
     paymentType?: SortOrder
     goldPrice?: SortOrder
+    isActive?: SortOrder
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20585,6 +20601,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
     goldPrice?: IntFilter<"Order"> | number
+    isActive?: BoolFilter<"Order"> | boolean
     totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -20599,6 +20616,7 @@ export namespace Prisma {
     status?: SortOrder
     paymentType?: SortOrder
     goldPrice?: SortOrder
+    isActive?: SortOrder
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -20618,6 +20636,7 @@ export namespace Prisma {
     status?: EnumOrderStatusWithAggregatesFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeWithAggregatesFilter<"Order"> | $Enums.PaymentType
     goldPrice?: IntWithAggregatesFilter<"Order"> | number
+    isActive?: BoolWithAggregatesFilter<"Order"> | boolean
     totalAmount?: IntWithAggregatesFilter<"Order"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -21527,6 +21546,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21541,6 +21561,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21552,6 +21573,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21566,6 +21588,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21579,6 +21602,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -21588,6 +21612,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -21599,6 +21624,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -22517,6 +22543,7 @@ export namespace Prisma {
     status?: SortOrder
     paymentType?: SortOrder
     goldPrice?: SortOrder
+    isActive?: SortOrder
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22535,6 +22562,7 @@ export namespace Prisma {
     status?: SortOrder
     paymentType?: SortOrder
     goldPrice?: SortOrder
+    isActive?: SortOrder
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -22546,6 +22574,7 @@ export namespace Prisma {
     status?: SortOrder
     paymentType?: SortOrder
     goldPrice?: SortOrder
+    isActive?: SortOrder
     totalAmount?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -24140,6 +24169,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24152,6 +24182,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24228,6 +24259,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFilter<"Order"> | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFilter<"Order"> | $Enums.PaymentType
     goldPrice?: IntFilter<"Order"> | number
+    isActive?: BoolFilter<"Order"> | boolean
     totalAmount?: IntFilter<"Order"> | number
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
@@ -25368,6 +25400,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25381,6 +25414,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25494,6 +25528,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25507,6 +25542,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25829,6 +25865,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25842,6 +25879,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25904,6 +25942,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25917,6 +25956,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25928,6 +25968,7 @@ export namespace Prisma {
     status?: $Enums.OrderStatus
     paymentType: $Enums.PaymentType
     goldPrice: number
+    isActive?: boolean
     totalAmount: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -25949,6 +25990,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25961,6 +26003,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -25973,6 +26016,7 @@ export namespace Prisma {
     status?: EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
     paymentType?: EnumPaymentTypeFieldUpdateOperationsInput | $Enums.PaymentType
     goldPrice?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     totalAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

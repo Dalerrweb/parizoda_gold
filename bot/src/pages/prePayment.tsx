@@ -26,23 +26,26 @@ import axios from "axios";
 
 const isValidPhone = (v: string) => /^\+?998\d{9}$/.test(v.replace(/\D/g, ""));
 
+const createOrderBody = (selected: CartItem[]) => {
+	return selected.map((item: CartItem) => {
+		const res: any = {
+			productId: item.id,
+			quantity: item.quantity
+		};
+
+		if (item.configKey.includes('single')) {
+			res.variantId = item.selectedSizeId;
+		}
+
+		res.bundleItems = item.items?.map((elem) => ({ productId: elem.childId, variantId: elem.selectedSizeId })) || [];
+
+		return res;
+	});
+}
+
 const createOrder = async (selected: CartItem[]) => {
 	try {
-		const initData = window.Telegram.WebApp.initData;
-		const items = selected.map((item: CartItem) => {
-			const res: any = {
-				productId: item.id,
-				quantity: item.quantity
-			};
-
-			if (item.configKey.includes('single')) {
-				res.variantId = item.selectedSizeId;
-			}
-
-			res.bundleItems = item.items?.map((elem) => ({ productId: elem.childId, variantId: elem.selectedSizeId })) || [];
-
-			return res;
-		});
+		const items = createOrderBody(selected);
 
 		const token = localStorage.getItem('token');
 
@@ -51,9 +54,8 @@ const createOrder = async (selected: CartItem[]) => {
 			{
 				order: {
 					paymentType: "CASH",
-					items: items
+					items
 				},
-				initData
 			},
 			{
 				headers: {
@@ -190,21 +192,33 @@ export default function BuyNowPage() {
 			return;
 		}
 
-		const res = await fetch(
+		const items = createOrderBody(selected);
+
+		const token = localStorage.getItem('token');
+
+		const res = await axios.post(
 			import.meta.env.VITE_API_URL + "/payment/create",
 			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ userId: user?.id })
+				userId: user?.id,
+				amount: total,
+				order: {
+					paymentType: "CARD",
+					items
+				}
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
 			}
 		);
-		const data = await res.json();
-
-		if (!data.checkout_url) {
+		if (!res.data.checkout_url) {
 			alert('Что-то пошло не так проверьте свои данные !');
 		}
 
-		window.open(data.checkout_url, "_blank");
+		window.open(res.data.checkout_url, "_blank");
+
+		clearSelected();
 
 		setIsProcessing(false);
 	};

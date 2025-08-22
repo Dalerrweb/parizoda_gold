@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
 		where: { telegramId: tgUser.id },
 		include: {
 			orders: {
+				where: { isActive: true },
 				include: {
 					items: {
 						include: {

@@ -40,6 +40,11 @@ function ProductDetails({ product }: ProductDetailsProps) {
 		weight: selectedSize?.weight || 0,
 		markup: product.markup,
 		title: product.name,
+		price: calculate({
+			weight:
+				selectedSize?.weight || 0,
+			markup: product.markup,
+		}),
 		quantity: 1,
 		items: Object.values(bundleItems),
 	};

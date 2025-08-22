@@ -14,6 +14,7 @@ export interface CartItem {
 	image: string;
 	weight: number;
 	markup: number;
+	price: number;
 	selectedSizeId: any;
 	title: string;
 	quantity: number;
@@ -27,6 +28,7 @@ type CartBundleItem = {
 	weight: number;
 	markup: number;
 	title: string;
+	price: number;
 	childId: number;
 	selectedSizeId: number;
 };
