@@ -202,7 +202,7 @@ export default function BuyNowPage() {
 				userId: user?.id,
 				amount: Number(import.meta.env.VITE_ORDER_FIX_PRICE || 5000),
 				order: {
-					paymentType: "CARD",
+					paymentType: "PREPAYMENTBYCARD",
 					items
 				}
 			},
@@ -220,7 +220,7 @@ export default function BuyNowPage() {
 		window.open(res.data.checkout_url, "_blank");
 
 		clearSelected();
-		// selected.forEach((item) => removeFromCart(item.configKey));
+		selected.forEach((item) => removeFromCart(item.configKey));
 
 		setIsProcessing(false);
 	};
