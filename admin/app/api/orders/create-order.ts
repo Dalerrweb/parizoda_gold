@@ -17,7 +17,7 @@ const calculate = ({
 }) => {
     const priceWithoutMarkup = Number(pricePerGram) * Number(weight);
 
-    return BigInt(priceWithoutMarkup * parseInt((1 + Number(markup) / 100).toFixed(0)));
+    return priceWithoutMarkup * (1 + Number(markup) / 100);
 };
 
 export async function createOrder({ userId, body }: OrderInput) {
@@ -32,7 +32,7 @@ export async function createOrder({ userId, body }: OrderInput) {
     const auPrice = await prisma.auPrice.findFirst();
     if (!auPrice) throw new Error("Gold price not found");
 
-    let totalAmount = BigInt(0);
+    let totalAmount = 0;
     const orderItemsData: any[] = [];
 
     for (const item of body.order.items) {
@@ -53,7 +53,7 @@ export async function createOrder({ userId, body }: OrderInput) {
                 pricePerGram: BigInt(auPrice.pricePerGram),
             });
 
-            totalAmount += price * BigInt(item.quantity);
+            totalAmount += price * item.quantity;
 
             orderItemsData.push({
                 productId: item.productId,
@@ -69,7 +69,7 @@ export async function createOrder({ userId, body }: OrderInput) {
 
         if (dbProduct.type === ProductType.BUNDLE) {
             const bundleItems: any[] = [];
-            let bundleTotalPrice = BigInt(0);
+            let bundleTotalPrice = 0;
 
             for (const b of item.bundleItems) {
                 const bundleDbProduct = await prisma.product.findUnique({
@@ -89,6 +89,7 @@ export async function createOrder({ userId, body }: OrderInput) {
                 });
 
                 bundleTotalPrice += price;
+
                 bundleItems.push({
                     productId: b.productId,
                     variantId: b.variantId,
@@ -98,7 +99,7 @@ export async function createOrder({ userId, body }: OrderInput) {
                 });
             }
 
-            totalAmount += bundleTotalPrice * BigInt(item.quantity);
+            totalAmount += bundleTotalPrice * item.quantity;
 
             orderItemsData.push({
                 productId: item.productId,
